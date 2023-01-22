@@ -52,6 +52,7 @@ export default {
                 .catch(error => {
                     console.log(error)
                 })
+            await this.getLatestStream()
         },
         async createNewStream() {
             await axios.post('/api/stream/new')
