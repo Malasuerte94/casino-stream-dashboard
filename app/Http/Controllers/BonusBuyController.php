@@ -51,6 +51,35 @@ class BonusBuyController extends Controller
         $bonusBuy->save();
     }
 
+        /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function store(Request $request): \Illuminate\Http\JsonResponse
+    {
+
+        $seeder = Str::random(20);
+        $latestBonusBuy = BonusBuy::create([
+            'name' => 'Bonus Buy',
+            'seed' => $seeder,
+        ]);
+        
+
+        $gamesForBonusBuy = $latestBonusBuy->bonusBuyGame;
+        if(!$gamesForBonusBuy->first()) {
+            $gamesForBonusBuy = $latestBonusBuy->bonusBuyGame()->create();
+            $gamesForBonusBuy->save();
+            $gamesForBonusBuy = [$gamesForBonusBuy];
+        }
+
+        return response()->json([
+            'bonusBuyGames' => $gamesForBonusBuy,
+            'bonusBuy' => $latestBonusBuy,
+        ]);
+    }
+
 
     /**
      * Remove the specified resource from storage.

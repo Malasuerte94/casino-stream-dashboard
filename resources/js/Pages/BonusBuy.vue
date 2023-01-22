@@ -8,8 +8,9 @@
             <div>Rezultat</div>
             <div>Multi</div>
         </div>
-        <div class="slider">
-            <div v-for="(game, index) in bonusBuyGames" :key="index" class="table">
+        <div class="slider" v-if="bonusBuyGames.length > 1">
+        <template v-for="(game, index) in bonusBuyGames" :key="index">
+            <div class="table" v-if="game.name">
                 <div>{{ index + 1 }}</div>
                 <div>{{ game.name }}</div>
                 <div>{{ game.stake }}</div>
@@ -17,6 +18,8 @@
                 <div>{{ game.result }}</div>
                 <div>x{{ game.multiplier }}</div>
             </div>
+        </template>
+            
         </div>
     </div>
 </template>
@@ -31,13 +34,15 @@ export default {
     },
     async mounted() {
         await this.getLatestList()
-        var lineHeight = this.$el.querySelector(".slider > div").clientHeight;
-        var viewHeight = window.innerHeight;
-        var slider = this.$el.querySelector(".slider");
-        var time = (slider.offsetHeight * 2.0 + viewHeight * 2) / 150.0; // 500px / sec
-        slider.style.animationDuration = time + "s";
+        this.updateTheListFromTimeToTime()
     },
     methods: {
+        updateTableScroll() { 
+            var viewHeight = window.innerHeight;
+            var slider = this.$el.querySelector(".slider");
+            var time = (slider.offsetHeight * 2.0 + viewHeight * 2) / 150.0; // 500px / sec
+            slider.style.animationDuration = time + "s";
+        },
         async getLatestList() {
             await axios.get('/api/bonus-buy')
                 .then(response => {
@@ -48,7 +53,13 @@ export default {
                 .catch(error => {
                     console.log(error)
                 })
+            this.updateTableScroll()
         },
+        async updateTheListFromTimeToTime() {
+            setInterval(async () => {
+                await this.getLatestList()
+            }, 5000)
+        }
     }
 }
 </script>
@@ -61,7 +72,7 @@ body {
 .table {
     color: white;
     display: grid;
-    grid-template-columns: 10px 3fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 30px 3fr 1fr 1fr 1fr 1fr;
     grid-gap: 10px;
     margin-bottom: 10px;
     position: relative;

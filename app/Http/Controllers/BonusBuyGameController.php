@@ -100,11 +100,21 @@ class BonusBuyGameController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\BonusBuyGame  $bonusBuyGame
-     * @return \Illuminate\Http\Response
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(BonusBuyGame $bonusBuyGame)
+    public function destroy(Request $request, int $id): \Illuminate\Http\JsonResponse
     {
-        //
+        //destory the row that has the id, the payload contains the id
+        $bonusBuyGame = BonusBuyGame::find($id);
+        if(!$bonusBuyGame) {
+            return response()->json([
+                'message' => 'Bonus Buy Game not found',
+            ]);
+        }
+        $bonusBuyGame->delete();
+        return response()->json([
+            'message' => 'Bonus Buy Game deleted',
+        ]);
     }
 }

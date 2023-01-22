@@ -15,9 +15,13 @@ use Inertia\Inertia;
 |
 */
 //display in obs
-    Route::get('/bonus-buy', function () {
-        return Inertia::render('BonusBuy');
-    })->name('bonus-buy');
+Route::get('/bonus-buy', function () {
+    return Inertia::render('BonusBuy');
+})->name('bonus-buy');
+Route::get('/stream-start', function () {
+    return Inertia::render('StreamStart');
+})->name('stream-start');
+
 
 
 Route::get('/', function () {

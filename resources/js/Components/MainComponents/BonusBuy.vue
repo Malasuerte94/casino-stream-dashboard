@@ -1,11 +1,12 @@
 <template>
     <div>
         <div>
-            <div class="grid grid-cols-[minmax(200px,_1fr)_120px] gap-2 mt-8 mb-8">
+            <h5 class="text-lg font-bold">Bonus Buy - List</h5>
+            <div class="grid grid-cols-[minmax(200px,_1fr)_120px] gap-2 mt-2 mb-2">
                 <input @input="startTimerUpdateBonusBuy" type="text" id="bonus_buy_name" v-model="bonusBuy.name"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Nume Lista">
-                <button type="button" tabindex="-1"
+                <button @click="resetBonusBuy" type="button" tabindex="-1"
                     class="justify-center self-center focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">CLEAR</button>
             </div>
             <template v-if="bonusBuyGames">
@@ -46,6 +47,7 @@
                             class="text-center disabled:opacity-75 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder="Multiplier" /></div>
                     <button type="button" tabindex="-1"
+                        @click="removeBonusBuyGameRow(game.id)"
                         class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center mr-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
                         <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor">
@@ -94,8 +96,19 @@ export default {
             this.calcCurentRowMultiplier(game, index)
             this.startTimerUpdateBonusBuyGames()
         },
+        async resetBonusBuy() {
+            await axios.post('/api/bonus-buy')
+                .then(response => {
+                    this.bonusBuy = response.data.bonusBuy
+                    this.bonusBuyGames = response.data.bonusBuyGames
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+        },
         //add new games row
         async createNewBonusBuyGameRow() {
+            this.forceUpdateBonusBuyGames()
             let bonusBuyId = this.bonusBuy.id
             await axios.post('/api/bonus-buy-games', {
                 bonusBuyId
@@ -107,6 +120,28 @@ export default {
                     console.log(error)
                 })
             await this.getLatestList()
+        },
+        async forceUpdateBonusBuyGames() { 
+            let games = this.bonusBuyGames
+            await axios.put('/api/bonus-buy-games', {
+                games,
+            })
+                .then(function (response) {
+                    console.log(response);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        },
+        //remove games row
+        async removeBonusBuyGameRow(id) {
+            await axios.delete('/api/bonus-buy-games/' + id)
+                .then(response => {
+                    this.bonusBuyGames = this.bonusBuyGames.filter(game => game.id != id)
+                })
+                .catch(error => {
+                    console.log(error)
+                })
         },
         //update games
         async updateBonusBuyGames() {
