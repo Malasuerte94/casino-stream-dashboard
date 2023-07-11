@@ -39,5 +39,6 @@ export default {
 body {
     background-color: black;
     font-size: 24px;
+    font-weight: bold;
 }
 </style>

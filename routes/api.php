@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BonusBuyController;
 use App\Http\Controllers\BonusBuyGameController;
+use App\Http\Controllers\SocialController;
 use App\Http\Controllers\StreamController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -38,3 +39,7 @@ Route::patch('/bonus-buy', [BonusBuyController::class, 'edit']);
 Route::put('/bonus-buy-games', [BonusBuyGameController::class, 'update']);
 Route::post('/bonus-buy-games', [BonusBuyGameController::class, 'store']);
 Route::delete('/bonus-buy-games/{id}', [BonusBuyGameController::class, 'destroy']);
+
+//socials
+Route::get('/socials', [SocialController::class, 'index']);
+Route::post('/socials', [SocialController::class, 'store']);

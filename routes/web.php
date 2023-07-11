@@ -40,4 +40,7 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+    Route::get('/settings', function () {
+        return Inertia::render('Settings');
+    })->name('settings');
 });
