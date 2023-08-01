@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\BonusBuy;
+use App\Models\Stream;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -13,19 +14,29 @@ class BonusBuyController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(): \Illuminate\Http\JsonResponse
+    public function index(Request $request): \Illuminate\Http\JsonResponse
     {
-        $latestBonusBuy = BonusBuy::latest()->first();
-        if(!$latestBonusBuy) {
-            $seeder = Str::random(20);
-            $latestBonusBuy = BonusBuy::create([
-                'name' => 'Bonus Buy',
-                'seed' => $seeder,
-            ]);
+        $user = $request->user();
+
+        $latestStream = $user->streams()->latest()->first();
+
+        $latestBonusBuy = null;
+        if ($latestStream) {
+            $latestBonusBuy = $latestStream->bonusBuys()->latest()->first();
+
+            if (!$latestBonusBuy) {
+                $seeder = Str::random(20);
+                $latestBonusBuy = $latestStream->bonusBuys()->create([
+                    'name' => 'Bonus Buy',
+                    'seed' => $seeder,
+                    'user_id' => $user->id,
+                    'stream_id' => $latestStream->id
+                ]);
+            }
         }
 
-        $gamesForBonusBuy = $latestBonusBuy->bonusBuyGame;
-        if(!$gamesForBonusBuy->first()) {
+        $gamesForBonusBuy = $latestBonusBuy ? $latestBonusBuy->bonusBuyGame : [];
+        if (!$gamesForBonusBuy->first()) {
             $gamesForBonusBuy = $latestBonusBuy->bonusBuyGame()->create();
             $gamesForBonusBuy->save();
             $gamesForBonusBuy = [$gamesForBonusBuy];
@@ -35,8 +46,8 @@ class BonusBuyController extends Controller
             'bonusBuyGames' => $gamesForBonusBuy,
             'bonusBuy' => $latestBonusBuy,
         ]);
-        
     }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -51,7 +62,7 @@ class BonusBuyController extends Controller
         $bonusBuy->save();
     }
 
-        /**
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -65,7 +76,7 @@ class BonusBuyController extends Controller
             'name' => 'Bonus Buy',
             'seed' => $seeder,
         ]);
-        
+
 
         $gamesForBonusBuy = $latestBonusBuy->bonusBuyGame;
         if(!$gamesForBonusBuy->first()) {
@@ -80,15 +91,4 @@ class BonusBuyController extends Controller
         ]);
     }
 
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\BonusBuy  $bonusBuy
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(BonusBuy $bonusBuy)
-    {
-        //
-    }
 }

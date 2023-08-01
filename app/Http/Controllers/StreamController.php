@@ -24,15 +24,6 @@ class StreamController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -42,23 +33,13 @@ class StreamController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        $user = $request->user();
+        $streamData = [];
 
-        $stream = Stream::create();
-        
+        $stream = $user->streams()->create($streamData);
         return response()->json([
             'stream' => $stream,
         ]);
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Stream  $stream
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Stream $stream)
-    {
-        //
     }
 
     /**
@@ -87,14 +68,4 @@ class StreamController extends Controller
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Stream  $stream
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Stream $stream)
-    {
-        //
-    }
 }

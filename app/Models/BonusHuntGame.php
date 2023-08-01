@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class BonusHuntGame extends Model
 {
     use HasFactory;
+    protected $guarded = ["id"];
+
+    public function bonusHunt()
+    {
+        return $this->belongsTo(BonusHunt::class);
+    }
 }

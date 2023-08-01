@@ -588,6 +588,7 @@ class ComposerStaticInit69c8e8820f8dba78f915ae86794425a6
         'App\\Http\\Controllers\\BonusHuntController' => __DIR__ . '/../..' . '/app/Http/Controllers/BonusHuntController.php',
         'App\\Http\\Controllers\\BonusHuntGameController' => __DIR__ . '/../..' . '/app/Http/Controllers/BonusHuntGameController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
+        'App\\Http\\Controllers\\SocialController' => __DIR__ . '/../..' . '/app/Http/Controllers/SocialController.php',
         'App\\Http\\Controllers\\StreamController' => __DIR__ . '/../..' . '/app/Http/Controllers/StreamController.php',
         'App\\Http\\Kernel' => __DIR__ . '/../..' . '/app/Http/Kernel.php',
         'App\\Http\\Middleware\\Authenticate' => __DIR__ . '/../..' . '/app/Http/Middleware/Authenticate.php',

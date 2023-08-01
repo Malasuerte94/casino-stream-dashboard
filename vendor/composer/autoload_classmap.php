@@ -19,6 +19,7 @@ return array(
     'App\\Http\\Controllers\\BonusHuntController' => $baseDir . '/app/Http/Controllers/BonusHuntController.php',
     'App\\Http\\Controllers\\BonusHuntGameController' => $baseDir . '/app/Http/Controllers/BonusHuntGameController.php',
     'App\\Http\\Controllers\\Controller' => $baseDir . '/app/Http/Controllers/Controller.php',
+    'App\\Http\\Controllers\\SocialController' => $baseDir . '/app/Http/Controllers/SocialController.php',
     'App\\Http\\Controllers\\StreamController' => $baseDir . '/app/Http/Controllers/StreamController.php',
     'App\\Http\\Kernel' => $baseDir . '/app/Http/Kernel.php',
     'App\\Http\\Middleware\\Authenticate' => $baseDir . '/app/Http/Middleware/Authenticate.php',

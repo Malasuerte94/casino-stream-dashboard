@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\BonusBuyController;
 use App\Http\Controllers\BonusBuyGameController;
+use App\Http\Controllers\BonusHuntController;
+use App\Http\Controllers\BonusHuntGameController;
 use App\Http\Controllers\SocialController;
 use App\Http\Controllers\StreamController;
 use Illuminate\Http\Request;
@@ -22,13 +24,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-
-//patch una put pentru toate
-//stream
 Route::get('/stream', [StreamController::class, 'index']);
 Route::post('/stream/new', [StreamController::class, 'store']);
 Route::patch('/stream/update', [StreamController::class, 'edit']);
-
 
 //bonus buy
 Route::get('/bonus-buy', [BonusBuyController::class, 'index']);
@@ -39,6 +37,17 @@ Route::patch('/bonus-buy', [BonusBuyController::class, 'edit']);
 Route::put('/bonus-buy-games', [BonusBuyGameController::class, 'update']);
 Route::post('/bonus-buy-games', [BonusBuyGameController::class, 'store']);
 Route::delete('/bonus-buy-games/{id}', [BonusBuyGameController::class, 'destroy']);
+
+
+//bonus hunt
+Route::get('/bonus-hunt', [BonusHuntController::class, 'index']);
+Route::post('/bonus-hunt', [BonusHuntController::class, 'store']);
+Route::patch('/bonus-hunt', [BonusHuntController::class, 'edit']);
+
+//bonus hunt games
+Route::put('/bonus-hunt-games', [BonusHuntGameController::class, 'update']);
+Route::post('/bonus-hunt-games', [BonusHuntGameController::class, 'store']);
+Route::delete('/bonus-hunt-games/{id}', [BonusHuntGameController::class, 'destroy']);
 
 //socials
 Route::get('/socials', [SocialController::class, 'index']);

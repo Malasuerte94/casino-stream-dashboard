@@ -8,15 +8,6 @@ use Illuminate\Http\Request;
 
 class BonusBuyGameController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -45,27 +36,6 @@ class BonusBuyGameController extends Controller
 
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\BonusBuyGame  $bonusBuyGame
-     * @return \Illuminate\Http\Response
-     */
-    public function show(BonusBuyGame $bonusBuyGame)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\BonusBuyGame  $bonusBuyGame
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(BonusBuyGame $bonusBuyGame)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
