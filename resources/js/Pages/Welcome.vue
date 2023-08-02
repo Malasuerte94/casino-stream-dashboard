@@ -18,9 +18,9 @@ defineProps({
             <Link v-if="$page.props.user" :href="route('dashboard')" class="text-sm text-white underline">Dashboard</Link>
 
             <template v-else>
-                <Link :href="route('login')" class="text-sm text-white underline">Log in</Link>
+                <Link :href="route('login')" class="text-sm text-black underline">Log in</Link>
 
-                <Link v-if="canRegister" :href="route('register')" class="ml-4 text-sm text-white underline">Register</Link>
+                <Link v-if="canRegister" :href="route('register')" class="ml-4 text-sm text-black underline">Register</Link>
             </template>
         </div>
         </div>

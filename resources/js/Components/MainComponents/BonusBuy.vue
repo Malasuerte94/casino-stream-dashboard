@@ -1,5 +1,5 @@
 <template>
-    <div class="grid grid-cols-[minmax(200px,_1fr)_120px] gap-2 mt-2 mb-2">
+    <div class="grid grid-cols-[minmax(200px,_1fr)_120px_120px_120px] gap-2 mt-2 mb-2">
         <input
             @input="startTimerUpdateBonusBuy"
             type="text"
@@ -7,6 +7,22 @@
             v-model="bonusBuy.name"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="Nume Lista"
+        />
+        <input
+            @input="startTimerUpdateBonusBuy"
+            type="number"
+            id="bonus_buy_start"
+            v-model="bonusBuy.start"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="Cost (LEI)"
+        />
+        <input
+            disabled
+            type="number"
+            id="bonus_buy_result"
+            v-model="bonusBuy.result"
+            class="cursor-not-allowed bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="Rezultat (LEI)"
         />
         <button
             @click="resetBonusBuy"
@@ -26,12 +42,12 @@
             >
                 nr
             </div>
-            <div>Game</div>
-            <div>Stake</div>
-            <div>Buy</div>
-            <div>Result</div>
-            <div>Multiplier</div>
-            <div>Remove</div>
+            <div>Joc</div>
+            <div>Miză</div>
+            <div>Preț (LEI)</div>
+            <div>Rezultat (LEI)</div>
+            <div>Multiplicator</div>
+            <div>Șterge</div>
         </div>
         <div
             v-for="(game, index) in bonusBuyGames"
@@ -89,7 +105,7 @@
                     v-model="game.multiplier"
                     type="number"
                     id="multiplier"
-                    class="text-center disabled:opacity-75 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    class="cursor-not-allowed text-center disabled:opacity-75 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Multiplier"
                 />
             </div>
@@ -192,7 +208,7 @@ export default {
                     games,
                 })
                 .then(function (response) {
-                    console.log(response);
+                    //console.log(response);
                 })
                 .catch(function (error) {
                     console.log(error);
@@ -219,13 +235,13 @@ export default {
                     games,
                 })
                 .then(function (response) {
-                    console.log(response);
+                    //console.log(response);
                 })
                 .catch(function (error) {
                     console.log(error);
                 });
             this.timerUpdateBonusBuyGames = false;
-            await getLatestList();
+            await this.getLatestList();
         },
         //update list name
         async updateBonusBuy() {

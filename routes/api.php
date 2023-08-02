@@ -4,8 +4,10 @@ use App\Http\Controllers\BonusBuyController;
 use App\Http\Controllers\BonusBuyGameController;
 use App\Http\Controllers\BonusHuntController;
 use App\Http\Controllers\BonusHuntGameController;
+use App\Http\Controllers\BonusListController;
 use App\Http\Controllers\SocialController;
 use App\Http\Controllers\StreamController;
+use App\Http\Controllers\UserSettingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -38,7 +40,6 @@ Route::put('/bonus-buy-games', [BonusBuyGameController::class, 'update']);
 Route::post('/bonus-buy-games', [BonusBuyGameController::class, 'store']);
 Route::delete('/bonus-buy-games/{id}', [BonusBuyGameController::class, 'destroy']);
 
-
 //bonus hunt
 Route::get('/bonus-hunt', [BonusHuntController::class, 'index']);
 Route::post('/bonus-hunt', [BonusHuntController::class, 'store']);
@@ -52,3 +53,11 @@ Route::delete('/bonus-hunt-games/{id}', [BonusHuntGameController::class, 'destro
 //socials
 Route::get('/socials', [SocialController::class, 'index']);
 Route::post('/socials', [SocialController::class, 'store']);
+
+//settings
+Route::get('/settings', [UserSettingController::class, 'index']);
+Route::get('/settings/{id}', [UserSettingController::class, 'show']);
+Route::patch('/settings', [UserSettingController::class, 'edit']);
+
+//LIST
+Route::get('/bonus-list/{id}', [BonusListController::class, 'index']);

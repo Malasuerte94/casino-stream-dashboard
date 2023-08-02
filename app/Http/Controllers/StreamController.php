@@ -13,11 +13,13 @@ class StreamController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(): \Illuminate\Http\JsonResponse
+    public function index(Request $request): \Illuminate\Http\JsonResponse
     {
-        $latestStream = Stream::latest()->first();
+        $user = $request->user();
+        $latestStream = $user->streams()->latest()->first();
+
         if(!$latestStream) {
-            $latestStream = Stream::create();
+            $latestStream = $user->streams()->create();
         }
         return response()->json([
             'stream' => $latestStream,
@@ -54,18 +56,10 @@ class StreamController extends Controller
         $stream->casino = $request->casino;
         $stream->deposit = $request->deposit;
         $stream->save();
+        return response()->json([
+            'stream' => $stream,
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Stream  $stream
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Stream $stream)
-    {
-        //
-    }
 
 }

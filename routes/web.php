@@ -15,10 +15,10 @@ use Inertia\Inertia;
 |
 */
 //display in obs
-Route::get('/bonus-buy', function () {
-    return Inertia::render('BonusBuy');
-})->name('bonus-buy');
-Route::get('/stream-start', function () {
+Route::get('/bonus-list/{id}', function ($id) {
+    return Inertia::render('BonusList', ['id' => $id]);
+})->name('bonus-list');
+Route::get('/stream-start/{id}', function () {
     return Inertia::render('StreamStart');
 })->name('stream-start');
 

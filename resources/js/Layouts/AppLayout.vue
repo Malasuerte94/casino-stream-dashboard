@@ -8,7 +8,7 @@ import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 
-defineProps({
+const props = defineProps({
     title: String,
 });
 
@@ -29,7 +29,7 @@ const logout = () => {
 
 <template>
     <div>
-        <Head :title="title" />
+        <Head :title="props.title" />
 
         <Banner />
 
@@ -53,12 +53,12 @@ const logout = () => {
                                 </NavLink>
                             </div>
                             <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                                <NavLink :href="route('stream-start')" :active="route().current('stream-start')">
+                                <NavLink :href="route('stream-start', { id: $page.props.user.id  })" :active="route().current('stream-start')">
                                     Casino + Depo - OBS
                                 </NavLink>
                             </div>
                             <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                                <NavLink :href="route('bonus-buy')" :active="route().current('bonus-buy')">
+                                <NavLink :href="route('bonus-list', { id: $page.props.user.id })" :active="route().current('bonus-list')">
                                     Bonus Buy - OBS
                                 </NavLink>
                             </div>

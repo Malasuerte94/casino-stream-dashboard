@@ -17,10 +17,9 @@ class BonusBuyController extends Controller
     public function index(Request $request): \Illuminate\Http\JsonResponse
     {
         $user = $request->user();
-
         $latestStream = $user->streams()->latest()->first();
-
         $latestBonusBuy = null;
+
         if ($latestStream) {
             $latestBonusBuy = $latestStream->bonusBuys()->latest()->first();
 
@@ -35,11 +34,16 @@ class BonusBuyController extends Controller
             }
         }
 
-        $gamesForBonusBuy = $latestBonusBuy ? $latestBonusBuy->bonusBuyGame : [];
-        if (!$gamesForBonusBuy->first()) {
-            $gamesForBonusBuy = $latestBonusBuy->bonusBuyGame()->create();
-            $gamesForBonusBuy->save();
-            $gamesForBonusBuy = [$gamesForBonusBuy];
+        $gamesForBonusBuy = null;
+        if ($latestBonusBuy) {
+            $gamesForBonusBuy = $latestBonusBuy->bonusBuyGame;
+            if (!$gamesForBonusBuy->first()) {
+                $gamesForBonusBuy = $latestBonusBuy->bonusBuyGame()->create();
+                $gamesForBonusBuy->save();
+                $gamesForBonusBuy = [$gamesForBonusBuy];
+            }
+        } else {
+            $gamesForBonusBuy = [];
         }
 
         return response()->json([

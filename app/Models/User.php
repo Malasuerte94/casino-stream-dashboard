@@ -65,4 +65,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Stream::class);
     }
+
+    public function userSettings(): HasMany
+    {
+        return $this->hasMany(UserSetting::class);
+    }
 }

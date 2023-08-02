@@ -34,16 +34,16 @@ class BonusHuntController extends Controller
             }
         }
 
-        $gamesForBonusBuy = $latestBonusHunt ? $latestBonusHunt->bonusHuntGame : [];
-        if (!$gamesForBonusBuy->first()) {
-            $gamesForBonusBuy = $latestBonusHunt->bonusHuntGame()->create();
-            $gamesForBonusBuy->save();
-            $gamesForBonusBuy = [$gamesForBonusBuy];
+        $gamesForBonusHunt = $latestBonusHunt ? $latestBonusHunt->bonusHuntGame : [];
+        if (!$gamesForBonusHunt->first()) {
+            $gamesForBonusHunt = $latestBonusHunt->bonusHuntGame()->create();
+            $gamesForBonusHunt->save();
+            $gamesForBonusHunt = [$gamesForBonusHunt];
         }
 
         return response()->json([
-            'bonusBuyGames' => $gamesForBonusBuy,
-            'bonusBuy' => $latestBonusHunt,
+            'bonusHuntGames' => $gamesForBonusHunt,
+            'bonusHunt' => $latestBonusHunt,
         ]);
     }
 
@@ -58,7 +58,7 @@ class BonusHuntController extends Controller
 
         $seeder = Str::random(20);
         $latestBonusHunt = BonusHunt::create([
-            'name' => 'Bonus Buy',
+            'name' => 'Bonus Hunt',
             'seed' => $seeder,
         ]);
 
@@ -87,6 +87,7 @@ class BonusHuntController extends Controller
     {
         $bonusHunt = BonusHunt::where('seed', $request->bonusHunt['seed'])->first();
         $bonusHunt->name = $request->bonusHunt['name'];
+        $bonusHunt->start = $request->bonusHunt['start'];
         $bonusHunt->save();
     }
 

@@ -44,6 +44,7 @@ class BonusHuntGameController extends Controller
      */
     public function update(Request $request): \Illuminate\Http\JsonResponse
     {
+        $totalResult = 0;
 
         foreach ($request->games as $game) {
             if (!$game['name']) {
@@ -58,10 +59,24 @@ class BonusHuntGameController extends Controller
             $bonusHuntGame->result = $game['result'];
             $bonusHuntGame->multiplier = $game['multiplier'];
             $bonusHuntGame->save();
+
+            $totalResult += $game['result'];
+        }
+
+        if (isset($request->games[0])) {
+            $firstGame = BonusHuntGame::find($request->games[0]['id']);
+            if ($firstGame) {
+                $bonusHunt = $firstGame->bonusHunt;
+                if ($bonusHunt) {
+                    $bonusHunt->result = $totalResult;
+                    $bonusHunt->save();
+                }
+            }
         }
 
         return response()->json([
             'success' => 'Bonus Buy Games updated',
+            'total' => $totalResult
         ]);
     }
 
