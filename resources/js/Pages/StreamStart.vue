@@ -6,6 +6,7 @@
 
 <script>
 export default {
+    props: ["id"],
     data() {
         return {
             stream: [],
@@ -18,7 +19,7 @@ export default {
     methods: {
 
         async getLatestStream() {
-            await axios.get('/api/stream')
+            await axios.get('/api/stream/' + this.id)
                 .then(response => {
                     this.stream = response.data.stream
 

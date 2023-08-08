@@ -59,5 +59,6 @@ Route::get('/settings', [UserSettingController::class, 'index']);
 Route::get('/settings/{id}', [UserSettingController::class, 'show']);
 Route::patch('/settings', [UserSettingController::class, 'edit']);
 
-//LIST
+//LIST PUBLIC
 Route::get('/bonus-list/{id}', [BonusListController::class, 'index']);
+Route::get('/stream/{id}', [StreamController::class, 'show']);

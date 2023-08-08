@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Stream;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -58,6 +59,24 @@ class StreamController extends Controller
         $stream->save();
         return response()->json([
             'stream' => $stream,
+        ]);
+    }
+
+
+    /**
+    * Show from link
+    *
+    * @return \Illuminate\Http\JsonResponse
+    */
+    public function show(int $id): \Illuminate\Http\JsonResponse
+    {
+        $userId = $id;
+        $user = User::findOrFail($userId);
+
+        $latestStream = $user->streams()->latest()->first();
+
+        return response()->json([
+            'stream' => $latestStream,
         ]);
     }
 

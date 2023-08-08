@@ -18,8 +18,8 @@ use Inertia\Inertia;
 Route::get('/bonus-list/{id}', function ($id) {
     return Inertia::render('BonusList', ['id' => $id]);
 })->name('bonus-list');
-Route::get('/stream-start/{id}', function () {
-    return Inertia::render('StreamStart');
+Route::get('/stream-start/{id}', function ($id) {
+    return Inertia::render('StreamStart', ['id' => $id]);
 })->name('stream-start');
 
 

@@ -75,10 +75,15 @@ class BonusBuyController extends Controller
     public function store(Request $request): \Illuminate\Http\JsonResponse
     {
 
+        $user = $request->user();
+        $latestStream = $user->streams()->latest()->first();
+
         $seeder = Str::random(20);
         $latestBonusBuy = BonusBuy::create([
             'name' => 'Bonus Buy',
             'seed' => $seeder,
+            'user_id' => $user->id,
+            'stream_id' => $latestStream->id
         ]);
 
 

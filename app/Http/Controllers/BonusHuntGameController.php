@@ -55,9 +55,9 @@ class BonusHuntGameController extends Controller
                 continue;
             }
             $bonusHuntGame->name = $game['name'];
-            $bonusHuntGame->stake = $game['stake'];
-            $bonusHuntGame->result = $game['result'];
-            $bonusHuntGame->multiplier = $game['multiplier'];
+            $bonusHuntGame->stake = $game['stake'] ?? 0;
+            $bonusHuntGame->result = $game['result'] ?? 0;
+            $bonusHuntGame->multiplier = $game['multiplier'] ?? 0;
             $bonusHuntGame->save();
 
             $totalResult += $game['result'];

@@ -56,10 +56,10 @@ class BonusBuyGameController extends Controller
                 continue;
             }
             $bonusBuyGame->name = $game['name'];
-            $bonusBuyGame->stake = $game['stake'];
-            $bonusBuyGame->price = $game['price'];
-            $bonusBuyGame->result = $game['result'];
-            $bonusBuyGame->multiplier = $game['multiplier'];
+            $bonusBuyGame->stake = $game['stake'] ?? 0;
+            $bonusBuyGame->price = $game['price'] ?? 0;
+            $bonusBuyGame->result = $game['result'] ?? 0;
+            $bonusBuyGame->multiplier = $game['multiplier'] ?? 0;
             $bonusBuyGame->save();
 
             $totalResult += $game['result'];

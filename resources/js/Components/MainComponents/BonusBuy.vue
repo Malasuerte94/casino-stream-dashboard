@@ -150,8 +150,7 @@ export default {
         return {
             bonusBuy: [],
             bonusBuyGames: [],
-            timerUpdateBonusBuy: false,
-            timerUpdateBonusBuyGames: false,
+            timerUpdateBonusBuyGamesTimeout: null,
             updateListTimer: 5, //in seconds
         };
     },
@@ -173,6 +172,7 @@ export default {
         checkModifiedFields(game, index) {
             this.calcCurentRowMultiplier(game, index);
             this.startTimerUpdateBonusBuyGames();
+            this.startTimerUpdateBonusBuy();
         },
         async resetBonusBuy() {
             await axios
@@ -240,7 +240,6 @@ export default {
                 .catch(function (error) {
                     console.log(error);
                 });
-            this.timerUpdateBonusBuyGames = false;
             await this.getLatestList();
         },
         //update list name
@@ -256,21 +255,19 @@ export default {
                 .catch(function (error) {
                     console.log(error);
                 });
-            this.timerUpdateBonusBuy = false;
         },
         startTimerUpdateBonusBuy() {
-            if (this.timerUpdateBonusBuy == true) {
-                return;
+            if (this.timerUpdateBonusBuyTimeout) {
+                clearTimeout(this.timerUpdateBonusBuyTimeout);
             }
-            this.timerUpdateBonusBuy = true;
-            setTimeout(this.updateBonusBuy, 5000);
+            this.timerUpdateBonusBuyTimeout = setTimeout(this.updateBonusBuy, this.updateListTimer * 1000);
         },
         startTimerUpdateBonusBuyGames() {
-            if (this.timerUpdateBonusBuyGames == true) {
-                return;
+
+            if (this.timerUpdateBonusBuyGamesTimeout) {
+                clearTimeout(this.timerUpdateBonusBuyGamesTimeout);
             }
-            this.timerUpdateBonusBuyGames = true;
-            setTimeout(this.updateBonusBuyGames, 5000);
+            this.timerUpdateBonusBuyGamesTimeout = setTimeout(this.updateBonusBuyGames, this.updateListTimer * 1000);
         },
         calcCurentRowMultiplier(game, index) {
             if (

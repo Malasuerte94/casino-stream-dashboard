@@ -3,7 +3,7 @@
         <div v-if="settings.bonus_list == 'buy'" class="table">
             <div class="table-container">
                 <div class="header">
-                    <div class="header-content">
+                    <div class="header-content_buy header-content">
                         <div class="text-center">#</div>
                         <div>Joc</div>
                         <div>Miză</div>
@@ -14,7 +14,7 @@
                 </div>
                 <div class="games">
                     <div
-                        class="row-game"
+                        class="game-single row-game_buy"
                         v-for="(game, index) in bonusListGames"
                         :key="index"
                     >
@@ -30,26 +30,24 @@
         </div>
         <div v-else class="table">
             <div class="table-container">
-                <div>
-                    <div>
-                        <div>#</div>
+                <div class="header">
+                    <div class="header-content_hunt header-content">
+                        <div class="text-center">#</div>
                         <div>Joc</div>
                         <div>Miză</div>
-                        <div></div>
                         <div>Plată</div>
                         <div>Multi</div>
                     </div>
                 </div>
-                <div class="games" ref="gamesContainer">
+                <div class="games">
                     <div
-                        class="row-game"
+                        class="game-single row-game_hunt"
                         v-for="(game, index) in bonusListGames"
                         :key="index"
                     >
                         <div class="number_game">{{ index + 1 }}</div>
                         <div>{{ game.name }}</div>
                         <div>{{ game.stake }}</div>
-                        <div></div>
                         <div>{{ game.result }}</div>
                         <div>x{{ game.multiplier }}</div>
                     </div>
@@ -109,7 +107,7 @@ export default {
         animation() {
             setInterval(async () => {
                 if(this.bonusListGames.length >= 10) {
-                var marginHeight = $(".row-game").height();
+                var marginHeight = $(".game-single").height();
                 $(".games")
                     .stop(true, true)
                     .animate(
@@ -146,16 +144,29 @@ body,
     position: relative;
     z-index: 1;
 }
-.header-content {
+.header-content_buy {
     display: grid;
     grid-template-columns: 30px 115px 50px 70px 70px 60px;
 }
 
-.row-game {
+.row-game_buy {
     padding-top: 10px;
     padding-bottom: 10px;
     display: grid;
     grid-template-columns: 30px 115px 50px 70px 70px 60px;
+    border-bottom: 1px solid #d5d5d53b;
+}
+
+.header-content_hunt {
+    display: grid;
+    grid-template-columns: 30px 155px 60px 80px 70px;
+}
+
+.row-game_hunt {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    display: grid;
+    grid-template-columns: 30px 155px 60px 80px 70px;
     border-bottom: 1px solid #d5d5d53b;
 }
 
