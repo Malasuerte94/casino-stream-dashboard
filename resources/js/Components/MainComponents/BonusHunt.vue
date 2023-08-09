@@ -1,5 +1,7 @@
 <template>
-    <div class="grid grid-cols-[minmax(200px,_1fr)_120px_120px_120px] gap-2 mt-2 mb-2">
+    <div
+        class="grid grid-cols-[minmax(200px,_1fr)_120px_120px_120px] gap-2 mt-2 mb-2"
+    >
         <input
             @input="startTimerUpdateBonusHunt"
             type="text"
@@ -72,6 +74,7 @@
                 <input
                     @input="checkModifiedFields(game, index)"
                     v-model="game.stake"
+                    min="1"
                     type="number"
                     id="stake"
                     class="text-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -139,8 +142,8 @@ export default {
         return {
             bonusHunt: [],
             bonusHuntGames: [],
-            timerUpdateBonusHunt: false,
-            timerUpdateBonusHuntGames: false,
+            timerUpdateBonusHuntGamesTimeout: null,
+            timerUpdateBonusHuntTimeout: null,
             updateListTimer: 5, //in seconds
         };
     },
@@ -248,27 +251,31 @@ export default {
             this.timerUpdateBonusHunt = false;
         },
         startTimerUpdateBonusHunt() {
-            if (this.timerUpdateBonusHunt == true) {
-                return;
+            if (this.timerUpdateBonusHuntTimeout) {
+                clearTimeout(this.timerUpdateBonusHuntTimeout);
             }
-            this.timerUpdateBonusHunt = true;
-            setTimeout(this.updateBonusHunt, 5000);
+            this.timerUpdateBonusHuntTimeout = setTimeout(
+                this.updateBonusHunt,
+                this.updateListTimer * 1000
+            );
         },
         startTimerUpdateBonusHuntGames() {
-            if (this.timerUpdateBonusHuntGames == true) {
-                return;
+
+            if (this.timerUpdateBonusHuntGamesTimeout) {
+                clearTimeout(this.timerUpdateBonusHuntGamesTimeout);
             }
-            this.timerUpdateBonusHuntGames = true;
-            setTimeout(this.updateBonusHuntGames, 5000);
+            this.timerUpdateBonusHuntGamesTimeout = setTimeout(
+                this.updateBonusHuntGames,
+                this.updateListTimer * 1000
+            );
+
         },
         calcCurentRowMultiplier(game, index) {
-            if (game.name == "" || game.stake == "" || game.result == "") {
+            if (game.name == "" || game.stake == "" || game.result < 0) {
                 return;
             }
-            this.bonusHuntGames[index].multiplier = Math.round(
-                game.result / game.stake,
-                2
-            );
+            this.bonusHuntGames[index].multiplier = game.result == 0 ? 0 : Math.round(game.result / game.stake, 1);
+            this.bonusHuntGames[index].result = Math.ceil(game.result);
         },
     },
 };

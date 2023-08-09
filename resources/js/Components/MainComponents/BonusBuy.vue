@@ -1,5 +1,7 @@
 <template>
-    <div class="grid grid-cols-[minmax(200px,_1fr)_120px_120px_120px] gap-2 mt-2 mb-2">
+    <div
+        class="grid grid-cols-[minmax(200px,_1fr)_120px_120px_120px] gap-2 mt-2 mb-2"
+    >
         <input
             @input="startTimerUpdateBonusBuy"
             type="text"
@@ -74,6 +76,7 @@
                     @input="checkModifiedFields(game, index)"
                     v-model="game.stake"
                     type="number"
+                    min="1"
                     id="stake"
                     class="text-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Stake"
@@ -151,6 +154,7 @@ export default {
             bonusBuy: [],
             bonusBuyGames: [],
             timerUpdateBonusBuyGamesTimeout: null,
+            timerUpdateBonusBuyTimeout: null,
             updateListTimer: 5, //in seconds
         };
     },
@@ -260,28 +264,34 @@ export default {
             if (this.timerUpdateBonusBuyTimeout) {
                 clearTimeout(this.timerUpdateBonusBuyTimeout);
             }
-            this.timerUpdateBonusBuyTimeout = setTimeout(this.updateBonusBuy, this.updateListTimer * 1000);
+            this.timerUpdateBonusBuyTimeout = setTimeout(
+                this.updateBonusBuy,
+                this.updateListTimer * 1000
+            );
         },
         startTimerUpdateBonusBuyGames() {
-
             if (this.timerUpdateBonusBuyGamesTimeout) {
                 clearTimeout(this.timerUpdateBonusBuyGamesTimeout);
             }
-            this.timerUpdateBonusBuyGamesTimeout = setTimeout(this.updateBonusBuyGames, this.updateListTimer * 1000);
+            this.timerUpdateBonusBuyGamesTimeout = setTimeout(
+                this.updateBonusBuyGames,
+                this.updateListTimer * 1000
+            );
         },
         calcCurentRowMultiplier(game, index) {
             if (
                 game.name == "" ||
                 game.stake == "" ||
                 game.price == "" ||
-                game.result == ""
+                game.result < 0
             ) {
                 return;
             }
             this.bonusBuyGames[index].multiplier = Math.round(
                 game.result / game.stake,
-                2
+                1
             );
+            this.bonusBuyGames[index].result = Math.ceil(game.result);
         },
     },
 };

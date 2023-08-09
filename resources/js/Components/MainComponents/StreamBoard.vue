@@ -87,6 +87,7 @@
 <script >
 import axios from "axios";
 export default {
+    emits: ['displayOnly'],
     data() {
         return {
             stream: [],
@@ -129,7 +130,11 @@ export default {
                 .catch((error) => {
                     console.log(error);
                 });
-                await this.getSettings();
+            await this.getSettings();
+
+            if (this.settings.bonus_list) {
+                this.$emit('displayOnly', this.settings.bonus_list);
+            }
         },
         async updateStream() {
             await axios
