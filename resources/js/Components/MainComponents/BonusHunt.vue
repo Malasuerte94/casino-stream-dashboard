@@ -23,7 +23,7 @@
             type="number"
             id="bonus_hunt_result"
             v-model="bonusHunt.result"
-            class="cursor-not-allowed bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            class="cursor-not-allowed disabled:opacity-75 bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="Rezultat (LEI)"
         />
         <button
@@ -97,7 +97,7 @@
                     v-model="game.multiplier"
                     type="number"
                     id="multiplier"
-                    class="cursor-not-allowed text-center disabled:opacity-75 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    class="cursor-not-allowed text-center disabled:opacity-75 bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Multiplier"
                 />
             </div>
@@ -165,6 +165,7 @@ export default {
         checkModifiedFields(game, index) {
             this.calcCurentRowMultiplier(game, index);
             this.startTimerUpdateBonusHuntGames();
+            this.startTimerUpdateBonusHunt();
         },
         async resetBonusHunt() {
             await axios
@@ -232,7 +233,6 @@ export default {
                 .catch(function (error) {
                     console.log(error);
                 });
-            this.timerUpdateBonusHuntGames = false;
             await this.getLatestList();
         },
         //update list name
@@ -248,7 +248,6 @@ export default {
                 .catch(function (error) {
                     console.log(error);
                 });
-            this.timerUpdateBonusHunt = false;
         },
         startTimerUpdateBonusHunt() {
             if (this.timerUpdateBonusHuntTimeout) {

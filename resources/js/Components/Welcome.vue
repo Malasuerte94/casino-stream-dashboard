@@ -42,7 +42,7 @@ export default {
     components: { ApplicationLogo, BonusBuy, BonusHunt, StreamBoard },
     data() {
         return {
-            showForm: 'hunt',
+            showForm: null,
         };
     },
     mounted() {

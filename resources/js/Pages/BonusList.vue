@@ -1,6 +1,6 @@
 <template>
     <template v-if="!loading">
-        <div class="table">
+        <div class="table" ref="viewport">
             <div class="table-container">
                 <div class="header-list">
                     <div class="header-list-title">
@@ -29,7 +29,9 @@
                                 </g>
                             </svg>
                         </span>
-                        <span>{{ settings.bonus_list == 'buy' ? 'Buy' : 'Hunt' }}</span>
+                        <span>{{
+                            settings.bonus_list == "buy" ? "Buy" : "Hunt"
+                        }}</span>
                     </div>
                     <div class="progress">
                         <div
@@ -47,10 +49,18 @@
                         </div>
                     </div>
                     <div class="header-details">
-                        <div>Avg (x)<span>{{ averageMulti }}</span></div>
-                        <div>Top (x)<span>{{ gameHighestMulti }}</span></div>
-                        <div>Cost<span>{{ bonusList.start }} lei</span></div>
-                        <div>Rezultat<span>{{ bonusList.result }} lei</span></div>
+                        <div>
+                            Avg (x)<span>{{ averageMulti }}</span>
+                        </div>
+                        <div>
+                            Top (x)<span>{{ gameHighestMulti }}</span>
+                        </div>
+                        <div>
+                            Cost<span>{{ bonusList.start }} lei</span>
+                        </div>
+                        <div>
+                            Rezultat<span>{{ bonusList.result }} lei</span>
+                        </div>
                     </div>
                 </div>
                 <template v-if="settings.bonus_list == 'buy'">
@@ -64,19 +74,78 @@
                             <div>Multi</div>
                         </div>
                     </div>
-                    <div class="games">
+                    <div
+                        class="games scroll-wrapper"
+                        :style="bonusListGames.length > 10 ? {
+                            animationDuration: animationTime + 's',
+                            animationName: 'scrollAnimation',
+                            animationTimingFunction: 'linear',
+                            animationIterationCount: 'infinite',
+                            '--translate-y': transformY + 'px',
+                        } : {}"
+                    >
                         <div
-                            class="game-single row-game_buy"
                             v-for="(game, index) in bonusListGames"
-                            :key="index"
+                            :key="'a-' + game.id"
+                            class="game-single row-game_buy"
+                            :class="[
+                                index === firstEmptyResultIndex
+                                    ? 'current'
+                                    : '',
+                            ]"
                         >
                             <div class="number_game">{{ index + 1 }}</div>
                             <div>{{ game.name }}</div>
                             <div>{{ game.stake }}</div>
                             <div>{{ game.price }}</div>
-                            <div>{{ game.result == 0 ? '' : 'x'+game.result }}</div>
-                            <div>x{{ game.multiplier }}</div>
+                            <div>
+                                {{
+                                    game.result == 0 || game.result == null
+                                        ? ""
+                                        : "x" + game.result
+                                }}
+                            </div>
+                            <div>
+                                {{
+                                    game.multiplier == 0 ||
+                                    game.multiplier == null
+                                        ? ""
+                                        : "x" + game.multiplier
+                                }}
+                            </div>
                         </div>
+                        <template v-if="bonusListGames.length > 10">
+                            <div
+                                v-for="(game, index) in bonusListGames"
+                                :key="'b-' + game.id"
+                                class="game-single row-game_buy"
+                                :class="[
+                                    index === firstEmptyResultIndex
+                                        ? 'current'
+                                        : '',
+                                ]"
+                            >
+                                <div class="number_game">{{ index + 1 }}</div>
+                                <div>{{ game.name }}</div>
+                                <div>{{ game.stake }}</div>
+                                <div>{{ game.price }}</div>
+                                <div>
+                                    {{
+                                        game.result == 0 || game.result == null
+                                            ? ""
+                                            : "x" + game.result
+                                    }}
+                                </div>
+                                <div>
+                                    {{
+                                        game.multiplier == 0 ||
+                                        game.multiplier == null
+                                            ? ""
+                                            : "x" + game.multiplier
+                                    }}
+                                </div>
+                            </div>
+                        </template>
                     </div>
                 </template>
                 <template v-else>
@@ -89,21 +158,76 @@
                             <div>Multi</div>
                         </div>
                     </div>
-                    <div class="games">
+                    <div
+                        class="games scroll-wrapper"
+                        :style="bonusListGames.length > 10 ? {
+                            animationDuration: animationTime + 's',
+                            animationName: 'scrollAnimation',
+                            animationTimingFunction: 'linear',
+                            animationIterationCount: 'infinite',
+                            '--translate-y': transformY + 'px',
+                        } : {}"
+                    >
                         <div
                             v-for="(game, index) in bonusListGames"
-                            :key="index"
+                            :key="'a-' + game.id"
                             class="game-single row-game_hunt"
                             :class="[
-                                index === firstEmptyResultIndex ? 'current' : '',
+                                index === firstEmptyResultIndex
+                                    ? 'current'
+                                    : '',
                             ]"
                         >
                             <div class="number_game">{{ index + 1 }}</div>
                             <div>{{ game.name }}</div>
                             <div>{{ game.stake }}</div>
-                            <div>{{ game.result == 0 ? '' : game.result }}</div>
-                            <div>{{ game.multiplier == 0 ? '' : 'x'+game.multiplier }}</div>
+                            <div>
+                                {{
+                                    game.result == 0 || game.result == null
+                                        ? ""
+                                        : game.result
+                                }}
+                            </div>
+                            <div>
+                                {{
+                                    game.multiplier == 0 ||
+                                    game.multiplier == null
+                                        ? ""
+                                        : "x" + game.multiplier
+                                }}
+                            </div>
                         </div>
+                        <template v-if="bonusListGames.length > 10">
+                            <div
+                                v-for="(game, index) in bonusListGames"
+                                :key="'b-' + game.id"
+                                class="game-single row-game_hunt"
+                                :class="[
+                                    index === firstEmptyResultIndex
+                                        ? 'current'
+                                        : '',
+                                ]"
+                            >
+                                <div class="number_game">{{ index + 1 }}</div>
+                                <div>{{ game.name }}</div>
+                                <div>{{ game.stake }}</div>
+                                <div>
+                                    {{
+                                        game.result == 0 || game.result == null
+                                            ? ""
+                                            : game.result
+                                    }}
+                                </div>
+                                <div>
+                                    {{
+                                        game.multiplier == 0 ||
+                                        game.multiplier == null
+                                            ? ""
+                                            : "x" + game.multiplier
+                                    }}
+                                </div>
+                            </div>
+                        </template>
                     </div>
                 </template>
             </div>
@@ -111,7 +235,6 @@
     </template>
 </template>
 <script>
-import $ from "jquery";
 export default {
     props: ["id"],
     data() {
@@ -120,6 +243,8 @@ export default {
             bonusList: [],
             bonusListGames: [],
             settings: null,
+            isUpdating: false,
+            isAnimating: false,
         };
     },
     async mounted() {
@@ -127,7 +252,6 @@ export default {
         await this.getLatestList();
         this.updateTheListFromTimeToTime();
         this.loading = false;
-        this.animation();
     },
     methods: {
         async getSettings() {
@@ -154,26 +278,13 @@ export default {
         },
         async updateTheListFromTimeToTime() {
             setInterval(async () => {
-                await this.getLatestList();
-                await this.getSettings();
-            }, 5000);
-        },
-        animation() {
-            setInterval(async () => {
-                if (this.bonusListGames.length >= 10) {
-                    var marginHeight = $(".game-single").height();
-                    $(".games")
-                        .stop(true, true)
-                        .animate(
-                            { marginTop: "-" + marginHeight + "px" },
-                            1000,
-                            function () {
-                                $(this).children("div:first").appendTo(this);
-                                $(this).css({ marginTop: 0 });
-                            }
-                        );
+                if (!this.isAnimating) {
+                    this.isUpdating = true;
+                    await this.getLatestList();
+                    await this.getSettings();
+                    this.isUpdating = false;
                 }
-            }, 3000);
+            }, 8000);
         },
     },
     computed: {
@@ -194,23 +305,65 @@ export default {
             ).length;
         },
         gameHighestMulti() {
-            return Math.max(...this.bonusListGames.map(game => parseFloat(game.multiplier)));
+            return Math.max(
+                ...this.bonusListGames.map((game) =>
+                    parseFloat(game.multiplier)
+                )
+            );
         },
         progressPercentage() {
             return (this.gamesOpenedNr / this.gamesTotalNr) * 100;
         },
         averageMulti() {
-            const validGames = this.bonusListGames.filter(game => game.result !== null && game.result !== "0");
+            const validGames = this.bonusListGames.filter(
+                (game) => game.result !== null && game.result !== "0"
+            );
             if (validGames.length === 0) return 0;
-            const totalMultiplier = validGames.reduce((sum, game) => sum + parseFloat(game.multiplier), 2);
+            const totalMultiplier = validGames.reduce(
+                (sum, game) => sum + parseFloat(game.multiplier),
+                2
+            );
             const average = totalMultiplier / validGames.length;
             return Math.round(average);
-        }
+        },
+        animationTime() {
+            const timePerGame = 0.5;
+            const animationTimeForOneList =
+                timePerGame * this.bonusListGames.length;
+            return 2 * animationTimeForOneList;
+        },
+        transformY() {
+            //inaltime joc care poate fi loata direct si e ami ok
+            const gamesListHeight = 32;
+            return -((gamesListHeight * (this.bonusListGames.length * 2)) / 2);
+        },
     },
 };
 </script>
 
 <style lang="scss">
+.scroll-wrapper {
+    overflow: hidden;
+    height: 100vh;
+}
+
+.games {
+    backface-visibility: hidden;
+    will-change: transform;
+}
+
+.games:hover {
+    animation-play-state: paused;
+}
+
+@keyframes scrollAnimation {
+    0% {
+        transform: translate3d(0, 0, 0);
+    }
+    100% {
+        transform: translate3d(0, var(--translate-y), 0);
+    }
+}
 body,
 #app {
     font-size: 1.3rem;
@@ -220,11 +373,13 @@ body,
 
 .table {
     width: 100%;
-    height: 100%;
     background-color: #000000ba;
     color: white;
     border: 4px black solid;
     border-radius: 5px;
+    max-height: 100vh;
+    display: block;
+    overflow: hidden;
 }
 
 .header {
@@ -236,49 +391,45 @@ body,
         text-transform: uppercase;
         font-weight: bold;
     }
-}
-
-.header-content_buy {
-    display: grid;
-    grid-template-columns: 30px 115px 50px 70px 70px 60px;
-}
-
-.row-game_buy {
-    padding-top: 10px;
-    padding-bottom: 10px;
-    display: grid;
-    grid-template-columns: 30px 115px 50px 70px 70px 60px;
-    border-bottom: 1px solid #d5d5d53b;
-}
-
-.header-content_hunt {
-    display: grid;
-    grid-template-columns: 30px 155px 60px 80px 70px;
-}
-
-.row-game_hunt {
-    display: grid;
-    grid-template-columns: 30px 155px 60px 80px 70px;
-    border-bottom: 1px solid #d5d5d53b;
-    align-content: center;
-    align-items: center;
+    .header-content_buy {
+        display: grid;
+        grid-template-columns: 30px 115px 50px 70px 70px 60px;
+    }
+    .header-content_hunt {
+        display: grid;
+        grid-template-columns: 30px 155px 60px 80px 70px;
+    }
 }
 
 .games {
-    top: 0;
-    position: relative;
     box-sizing: border-box;
     font-size: 16px;
+    overflow: inherit;
+    .game-single {
+        display: grid;
+        border-bottom: 1px solid #d5d5d53b;
+        align-content: center;
+        align-items: center;
+    }
+    .row-game_buy {
+        grid-template-columns: 30px 115px 50px 70px 70px 60px;
+    }
+    .row-game_hunt {
+        grid-template-columns: 30px 155px 60px 80px 70px;
+    }
+    .number_game {
+        color: rgb(109, 109, 109);
+        font-size: 14px;
+        padding: 5px;
+    }
+    .current {
+        background-color: rgba(255, 166, 0, 0.329);
+    }
 }
-.number_game {
-    color: rgb(109, 109, 109);
-    font-size: 14px;
-    padding: 5px;
-}
-.current {
-    background-color: rgba(255, 166, 0, 0.329);
-}
+
 .header-list {
+    z-index: 999;
+    position: relative;
     .header-list-title {
         display: flex;
         flex-direction: row;

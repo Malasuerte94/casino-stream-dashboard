@@ -118,6 +118,9 @@ export default {
                 .catch((error) => {
                     console.log(error);
                 });
+            if (this.settings.bonus_list) {
+                this.$emit('displayOnly', this.settings.bonus_list);
+            }
         },
         async updateSettings() {
             await axios

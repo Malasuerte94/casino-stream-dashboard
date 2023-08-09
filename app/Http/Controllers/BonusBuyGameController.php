@@ -46,6 +46,7 @@ class BonusBuyGameController extends Controller
     public function update(Request $request): \Illuminate\Http\JsonResponse
     {
         $totalResult = 0;
+        $priceList = 0;
 
         foreach ($request->games as $game) {
             if (!$game['name']) {
@@ -62,6 +63,7 @@ class BonusBuyGameController extends Controller
             $bonusBuyGame->multiplier = $game['multiplier'] ?? 0;
             $bonusBuyGame->save();
 
+            $priceList += $game['price'];
             $totalResult += $game['result'];
         }
 
@@ -71,6 +73,7 @@ class BonusBuyGameController extends Controller
             if ($firstGame) {
                 $bonusBuy = $firstGame->bonusBuy;
                 if ($bonusBuy) {
+                    $bonusBuy->start = $priceList;
                     $bonusBuy->result = $totalResult;
                     $bonusBuy->save();
                 }
