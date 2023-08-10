@@ -293,7 +293,7 @@ export default {
             this.bonusBuyGames[index].multiplier = Math.round(
                 (game.result / game.price) * 100
             ) / 100;
-            this.bonusBuyGames[index].result = Math.ceil(game.result);
+            this.bonusBuyGames[index].result = game.result;
         },
     },
 };

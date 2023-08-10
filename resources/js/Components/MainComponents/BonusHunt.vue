@@ -86,6 +86,7 @@
                     @input="checkModifiedFields(game, index)"
                     v-model="game.result"
                     type="number"
+                    step="0.1"
                     id="result"
                     class="text-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Result"
@@ -274,7 +275,7 @@ export default {
                 return;
             }
             this.bonusHuntGames[index].multiplier = game.result == 0 ? 0 : Math.round(game.result / game.stake, 1);
-            this.bonusHuntGames[index].result = Math.ceil(game.result);
+            this.bonusHuntGames[index].result = game.result;
         },
     },
 };
