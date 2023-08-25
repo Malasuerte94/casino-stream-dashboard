@@ -7,7 +7,7 @@
                 >Depozit</label
             >
             <input
-                v-model="deposits"
+                v-model="newDeposit.amount"
                 type="text"
                 id="deposit"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -21,7 +21,7 @@
                 >Casino</label
             >
             <input
-                v-model="deposits"
+                v-model="newDeposit.casino"
                 type="text"
                 id="casino"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -38,21 +38,26 @@
             </button>
         </div>
     </div>
-        <table v-if="!loading">
-            <tr>
-                <th>ID</th>
-                <th>Suma</th>
-                <th>Casino</th>
-                <th>Data</th>
-            </tr>
-
-            <tr v-for="deposit in deposits" :key="deposit.id">
-                <td>{{ deposit.id }}</td>
-                <td>{{ deposit.amount }}</td>
-                <td>{{ deposit.casino }}</td>
-                <td>{{ deposit.created_at }}</td>
-            </tr>
+    <div v-if="!loading" class="relative overflow-x-auto shadow-md sm:rounded-lg mt-6">
+        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <thead class="p-6 text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
+                <tr class="table-row">
+                    <th class="p-2 table-cell text-left">ID</th>
+                    <th class="p-2 table-cell text-left">Suma</th>
+                    <th class="p-2 table-cell text-left">Casino</th>
+                    <th class="p-2 table-cell text-left">Data</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="p-2 bg-white border-b dark:bg-gray-900 dark:border-gray-700" v-for="deposit in deposits" :key="deposit.id">
+                    <td class="p-2 table-cell text-left">{{ deposit.id }}</td>
+                    <td class="p-2 table-cell text-left">{{ deposit.amount }}</td>
+                    <td class="p-2 table-cell text-left">{{ deposit.casino }}</td>
+                    <td class="p-2 table-cell text-left">{{ formatDateLabels(deposit.created_at) }}</td>
+                </tr>
+            </tbody>
         </table>
+    </div>
 </template>
 <script >
 import axios from "axios";
@@ -64,6 +69,11 @@ export default {
         return {
             loading: true,
             deposits: [],
+            newDeposit: {
+                amount: 0,
+                casino: '',
+                stream_id: null
+            }
         };
     },
     async mounted() {
@@ -72,6 +82,7 @@ export default {
     },
     methods: {
         async getStreamDeposit() {
+            this.newDeposit.stream_id = this.stream.id;
             await axios
                 .get("/api/deposits/" + this.stream.id)
                 .then((response) => {
@@ -82,19 +93,29 @@ export default {
                 });
         },
         async createDeposit() {
+            this.loading = true;
+            let payload = this.newDeposit
             await axios
-                .post("/api/deposits/new")
-                .then((response) => {
-                    this.deposits = response.data.deposits;
+                .post("/api/deposits", {
+                    payload,
+                })
+                .then(() => {
+                    this.getStreamDeposit();
                 })
                 .catch((error) => {
                     console.log(error);
                 })
                 .finally(() => {
-                    location.reload();
+                    this.loading = false;
                 });
-            await this.getLatestStream();
         },
+        formatDateLabels(dateRaw) {
+            const date = new Date(dateRaw);
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Month is 0-indexed
+            const year = date.getFullYear();
+            return `${day}-${month}-${year}`;
+        }
     }
 };
 </script>

@@ -1,5 +1,9 @@
 <template>
     <div class="chart"><canvas id="activity"></canvas></div>
+    <div class="totals p-6">
+            <div>Total Deposits: {{ totalDeposits }}</div>
+            <div>Total Withdrawals: {{ totalWithdrawals }}</div>
+    </div>
 </template>
 <script>
 import axios from "axios";
@@ -87,6 +91,28 @@ export default {
             const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Month is 0-indexed
             const year = date.getFullYear();
             return `${day}-${month}-${year}`;
+        }
+    },
+    computed: {
+        totalDeposits() {
+            return this.deposits.reduce((sum, deposit) => {
+                const value = parseFloat(deposit.amount);
+                if (isNaN(value)) {
+                    console.warn(`Invalid deposit value detected: ${deposit.amount}`);
+                    return sum;
+                }
+                return sum + value;
+            }, 0);
+        },
+        totalWithdrawals() {
+            return this.withdrawals.reduce((sum, withdrawal) => {
+                const value = parseFloat(withdrawal.amount);
+                if (isNaN(value)) {
+                    console.warn(`Invalid withdrawal value detected: ${withdrawal.amount}`);
+                    return sum;
+                }
+                return sum + value;
+            }, 0);
         }
     },
 };

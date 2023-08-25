@@ -48,10 +48,12 @@ class DepositController extends Controller
     public function store(Request $request): JsonResponse
     {
         $user = $request->user();
+        $data = $request->payload;
+
         $streamData = [
-                'stream_id' => $request->stream_id,
-                'casino'=> $request->casino,
-                'amount'=> $request->amount,
+                'stream_id' => $data['stream_id'],
+                'casino'=> $data['casino'],
+                'amount'=> $data['amount'],
             ];
 
         $deposit = $user->deposits()->create($streamData);

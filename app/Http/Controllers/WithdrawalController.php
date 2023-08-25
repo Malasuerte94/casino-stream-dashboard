@@ -24,4 +24,41 @@ class WithdrawalController extends Controller
         ]);
     }
 
+    /**
+    * Show from link
+    *
+    * @return \Illuminate\Http\JsonResponse
+    */
+    public function show(Request $request, int $id): \Illuminate\Http\JsonResponse
+    {
+        $stream = Stream::findOrFail($id);
+        $withdrawals = $stream->withdrawals()->get();
+
+        return response()->json([
+            'withdrawals' => $withdrawals,
+        ]);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function store(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $data = $request->payload;
+
+        $streamData = [
+                'stream_id' => $data['stream_id'],
+                'amount'=> $data['amount'],
+            ];
+
+        $withdrawal = $user->withdrawals()->create($streamData);
+        return response()->json([
+            'withdrawal' => $withdrawal,
+        ]);
+    }
+
 }

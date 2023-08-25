@@ -1,5 +1,5 @@
 <script setup>
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link } from "@inertiajs/vue3";
 
 defineProps({
     canLogin: Boolean,
@@ -10,17 +10,44 @@ defineProps({
 </script>
 
 <template>
-    <Head title="Welcome" />
-
-    <div class="relative flex items-top justify-center min-h-screen bg-gray-100 dark:bg-gray-900 sm:items-center sm:pt-0">
+    <div
+        class="relative flex items-top justify-center min-h-screen bg-gray-100 dark:bg-gray-900 sm:items-center sm:pt-0"
+    >
         <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
-            <div v-if="canLogin" class="hidden px-6 py-4 sm:block font-semibold text-lg">
-            <Link v-if="$page.props.user" :href="route('dashboard')" class="text-lg text-black underline">Dashboard</Link>
-            <template v-else>
-                <Link :href="route('login')" class="text-lg text-black underline">Log in</Link>
-                <Link v-if="canRegister" :href="route('register')" class="ml-4 text-lg text-black underline">Register</Link>
-            </template>
-        </div>
+            <div class="flex center self-center">
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight mr-2">
+                    Dashboard Păcănele
+                </h2>
+                <a target="blank" href="https://www.youtube.com/@MalaTheMan">
+                    by @MalaTheMan</a
+                >
+            </div>
+            <div class="center text-center">
+                <div
+                    v-if="canLogin"
+                    class="hidden px-6 py-4 sm:block font-semibold text-lg"
+                >
+                    <Link
+                        v-if="$page.props.user"
+                        :href="route('streamdash')"
+                        class="text-lg text-black underline"
+                        >Dashboard</Link
+                    >
+                    <template v-else>
+                        <Link
+                            :href="route('login')"
+                            class="text-lg text-black underline"
+                            >Log in</Link
+                        >
+                        <Link
+                            v-if="canRegister"
+                            :href="route('register')"
+                            class="ml-4 text-lg text-black underline"
+                            >Register</Link
+                        >
+                    </template>
+                </div>
+            </div>
         </div>
     </div>
 </template>

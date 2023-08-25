@@ -1,20 +1,20 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import Welcome from '@/Components/Welcome.vue';
+import StreamBoard from '@/Components/MainComponents/StreamBoard.vue';
 </script>
 
 <template>
     <AppLayout title="Dashboard">
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Dashboard APS
-            </h2>
+            <div class="flex justify-between">
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight">Dashboard Păcănele</h2><a target="blank" href="https://www.youtube.com/@MalaTheMan"> by @MalaTheMan</a>
+            </div>
         </template>
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-                    <Welcome />
+                    <StreamBoard/>
                 </div>
             </div>
         </div>

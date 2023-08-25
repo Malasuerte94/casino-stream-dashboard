@@ -95,4 +95,22 @@ class BonusHuntController extends Controller
         $bonusHunt->save();
     }
 
+
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function all(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $user = $request->user();
+
+        $hunts = $user->streams()->with('bonusHunts')->get()->pluck('bonusHunts')->collapse();
+
+        return response()->json([
+            'hunts' => $hunts,
+        ]);
+    }
+
 }

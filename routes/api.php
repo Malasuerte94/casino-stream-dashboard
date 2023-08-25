@@ -44,6 +44,7 @@ Route::delete('/bonus-buy-games/{id}', [BonusBuyGameController::class, 'destroy'
 
 //bonus hunt
 Route::get('/bonus-hunt', [BonusHuntController::class, 'index']);
+Route::get('/bonus-hunt-all', [BonusHuntController::class, 'all']);
 Route::post('/bonus-hunt', [BonusHuntController::class, 'store']);
 Route::patch('/bonus-hunt', [BonusHuntController::class, 'edit']);
 
@@ -69,5 +70,7 @@ Route::get('/stream/{id}', [StreamController::class, 'show']);
 Route::get('/deposits', [DepositController::class, 'index']);
 Route::get('/deposits/{id}', [DepositController::class, 'show']);
 Route::get('/withdrawals', [WithdrawalController::class, 'index']);
+Route::get('/withdrawals/{id}', [WithdrawalController::class, 'show']);
 
-Route::post('/deposit', [DepositController::class, 'store']);
+Route::post('/deposits', [DepositController::class, 'store']);
+Route::post('/withdrawals', [WithdrawalController::class, 'store']);
