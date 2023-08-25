@@ -21,7 +21,9 @@ Route::get('/bonus-list/{id}', function ($id) {
 Route::get('/stream-start/{id}', function ($id) {
     return Inertia::render('StreamStart', ['id' => $id]);
 })->name('stream-start');
-
+Route::get('/slot/{id}', function ($id) {
+    return Inertia::render('Slot', ['id' => $id]);
+})->name('slot');
 
 
 Route::get('/', function () {
@@ -43,4 +45,7 @@ Route::middleware([
     Route::get('/settings', function () {
         return Inertia::render('Settings');
     })->name('settings');
+    Route::get('/report', function () {
+        return Inertia::render('Report');
+    })->name('report');
 });

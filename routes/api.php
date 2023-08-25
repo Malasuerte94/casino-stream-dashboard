@@ -5,9 +5,11 @@ use App\Http\Controllers\BonusBuyGameController;
 use App\Http\Controllers\BonusHuntController;
 use App\Http\Controllers\BonusHuntGameController;
 use App\Http\Controllers\BonusListController;
+use App\Http\Controllers\DepositController;
 use App\Http\Controllers\SocialController;
 use App\Http\Controllers\StreamController;
 use App\Http\Controllers\UserSettingController;
+use App\Http\Controllers\WithdrawalController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -62,3 +64,10 @@ Route::patch('/settings', [UserSettingController::class, 'edit']);
 //LIST PUBLIC
 Route::get('/bonus-list/{id}', [BonusListController::class, 'index']);
 Route::get('/stream/{id}', [StreamController::class, 'show']);
+
+//REPORT
+Route::get('/deposits', [DepositController::class, 'index']);
+Route::get('/deposits/{id}', [DepositController::class, 'show']);
+Route::get('/withdrawals', [WithdrawalController::class, 'index']);
+
+Route::post('/deposit', [DepositController::class, 'store']);

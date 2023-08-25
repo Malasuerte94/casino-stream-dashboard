@@ -1,50 +1,17 @@
 <template>
-    <button
+    <div class="bg-red-200 p-6 mb-12 rounded border">
+        <button
         @click="activateDialog"
         type="button"
-        class="mb-10 w-full focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+        class="w-full focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
     >
         Stream Nou
     </button>
-    <div class="grid grid-cols-3 gap-2">
-        <div>
-            <label
-                for="deposit"
-                class="block mb-2 text-sm font-medium text-gray-900"
-                >Depozit</label
-            >
-            <input
-                v-model="stream.deposit"
-                type="text"
-                id="deposit"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="Depus în lei"
-            />
-        </div>
-        <div>
-            <label
-                for="casino"
-                class="block mb-2 text-sm font-medium text-gray-900"
-                >Casino</label
-            >
-            <input
-                v-model="stream.casino"
-                type="text"
-                id="casino"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="Nume Casino"
-            />
-        </div>
-        <div class="self-end">
-            <button
-                type="button"
-                @click="updateStream"
-                class="w-full focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-            >
-                Update
-            </button>
-        </div>
     </div>
+    <div v-if="!loading" class="bg-green-200 rounded border p-6">
+        <DepositsStream :stream="stream"></DepositsStream>
+    </div>
+    <hr class="p-6 m-10">
     <div class="grid grid-cols-2 gap-2 mt-10">
         <div
             class="flex items-center pl-4 border bg-blue-400 border-gray-200 rounded dark:border-gray-700"
@@ -86,17 +53,21 @@
 </template>
 <script >
 import axios from "axios";
+import DepositsStream from './DepositsStream.vue';
 export default {
+    components: {DepositsStream},
     emits: ['displayOnly'],
     data() {
         return {
+            loading: true,
             stream: [],
             settings: [],
         };
     },
-    mounted() {
-        this.getLatestStream();
-        this.getSettings();
+    async mounted() {
+        await this.getLatestStream();
+        await this.getSettings();
+        this.loading = false;
     },
     methods: {
         async getLatestStream() {
