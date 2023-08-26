@@ -1,10 +1,11 @@
 <template>
+    <h2 class="text-lg font-bold mb-4">Retragere</h2>
     <div class="grid grid-cols-2 gap-2">
         <div>
             <label
                 for="deposit"
                 class="block mb-2 text-sm font-medium text-gray-900"
-                >Retragere</label
+                >Sumă retragere</label
             >
             <input
                 v-model="newWithdrawal.amount"
@@ -20,7 +21,7 @@
                 @click="createWithdraw"
                 class="w-full focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
             >
-                Withdraw
+                Confirmă
             </button>
         </div>
     </div>

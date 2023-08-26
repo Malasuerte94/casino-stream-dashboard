@@ -7,13 +7,18 @@
             class="w-full focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
         >
             Stream Nou
-        </button>
+            </button>
+            <div class="text-sm mt-4 text-red-500">
+                Înainte de fiecare stream te rog să apeși butonul de <b>Stream Nou</b>, introdu suma de pe care o ai depozitată pe casino și poți începe, dacă vrei să faci o retragere introdu și retragerea și confirmă pentru a avea un raport cât mai corect.
+            </div>
         </div>
-        <div v-if="!loading" class="bg-green-200 rounded border p-6">
-            <DepositsStream :stream="stream"></DepositsStream>
-        </div>
-        <div v-if="!loading" class="bg-blue-200 rounded border p-6">
-            <WithdrawalsStream :stream="stream"></WithdrawalsStream>
+        <div class="grid justify-between grid-cols-2 gap-2">
+            <div v-if="!loading" class="bg-green-200 rounded border p-6 w-50 block">
+                <DepositsStream :stream="stream"></DepositsStream>
+            </div>
+            <div v-if="!loading" class="bg-blue-200 rounded border p-6 w-50 block">
+                <WithdrawalsStream :stream="stream"></WithdrawalsStream>
+            </div>
         </div>
     </div>
 </template>
