@@ -51,7 +51,7 @@ class BannerController extends Controller
             'image' => $name
         ]);
 
-        $imageUploaded = $banner->addMediaFromRequest('image')->toMediaCollection('images');
+        $imageUploaded = $banner->addMediaFromRequest('image')->toMediaCollection('images', 'cpanelpublic');
 
         if($image) {
             $banner->image = $imageUploaded->original_url;
