@@ -86,4 +86,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserSetting::class);
     }
+
+    public function banners(): HasMany
+    {
+        return $this->hasMany(Banner::class);
+    }
 }

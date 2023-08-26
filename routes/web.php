@@ -21,6 +21,9 @@ Route::get('/bonus-list/{id}', function ($id) {
 Route::get('/stream-start/{id}', function ($id) {
     return Inertia::render('StreamStart', ['id' => $id]);
 })->name('stream-start');
+Route::get('/banners-obs/{id}', function ($id) {
+    return Inertia::render('BannersObs', ['id' => $id]);
+})->name('banners-obs');
 Route::get('/slot/{id}', function ($id) {
     return Inertia::render('Slot', ['id' => $id]);
 })->name('slot');
@@ -34,6 +37,7 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
+
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
@@ -48,6 +52,9 @@ Route::middleware([
     Route::get('/settings', function () {
         return Inertia::render('Settings');
     })->name('settings');
+    Route::get('/banners', function () {
+        return Inertia::render('Banners');
+    })->name('banners');
     Route::get('/report', function () {
         return Inertia::render('Report');
     })->name('report');

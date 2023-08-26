@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BannerController;
 use App\Http\Controllers\BonusBuyController;
 use App\Http\Controllers\BonusBuyGameController;
 use App\Http\Controllers\BonusHuntController;
@@ -62,10 +63,6 @@ Route::get('/settings', [UserSettingController::class, 'index']);
 Route::get('/settings/{id}', [UserSettingController::class, 'show']);
 Route::patch('/settings', [UserSettingController::class, 'edit']);
 
-//LIST PUBLIC
-Route::get('/bonus-list/{id}', [BonusListController::class, 'index']);
-Route::get('/stream/{id}', [StreamController::class, 'show']);
-
 //REPORT
 Route::get('/deposits', [DepositController::class, 'index']);
 Route::get('/deposits/{id}', [DepositController::class, 'show']);
@@ -74,3 +71,14 @@ Route::get('/withdrawals/{id}', [WithdrawalController::class, 'show']);
 
 Route::post('/deposits', [DepositController::class, 'store']);
 Route::post('/withdrawals', [WithdrawalController::class, 'store']);
+
+//banners
+Route::get('/banner', [BannerController::class, 'index']);
+Route::post('/banner', [BannerController::class, 'store']);
+Route::delete('/banner/{id}', [BannerController::class, 'destroy']);
+
+
+//LIST PUBLIC
+Route::get('/bonus-list/{id}', [BonusListController::class, 'index']);
+Route::get('/stream/{id}', [StreamController::class, 'show']);
+Route::get('/banners/{id}', [BannerController::class, 'show']);

@@ -1,8 +1,8 @@
 <template>
     <div class="chart"><canvas id="activity"></canvas></div>
     <div class="totals p-6">
-            <div>Total Deposits: {{ totalDeposits }}</div>
-            <div>Total Withdrawals: {{ totalWithdrawals }}</div>
+            <div>Total Depozit: {{ totalDeposits }} lei</div>
+            <div>Total Retrageri: {{ totalWithdrawals }} lei</div>
     </div>
 </template>
 <script>

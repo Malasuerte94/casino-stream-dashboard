@@ -1,5 +1,5 @@
 <template>
-    <div class="grid grid-cols-3 gap-2">
+    <div class="grid grid-cols-2 gap-2">
         <div>
             <label
                 for="deposit"
@@ -74,6 +74,7 @@ export default {
                 .catch((error) => {
                     console.log(error);
                 });
+            this.loading = false;
         },
         async createWithdraw() {
             this.loading = true;
@@ -87,9 +88,6 @@ export default {
                 })
                 .catch((error) => {
                     console.log(error);
-                })
-                .finally(() => {
-                    this.loading = false;
                 });
         },
         formatDateLabels(dateRaw) {

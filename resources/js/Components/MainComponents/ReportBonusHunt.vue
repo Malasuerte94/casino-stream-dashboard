@@ -1,8 +1,8 @@
 <template>
     <div class="chart"><canvas id="activityHunt"></canvas></div>
     <div class="totals p-6" v-if="!loading">
-        <div>Total Start: {{ totalStart }}</div>
-        <div>Total Result: {{ totalResult }}</div>
+        <div>Total Start: {{ totalStart }} lei</div>
+        <div>Total Câștig: {{ totalResult }} lei</div>
     </div>
 </template>
 <script>

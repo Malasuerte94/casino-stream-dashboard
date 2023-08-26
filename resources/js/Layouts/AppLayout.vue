@@ -45,7 +45,6 @@ const logout = () => {
                                     <ApplicationMark class="block h-9 w-auto" />
                                 </Link>
                             </div>
-
                             <!-- Navigation Links -->
                             <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                                 <NavLink :href="route('streamdash')" :active="route().current('streamdash')">
@@ -58,18 +57,13 @@ const logout = () => {
                                 </NavLink>
                             </div>
                             <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                                <NavLink :href="route('banners')" :active="route().current('banners')">
+                                    Banners
+                                </NavLink>
+                            </div>
+                            <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                                 <NavLink :href="route('report')" :active="route().current('report')">
                                     Raport
-                                </NavLink>
-                            </div>
-                            <div class="hidden bg-slate-100 space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                                <NavLink :href="route('stream-start', { id: $page.props.user.id  })" :active="route().current('stream-start')">
-                                    Casino + Depo - OBS
-                                </NavLink>
-                            </div>
-                            <div class="hidden bg-slate-100 space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                                <NavLink :href="route('bonus-list', { id: $page.props.user.id })" :active="route().current('bonus-list')">
-                                    Bonus Buy - OBS
                                 </NavLink>
                             </div>
                         </div>
