@@ -1,4 +1,7 @@
 <template>
+  <div>
+    <iframe width="100%" height="600" src="https://www.youtube.com/embed/LUAl7TN0OB4?si=xzfpOlpIxILzO7TZ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+  </div>
     <div class="p-6">
         <h2 class="text-lg font-bold mb-4">Changelog - Updateuri</h2>
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-6">
