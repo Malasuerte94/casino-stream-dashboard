@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SocialController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -14,6 +15,13 @@ use Inertia\Inertia;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+Route::get('/auth/{provider}/redirect', [SocialController::class, 'redirect'])
+    ->where('provider', 'google|youtube');
+
+Route::get('/auth/{provider}/callback', [SocialController::class, 'callback'])
+    ->where('provider', 'google|youtube');
+
 //display in obs
 Route::get('/bonus-list/{id}', function ($id) {
     return Inertia::render('BonusList', ['id' => $id]);

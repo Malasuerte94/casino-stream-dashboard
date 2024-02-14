@@ -3,10 +3,32 @@
 namespace App\Http\Controllers;
 
 use App\Models\Social;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Laravel\Socialite\Facades\Socialite;
 
 class SocialController extends Controller
 {
+
+    /**
+     * @param $provider
+     * @return RedirectResponse
+     */
+    public function redirect($provider): RedirectResponse
+    {
+        return Socialite::driver($provider)->redirect();
+    }
+
+    /**
+     * @param $provider
+     * @return RedirectResponse
+     */
+    public function callback($provider): RedirectResponse
+    {
+        $user = Socialite::driver($provider)->user();
+        dd($user);
+    }
+
     /**
      * Display a listing of the resource.
      *

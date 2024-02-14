@@ -77,7 +77,6 @@ Route::get('/banner', [BannerController::class, 'index']);
 Route::post('/banner', [BannerController::class, 'store']);
 Route::delete('/banner/{id}', [BannerController::class, 'destroy']);
 
-
 //LIST PUBLIC
 Route::get('/bonus-list/{id}', [BonusListController::class, 'index']);
 Route::get('/stream/{id}', [StreamController::class, 'show']);
