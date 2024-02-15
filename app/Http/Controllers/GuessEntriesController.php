@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\GuessEntriesResource;
 use App\Models\BonusBuy;
 use App\Models\BonusHunt;
 use Exception;
@@ -19,7 +20,8 @@ class GuessEntriesController extends Controller
         }
 
         $entries = $bonus->guessEntries;
-//here
+        $entries = GuessEntriesResource::collection($entries);
+
         return json_encode($entries);
 
     }

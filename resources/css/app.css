@@ -14,3 +14,9 @@
     width: 50px;
     border-radius: 50px;
 }
+
+.avatar-entry {
+    height: 20px;
+    width: 20px;
+    border-radius: 20px;
+}
