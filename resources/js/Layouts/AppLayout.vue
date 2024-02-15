@@ -284,13 +284,18 @@ const logout = () => {
                     </div>
                 </div>
             </nav>
-
             <!-- Page Heading -->
             <header v-if="$slots.header" class="bg-white shadow">
-                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                <div class="max-w-7xl mx-auto py-2 px-4 sm:px-6 lg:px-8">
                     <slot name="header" />
                 </div>
             </header>
+
+            <div class="px-8 mt-2 items-center opacity-75">
+              <div class="flex justify-end items-center">
+                <h2 class="font-semibold text-sm text-gray-800 leading-tight">Dashboard Păcănele <a target="blank" href="https://www.youtube.com/@MalaTheMan"> by @MalaTheMan</a></h2>
+              </div>
+            </div>
 
             <!-- Page Content -->
             <main>

@@ -71,11 +71,11 @@ class User extends Authenticatable
     }
 
     /**
-     * @return BelongsTo
+     * @return HasOne
      */
-    public function team(): BelongsTo
+    public function team(): HasOne
     {
-        return $this->belongsTo(Team::class);
+        return $this->hasOne(Team::class);
     }
 
     /**
@@ -118,8 +118,19 @@ class User extends Authenticatable
         return $this->hasMany(Social::class);
     }
 
+    /**
+     * @return HasOne
+     */
     public function role(): HasOne
     {
         return $this->hasOne(Role::class);
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function guessEntries(): HasMany
+    {
+        return $this->hasMany(GuessEntry::class);
     }
 }

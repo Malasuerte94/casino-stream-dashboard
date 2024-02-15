@@ -16,7 +16,7 @@ class StreamerMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if ($request->user() && $request->user()->role->identifier === 'streamer') {
+        if ($request->user() && $request->user()->role?->identifier === 'streamer') {
             return $next($request);
         }
 

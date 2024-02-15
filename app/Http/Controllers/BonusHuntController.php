@@ -34,7 +34,7 @@ class BonusHuntController extends Controller
             }
         }
 
-        $gamesForBonusHunt = $latestBonusHunt ? $latestBonusHunt->bonusHuntGame : [];
+        $gamesForBonusHunt = $latestBonusHunt ? $latestBonusHunt->bonusHuntGames : [];
         if (!$gamesForBonusHunt->first()) {
             $gamesForBonusHunt = $latestBonusHunt->bonusHuntGame()->create();
             $gamesForBonusHunt->save();

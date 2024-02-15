@@ -264,7 +264,6 @@ export default {
                     console.log(error);
                 });
         },
-
         async getLatestList() {
             await axios
                 .get("/api/bonus-list/" + this.id)

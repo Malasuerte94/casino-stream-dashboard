@@ -10,11 +10,11 @@ import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo.vue';
         <template #logo>
             <AuthenticationCardLogo />
         </template>
-            <div class="flex items-center justify-end">
+            <div class="flex items-center justify-between">
                 <Link :href="route('login')" class="underline text-sm text-gray-600 hover:text-gray-900">
                     Ai cont deja?
                 </Link>
-                <a href="/auth/youtube/redirect" class="ml-4">
+                <a href="/auth/youtube/redirect" class="ml-4 youtube-register">
                   Înregistrare cu YouTube
                 </a>
             </div>

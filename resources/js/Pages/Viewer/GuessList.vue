@@ -1,0 +1,137 @@
+<template>
+  <ViewerDash title="Bonuses">
+    <div class="py-12 max-w-7xl mx-auto sm:px-6 lg:px-8">
+      <div class="flex lg:flex-row flex-col gap-2">
+        <div class="lg:w-1/2 w-full mx-auto sm:px-2 lg:px-2">
+          <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+            <div class="p-6">
+              <InputLabel for="estimated" value="Introdu valoarea estimată (câștigul total pentru bonus list)" />
+              <TextInput
+                  id="estimated"
+                  v-model="estimated"
+                  type="number"
+                  class="mt-1 block w-full"
+                  required
+                  autofocus
+              />
+              <PrimaryButton @click="addEntry" class="mt-2" :class="{ 'opacity-25': alreadyEstimated }" :disabled="alreadyEstimated">
+                Patricipă
+              </PrimaryButton>
+            </div>
+          </div>
+        </div>
+        <div class="lg:w-1/2 w-full mx-auto sm:px-2 lg:px-2">
+          <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+            <div class="p-6">
+              <div class="mb-2">Despre</div>
+              <span class="font-bold text-red-800 mr-4">Cost: {{list.start ?? 0}}</span>
+              <span class="font-bold text-green-800 mr-4">Rezultat: {{list.result ?? 0}}</span>
+            </div>
+            <div class="p-6">
+              <div class="grid grid-cols-5 gap-2 mb-2 font-bold border-b-gray-800 border-b-[1px]">
+                <span>#</span>
+                <span>Nume</span>
+                <span>Miză</span>
+                <span>Rezultat</span>
+                <span>Multi</span>
+              </div>
+              <div class="grid grid-cols-5 gap-2" v-for="(game, index) in games"
+                   :key="'a-' + game.id">
+                <span>{{game.id}}</span>
+                <span>{{game.name}}</span>
+                <span>{{game.stake}}</span>
+                <span>{{game.result}}</span>
+                <span>{{game.multiplier}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="lg:w-1/2 w-full mx-auto sm:px-2 lg:px-2">
+          <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+            <div class="p-6">
+              Participanți
+              ---
+              lista
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <DialogModal :show="show">
+      <template #title>
+        Notificare
+      </template>
+      <template #content>
+        {{message.data}}
+      </template>
+      <template #footer>
+        <PrimaryButton @click="show = !show">
+          Ok
+        </PrimaryButton>
+      </template>
+    </DialogModal>
+    <!-- Main modal -->
+  </ViewerDash>
+</template>
+<script>
+import ViewerDash from '@/Layouts/ViewerDash.vue';
+import TextInput from "@/Components/TextInput.vue";
+import InputLabel from "@/Components/InputLabel.vue";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
+import DialogModal from '@/Components/DialogModal.vue';
+
+import axios from "axios";
+export default {
+  components: { ViewerDash, TextInput, InputLabel, PrimaryButton, DialogModal },
+  data() {
+    return {
+      message: '',
+      show: false,
+      estimated: '0',
+      alreadyEstimated: false,
+      entries: []
+    };
+  },
+  props: {
+    list: Object,
+    games: Object,
+    type: String
+  },
+  async mounted() {
+    await this.getEntries();
+  },
+  methods: {
+    async addEntry() {
+      await axios
+          .post("/api/add-entry", {
+            estimated_result: this.estimated,
+            bonus_id: this.list.id,
+            bonus_type: this.type
+          })
+          .then((response) => {
+            this.message = response
+          })
+          .catch((error) => {
+            this.message = error
+          });
+    },
+    async getEntries() {
+      await axios
+          .get("/api/show-entries/"+this.list.id+'/'+this.type)
+          .then((response) => {
+            this.entries = response
+          });
+    }
+  },
+  computed: {
+    bonusList() {
+      return this.list['data'];
+    }
+  },
+  watch: {
+    message() {
+      this.show = true
+    }
+  }
+}
+</script>

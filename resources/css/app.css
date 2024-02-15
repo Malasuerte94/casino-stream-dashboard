@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.youtube-register {
+    background-color: red;
+    padding: 10px 20px;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+}
+
+.profile-pic {
+    width: 50px;
+    border-radius: 50px;
+}

@@ -36,7 +36,7 @@ class BonusBuyController extends Controller
 
         $gamesForBonusBuy = null;
         if ($latestBonusBuy) {
-            $gamesForBonusBuy = $latestBonusBuy->bonusBuyGame;
+            $gamesForBonusBuy = $latestBonusBuy->bonusBuyGames;
             if (!$gamesForBonusBuy->first()) {
                 $gamesForBonusBuy = $latestBonusBuy->bonusBuyGame()->create();
                 $gamesForBonusBuy->save();

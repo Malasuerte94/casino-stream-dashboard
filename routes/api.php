@@ -7,6 +7,7 @@ use App\Http\Controllers\BonusHuntController;
 use App\Http\Controllers\BonusHuntGameController;
 use App\Http\Controllers\BonusListController;
 use App\Http\Controllers\DepositController;
+use App\Http\Controllers\GuessEntriesController;
 use App\Http\Controllers\SocialController;
 use App\Http\Controllers\StreamController;
 use App\Http\Controllers\UserSettingController;
@@ -81,3 +82,11 @@ Route::delete('/banner/{id}', [BannerController::class, 'destroy']);
 Route::get('/bonus-list/{id}', [BonusListController::class, 'index']);
 Route::get('/stream/{id}', [StreamController::class, 'show']);
 Route::get('/banners/{id}', [BannerController::class, 'show']);
+
+//generate url
+Route::get('/get-latest-list', [BonusListController::class, 'getUrl']);
+
+
+// ----- VIEWERS ACTIONS -----
+Route::post('/add-entry', [GuessEntriesController::class, 'postEntries']);
+Route::get('/show-entries/{id}/{type}', [GuessEntriesController::class, 'showEntries']);

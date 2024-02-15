@@ -75,14 +75,14 @@ const submit = () => {
                 </label>
             </div>
 
-            <div class="flex items-center justify-end mt-4">
+            <div class="flex items-center mt-4">
                 <Link v-if="canResetPassword" :href="route('password.request')" class="underline text-sm text-gray-600 hover:text-gray-900">
                     Ai uitat parola?
                 </Link>
                 <PrimaryButton class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                     Log in
                 </PrimaryButton>
-                <a href="/auth/youtube/redirect" class="ml-4">
+                <a href="/auth/youtube/redirect" class="ml-4 youtube-register self-end justify-end justify-items-end ml-auto">
                   Login YouTube
                 </a>
             </div>

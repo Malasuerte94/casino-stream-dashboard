@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\SocialController;
+use App\Http\Controllers\ViewerController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -24,7 +25,7 @@ Route::get('/auth/{provider}/callback', [SocialController::class, 'callback'])
 
 Route::post('/add-email-to-account', [SocialController::class, 'addRequiredEmail'])->name('add-required-email-to-account');
 
-//display in obs
+//display in OBS
 Route::get('/bonus-list/{id}', function ($id) {
     return Inertia::render('BonusList', ['id' => $id]);
 })->name('bonus-list');
@@ -47,6 +48,20 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 })->name('welcome');
+
+
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified',
+])->group(function () {
+    Route::get('/dashboard', function () {
+        return Inertia::render('Viewer/MainUser');
+    })->name('dashboard');
+    Route::get('/guess-list/{id}/{type}', [ViewerController::class, 'guessList'])->name('guess-list');
+    Route::get('/streamers', [ViewerController::class, 'streamerList'])->name('streamer-list');
+});
+
 
 Route::middleware([
     'auth:sanctum',

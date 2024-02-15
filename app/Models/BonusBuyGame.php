@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BonusBuyGame extends Model
 {
@@ -11,7 +12,7 @@ class BonusBuyGame extends Model
 
     protected $guarded = ["id"];
 
-    public function bonusBuy()
+    public function bonusBuy(): BelongsTo
     {
         return $this->belongsTo(BonusBuy::class);
     }
