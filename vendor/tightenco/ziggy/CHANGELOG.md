@@ -8,6 +8,69 @@ Breaking changes are marked with ⚠️.
 
 ## [Unreleased]
 
+## [v1.8.1] - 2023-10-12
+
+**Fixed**
+
+- Update: Correction of some spellings and articles in the Readme file. by @prince-noman in https://github.com/tighten/ziggy/pull/678
+- Fix `route().current()` with encoded characters by @bakerkretzmar in https://github.com/tighten/ziggy/pull/668
+
+**Changed**
+
+- Update Readme, formatting, and testing setup by @bakerkretzmar in https://github.com/tighten/ziggy/pull/675
+
+## [v1.8.0] - 2023-10-06
+
+**Added**
+
+- Add type declarations and `ziggy.d.ts` generation by @lmeysel and @bakerkretzmar in https://github.com/tighten/ziggy/pull/664
+
+## [v1.7.0] - 2023-10-04
+
+**Added**
+
+- Add `useRoute()` React hook by @bakerkretzmar in https://github.com/tighten/ziggy/pull/473
+
+**Fixed**
+
+- URL-encode fewer special characters inside in route parameters by @bakerkretzmar in https://github.com/tighten/ziggy/pull/662
+- Fix empty root URL with `absolute: false` by @bakerkretzmar in https://github.com/tighten/ziggy/pull/667
+
+## [v1.6.2] - 2023-08-18
+
+**Fixed**
+
+- Make slash "not encoding" less restrictive by @aguingand in https://github.com/tighten/ziggy/pull/661
+
+## [v1.6.1] - 2023-08-04
+
+**Fixed**
+
+- Fix numeric route names by @bakerkretzmar https://github.com/tighten/ziggy/pull/658
+
+## [v1.6.0] - 2023-05-12
+
+**Added**
+
+- Add `'ziggy.output.path'` config option by @mhelaiwa https://github.com/tighten/ziggy/pull/633
+
+## [v1.5.2] - 2023-05-05
+
+**Added**
+
+- Add Vite instructions to README.md by @fullstackfool https://github.com/tighten/ziggy/pull/627
+
+**Fixed**
+
+- Trim slashes between origin and optional first param by @bakerkretzmar in https://github.com/tighten/ziggy/pull/637
+- Fix `route().params` not being decoded by @Tofandel in https://github.com/tighten/ziggy/pull/610
+
+## [v1.5.1] - 2023-04-22
+
+**Fixed**
+
+- Check for overridden `getKeyName()` and `$primaryKey` by @Jared0430 in https://github.com/tighten/ziggy/pull/630
+
 ## [v1.5.0] - 2022-09-23
 
 **Added**
@@ -253,7 +316,15 @@ Breaking changes are marked with ⚠️.
 
 For previous changes see the [Releases](https://github.com/tighten/ziggy/releases) page.
 
-[Unreleased]: https://github.com/tighten/ziggy/compare/v1.5.0...HEAD
+[Unreleased]: https://github.com/tighten/ziggy/compare/v1.8.1...HEAD
+[v1.8.1]: https://github.com/tighten/ziggy/compare/v1.8.0...v1.8.1
+[v1.8.0]: https://github.com/tighten/ziggy/compare/v1.7.0...v1.8.0
+[v1.7.0]: https://github.com/tighten/ziggy/compare/v1.6.2...v1.7.0
+[v1.6.2]: https://github.com/tighten/ziggy/compare/v1.6.1...v1.6.2
+[v1.6.1]: https://github.com/tighten/ziggy/compare/v1.6.0...v1.6.1
+[v1.6.0]: https://github.com/tighten/ziggy/compare/v1.5.2...v1.6.0
+[v1.5.2]: https://github.com/tighten/ziggy/compare/v1.5.1...v1.5.2
+[v1.5.1]: https://github.com/tighten/ziggy/compare/v1.5.0...v1.5.1
 [v1.5.0]: https://github.com/tighten/ziggy/compare/v1.4.6...v1.5.0
 [v1.4.6]: https://github.com/tighten/ziggy/compare/v1.4.5...v1.4.6
 [v1.4.5]: https://github.com/tighten/ziggy/compare/v1.4.4...v1.4.5

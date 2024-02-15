@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use JsonSerializable;
 use ReflectionClass;
 use ReflectionMethod;
+use ReflectionProperty;
 
 class Ziggy implements JsonSerializable
 {
@@ -132,19 +133,23 @@ class Ziggy implements JsonSerializable
 
         $bindings = $this->resolveBindings($routes->toArray());
 
-        return $routes->merge($fallbacks)
-            ->map(function ($route) use ($bindings) {
-                return collect($route)->only(['uri', 'methods', 'wheres'])
-                    ->put('domain', $route->domain())
-                    ->put('bindings', $bindings[$route->getName()] ?? [])
-                    ->when($middleware = config('ziggy.middleware'), function ($collection) use ($middleware, $route) {
-                        if (is_array($middleware)) {
-                            return $collection->put('middleware', collect($route->middleware())->intersect($middleware)->values()->all());
-                        }
+        $fallbacks->map(function ($route, $name) use ($routes) {
+            $routes->put($name, $route);
+        });
 
-                        return $collection->put('middleware', $route->middleware());
-                    })->filter();
-            });
+        return $routes->map(function ($route) use ($bindings) {
+            return collect($route)->only(['uri', 'methods', 'wheres'])
+                ->put('domain', $route->domain())
+                ->put('parameters', $route->parameterNames())
+                ->put('bindings', $bindings[$route->getName()] ?? [])
+                ->when($middleware = config('ziggy.middleware'), function ($collection) use ($middleware, $route) {
+                    if (is_array($middleware)) {
+                        return $collection->put('middleware', collect($route->middleware())->intersect($middleware)->values()->all());
+                    }
+
+                    return $collection->put('middleware', $route->middleware());
+                })->filter();
+        });
     }
 
     /**
@@ -198,8 +203,11 @@ class Ziggy implements JsonSerializable
                 $model = class_exists(Reflector::class)
                     ? Reflector::getParameterClassName($parameter)
                     : $parameter->getType()->getName();
-                $override = (new ReflectionClass($model))->isInstantiable()
-                    && (new ReflectionMethod($model, 'getRouteKeyName'))->class !== Model::class;
+                $override = (new ReflectionClass($model))->isInstantiable() && (
+                    (new ReflectionMethod($model, 'getRouteKeyName'))->class !== Model::class
+                    || (new ReflectionMethod($model, 'getKeyName'))->class !== Model::class
+                    || (new ReflectionProperty($model, 'primaryKey'))->class !== Model::class
+                );
 
                 // Avoid booting this model if it doesn't override the default route key name
                 $bindings[$parameter->getName()] = $override ? app($model)->getRouteKeyName() : 'id';

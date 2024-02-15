@@ -22,6 +22,9 @@ Route::get('/auth/{provider}/redirect', [SocialController::class, 'redirect'])
 Route::get('/auth/{provider}/callback', [SocialController::class, 'callback'])
     ->where('provider', 'google|youtube');
 
+
+Route::inertia('/add-required-email/{socialId}', 'Auth/AddRequiredEmail')->name('add-required-email');
+
 //display in obs
 Route::get('/bonus-list/{id}', function ($id) {
     return Inertia::render('BonusList', ['id' => $id]);
@@ -36,6 +39,8 @@ Route::get('/slot/{id}', function ($id) {
     return Inertia::render('Slot', ['id' => $id]);
 })->name('slot');
 
+
+Route::post('/add-email-to-account', [SocialController::class, 'addRequiredEmail'])->name('add-required-email-to-account');
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [

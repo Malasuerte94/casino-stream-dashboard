@@ -14,9 +14,13 @@ return new class extends Migration {
     {
         Schema::create('socials', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('slug');
-            $table->string('icon');
+            $table->unsignedBigInteger('user_id')->nullable()->index();
+            $table->string('nickname');
+            $table->string('avatar');
+            $table->string('provider')->nullable();
+            $table->string('provider_id')->nullable();
+            $table->string('provider_token')->nullable();
+            $table->string('provider_refresh_token')->nullable();
             $table->timestamps();
         });
     }

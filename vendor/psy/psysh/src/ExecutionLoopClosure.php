@@ -3,7 +3,7 @@
 /*
  * This file is part of Psy Shell.
  *
- * (c) 2012-2022 Justin Hileman
+ * (c) 2012-2023 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -17,8 +17,7 @@ use Psy\Exception\ThrowUpException;
 /**
  * The Psy Shell's execution loop scope.
  *
- * @todo Once we're on PHP 5.5, we can switch ExecutionClosure to a generator
- * and get rid of the duplicate closure implementations :)
+ * @todo Switch ExecutionClosure to a generator and get rid of the duplicate closure implementations?
  */
 class ExecutionLoopClosure extends ExecutionClosure
 {

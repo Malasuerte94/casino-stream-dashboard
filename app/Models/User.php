@@ -61,34 +61,59 @@ class User extends Authenticatable
         'profile_photo_url',
     ];
 
-
+    /**
+     * @return HasMany
+     */
     public function streams(): HasMany
     {
         return $this->hasMany(Stream::class);
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);
     }
 
+    /**
+     * @return HasMany
+     */
     public function deposits(): HasMany
     {
         return $this->hasMany(Deposit::class);
     }
 
+    /**
+     * @return HasMany
+     */
     public function withdrawals(): HasMany
     {
         return $this->hasMany(Withdrawal::class);
     }
 
+    /**
+     * @return HasMany
+     */
     public function userSettings(): HasMany
     {
         return $this->hasMany(UserSetting::class);
     }
 
+    /**
+     * @return HasMany
+     */
     public function banners(): HasMany
     {
         return $this->hasMany(Banner::class);
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function socials(): HasMany
+    {
+        return $this->hasMany(Social::class);
     }
 }

@@ -3,8 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Social;
+use App\Models\User;
+use Exception;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Routing\Redirector;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Str;
+use Inertia\Inertia;
 use Laravel\Socialite\Facades\Socialite;
 
 class SocialController extends Controller
@@ -21,20 +31,79 @@ class SocialController extends Controller
 
     /**
      * @param $provider
-     * @return RedirectResponse
+     * @return Application|RedirectResponse|Redirector|\Inertia\Response
      */
-    public function callback($provider): RedirectResponse
+    public function callback($provider): \Inertia\Response|Redirector|Application|RedirectResponse
     {
-        $user = Socialite::driver($provider)->user();
-        dd($user);
+        try {
+            $socialUser = Socialite::driver($provider)->user();
+            $social = Social::where('provider', $provider)->where('provider_id', $socialUser->getId())->first();
+            if (!$social) {
+                $social = Social::create([
+                    'provider' => $provider,
+                    'provider_id' => $socialUser->id,
+                    'nickname' => $socialUser->nickname,
+                    'avatar' => $socialUser->avatar,
+                    'provider_token' => $socialUser->token,
+                    'provider_refresh_token' => $socialUser->refreshToken,
+                ]);
+            }
+            if ($social->user) {
+                auth()->login($social->user);
+                return redirect('/streamdash');
+            } else {
+                return Inertia::render('Auth/AddRequiredEmail', ['socialId' => $social->id]);
+            }
+        } catch (Exception $e) {
+            return redirect('/register');
+        }
+
+    }
+
+    /**
+     * @param Request $request
+     * @return Redirector|Application|RedirectResponse
+     */
+    public function addRequiredEmail(Request $request): \Illuminate\Routing\Redirector|\Illuminate\Contracts\Foundation\Application|RedirectResponse
+    {
+        try {
+            $request->validate([
+                'email' => 'required|email',
+                'social' => 'required',
+                'remember' => 'required'
+            ]);
+
+            $social = Social::findOrFail($request->input('social'));
+            $user = User::where('email', $request->input('email'))->first();
+
+            if($user) {
+                return redirect('/register');
+            }
+
+            $user = User::create([
+                'email' => $request->input('email'),
+                'name'=> $social->nickname,
+                'password' => bcrypt(Str::random(10)),
+                'profile_photo_path' => $social->avatar,
+            ]);
+
+            $social->update(['user_id' => $user->id]);
+
+            auth()->login($user);
+
+            return redirect('streamdash');
+        } catch (Exception $e) {
+            return redirect('/register');
+        }
+
     }
 
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function index(): \Illuminate\Http\JsonResponse
+    public function index(): JsonResponse
     {
         $socials = Social::all();
         return response()->json($socials);
@@ -43,7 +112,7 @@ class SocialController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function create()
     {
@@ -53,8 +122,8 @@ class SocialController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  Request  $request
+     * @return Response
      */
     public function store(Request $request)
     {
@@ -82,7 +151,7 @@ class SocialController extends Controller
      * Display the specified resource.
      *
      * @param  \App\Models\Social  $social
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function show(Social $social)
     {
@@ -93,7 +162,7 @@ class SocialController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  \App\Models\Social  $social
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function edit(Social $social)
     {
@@ -103,23 +172,13 @@ class SocialController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      * @param  \App\Models\Social  $social
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function update(Request $request, Social $social)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Social  $social
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Social $social)
-    {
-        //
-    }
 }

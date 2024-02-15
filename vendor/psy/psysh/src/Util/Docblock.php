@@ -3,7 +3,7 @@
 /*
  * This file is part of Psy Shell.
  *
- * (c) 2012-2022 Justin Hileman
+ * (c) 2012-2023 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -201,8 +201,6 @@ class Docblock
      * Whether or not a docblock contains a given @tag.
      *
      * @param string $tag The name of the @tag to check for
-     *
-     * @return bool
      */
     public function hasTag(string $tag): bool
     {
@@ -214,9 +212,9 @@ class Docblock
      *
      * @param string $tag
      *
-     * @return array
+     * @return array|null
      */
-    public function tag(string $tag): array
+    public function tag(string $tag): ?array
     {
         return $this->hasTag($tag) ? $this->tags[$tag] : null;
     }
@@ -225,8 +223,6 @@ class Docblock
      * Whether or not a string begins with a @tag.
      *
      * @param string $str
-     *
-     * @return bool
      */
     public static function isTagged(string $str): bool
     {

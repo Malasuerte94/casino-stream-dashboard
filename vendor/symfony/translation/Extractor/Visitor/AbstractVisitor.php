@@ -68,7 +68,20 @@ abstract class AbstractVisitor
         return false;
     }
 
-    private function getStringNamedArguments(Node\Expr\CallLike|Node\Attribute $node, string $argumentName = null, bool $isArgumentNamePattern = false): array
+    protected function nodeFirstNamedArgumentIndex(Node\Expr\CallLike|Node\Attribute|Node\Expr\New_ $node): int
+    {
+        $args = $node instanceof Node\Expr\CallLike ? $node->getRawArgs() : $node->args;
+
+        foreach ($args as $i => $arg) {
+            if ($arg instanceof Node\Arg && null !== $arg->name) {
+                return $i;
+            }
+        }
+
+        return \PHP_INT_MAX;
+    }
+
+    private function getStringNamedArguments(Node\Expr\CallLike|Node\Attribute $node, ?string $argumentName = null, bool $isArgumentNamePattern = false): array
     {
         $args = $node instanceof Node\Expr\CallLike ? $node->getArgs() : $node->args;
         $argumentValues = [];
@@ -104,6 +117,17 @@ abstract class AbstractVisitor
 
         if ($node instanceof Node\Expr\Assign && $node->expr instanceof Node\Scalar\String_) {
             return $node->expr->value;
+        }
+
+        if ($node instanceof Node\Expr\ClassConstFetch) {
+            try {
+                $reflection = new \ReflectionClass($node->class->toString());
+                $constant = $reflection->getReflectionConstant($node->name->toString());
+                if (false !== $constant && \is_string($constant->getValue())) {
+                    return $constant->getValue();
+                }
+            } catch (\ReflectionException) {
+            }
         }
 
         return null;
