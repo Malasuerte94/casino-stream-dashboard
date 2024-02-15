@@ -22,6 +22,8 @@ Route::get('/auth/{provider}/redirect', [SocialController::class, 'redirect'])
 Route::get('/auth/{provider}/callback', [SocialController::class, 'callback'])
     ->where('provider', 'google|youtube');
 
+Route::post('/add-email-to-account', [SocialController::class, 'addRequiredEmail'])->name('add-required-email-to-account');
+
 //display in obs
 Route::get('/bonus-list/{id}', function ($id) {
     return Inertia::render('BonusList', ['id' => $id]);
@@ -36,7 +38,6 @@ Route::get('/slot/{id}', function ($id) {
     return Inertia::render('Slot', ['id' => $id]);
 })->name('slot');
 
-Route::post('/add-email-to-account', [SocialController::class, 'addRequiredEmail'])->name('add-required-email-to-account');
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -45,12 +46,13 @@ Route::get('/', function () {
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
-});
+})->name('welcome');
 
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
+    'streamer'
 ])->group(function () {
     Route::get('/streamdash', function () {
         return Inertia::render('StreamDash');

@@ -414,8 +414,8 @@ class ComposerStaticInit69c8e8820f8dba78f915ae86794425a6
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-message/src',
-            1 => __DIR__ . '/..' . '/psr/http-factory/src',
+            0 => __DIR__ . '/..' . '/psr/http-factory/src',
+            1 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -689,6 +689,7 @@ class ComposerStaticInit69c8e8820f8dba78f915ae86794425a6
         'App\\Http\\Middleware\\HandleInertiaRequests' => __DIR__ . '/../..' . '/app/Http/Middleware/HandleInertiaRequests.php',
         'App\\Http\\Middleware\\PreventRequestsDuringMaintenance' => __DIR__ . '/../..' . '/app/Http/Middleware/PreventRequestsDuringMaintenance.php',
         'App\\Http\\Middleware\\RedirectIfAuthenticated' => __DIR__ . '/../..' . '/app/Http/Middleware/RedirectIfAuthenticated.php',
+        'App\\Http\\Middleware\\StreamerMiddleware' => __DIR__ . '/../..' . '/app/Http/Middleware/StreamerMiddleware.php',
         'App\\Http\\Middleware\\TrimStrings' => __DIR__ . '/../..' . '/app/Http/Middleware/TrimStrings.php',
         'App\\Http\\Middleware\\TrustHosts' => __DIR__ . '/../..' . '/app/Http/Middleware/TrustHosts.php',
         'App\\Http\\Middleware\\TrustProxies' => __DIR__ . '/../..' . '/app/Http/Middleware/TrustProxies.php',
@@ -701,6 +702,7 @@ class ComposerStaticInit69c8e8820f8dba78f915ae86794425a6
         'App\\Models\\BonusHunt' => __DIR__ . '/../..' . '/app/Models/BonusHunt.php',
         'App\\Models\\BonusHuntGame' => __DIR__ . '/../..' . '/app/Models/BonusHuntGame.php',
         'App\\Models\\Deposit' => __DIR__ . '/../..' . '/app/Models/Deposit.php',
+        'App\\Models\\Role' => __DIR__ . '/../..' . '/app/Models/Role.php',
         'App\\Models\\Social' => __DIR__ . '/../..' . '/app/Models/Social.php',
         'App\\Models\\Stream' => __DIR__ . '/../..' . '/app/Models/Stream.php',
         'App\\Models\\Team' => __DIR__ . '/../..' . '/app/Models/Team.php',
