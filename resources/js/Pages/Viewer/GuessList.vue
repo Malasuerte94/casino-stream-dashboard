@@ -14,7 +14,7 @@
                   required
                   autofocus
               />
-              <PrimaryButton @click="addEntry" class="mt-2" :class="{ 'opacity-25': alreadyEstimated }" :disabled="alreadyEstimated">
+              <PrimaryButton @click="addEntry" class="mt-2" :class="{ 'opacity-25': alreadyEstimated }" :disabled="alreadyEstimated || !is_open">
                 Patricipă
               </PrimaryButton>
             </div>
@@ -110,10 +110,15 @@ export default {
   props: {
     list: Object,
     games: Object,
-    type: String
+    type: String,
+    is_open: Boolean
   },
   async mounted() {
     await this.getEntries();
+    this.startRefreshing();
+  },
+  beforeDestroy() {
+    this.stopRefreshing();
   },
   methods: {
     async addEntry() {
@@ -135,9 +140,16 @@ export default {
           .get("/api/show-entries/"+this.list.id+'/'+this.type)
           .then((response) => {
             this.entries = response.data
-            console.log(this.entries)
           });
-    }
+    },
+    startRefreshing() {
+      this.refreshInterval = setInterval(() => {
+        this.getEntries();
+      }, 10000);
+    },
+    stopRefreshing() {
+      clearInterval(this.refreshInterval);
+    },
   },
   computed: {
     bonusList() {

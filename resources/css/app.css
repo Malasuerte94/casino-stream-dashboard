@@ -20,3 +20,30 @@
     width: 20px;
     border-radius: 20px;
 }
+
+.footer-donate {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    position: fixed;
+    bottom: 0;
+    padding: 15px 20px;
+    background-color: #383838;
+    color: white;
+}
+.donate-button {
+    font-weight: bold;
+    background-color: #54abff;
+    color: white;
+    padding: 5px 20px;
+    border-radius: 5px;
+    margin-left: 10px;
+    animation: glowing 5000ms infinite;
+}
+
+@keyframes glowing {
+    0% { box-shadow: 0 0 -5px #00c4b4; }
+    40% { box-shadow: 0 0 10px #00c479; }
+    60% { box-shadow: 0 0 10px #00c4ad; }
+    100% { box-shadow: 0 0 -5px #00c489; }
+}

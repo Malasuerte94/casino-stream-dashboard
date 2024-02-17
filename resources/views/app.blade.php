@@ -17,4 +17,12 @@
     <body class="font-sans antialiased">
         @inertia
     </body>
+    <div class="footer-donate font-sans items-center">
+        <div class="text-sm">
+            Proiect realizat de <a href="https://catalin-ene.ro/">Ene Catalin @ MalaTheMan</a>
+        </div>
+        <div class="font-bold">
+            Vrei să sprijini acest proiect? <a class="donate-button" target="_blank" href="https://www.paypal.com/donate/?hosted_button_id=L6B3AWLD39GNY"><span>Donație - PayPal / Card</span></a>
+        </div>
+    </div>
 </html>

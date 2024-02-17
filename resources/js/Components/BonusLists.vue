@@ -1,9 +1,18 @@
 <template>
   <div>
-    <div class="px-6 py-2 items-center flex">
+    <div class="px-6 py-2 flex w-full flex-row items-center justify-between">
+      <div class="flex items-center">
       <span class="mr-4">LINK pentru View-eri (ghicește suma)</span>
-      <div class="text-sm font-bold py-2 px-4 bg-zinc-500 rounded text-white border-gray-800 border-[2px]">
-          {{ guessUrl }}
+        <div class="text-sm font-bold py-2 px-4 bg-zinc-500 rounded text-white border-gray-800 border-[2px]">
+            {{ guessUrl }}
+        </div>
+      </div>
+      <div class="flex">
+        <label class="inline-flex items-center cursor-pointer">
+          <span class="ms-3 uppercase font-medium font-bold text-gray-900 dark:text-gray-300 mr-2">Înscrieri {{open_list ? ' Pornite' : ' Oprite'}}</span>
+          <input type="checkbox" true-value="true" false-value="false" v-model="open_list" @change="setStatusGuessList" class="sr-only peer">
+          <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+        </label>
       </div>
     </div>
     <div class="bg-gray-200 bg-opacity-25 grid grid-cols-1">
@@ -71,14 +80,15 @@ export default {
   components: {ApplicationLogo, BonusBuy, BonusHunt, StreamBoard},
   data() {
     return {
+      open_list: false,
       settings: [],
       latestList: ''
     };
   },
   async mounted() {
+    initFlowbite();
     await this.getSettings();
     await this.getUrlGuessList();
-    initFlowbite();
   },
   methods: {
     async getSettings() {
@@ -112,18 +122,27 @@ export default {
           .get("/api/get-latest-list")
           .then((response) => {
             this.latestList = response.data['list-id'];
+            this.open_list = response.data['is_open'] === 1;
           });
+    },
+    async setStatusGuessList() {
+      await axios.post("/api/set-latest-list", {
+        is_open: this.open_list,
+        list_id: this.latestList,
+        type: this.settings.bonus_list
+      });
     }
   },
   computed: {
     guessUrl() {
-      return 'https://pacanele.catalin-ene.ro/guess-list/' + this.latestList + '/' + this.settings.bonus_list;
+      const host = window.location.origin;
+      return `${host}/guess-list/${this.latestList}/${this.settings.bonus_list}`;
     }
   },
   watch: {
     settings() {
       this.getUrlGuessList()
-    }
+    },
   }
 };
 </script>

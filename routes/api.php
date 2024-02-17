@@ -64,6 +64,10 @@ Route::get('/settings', [UserSettingController::class, 'index']);
 Route::get('/settings/{id}', [UserSettingController::class, 'show']);
 Route::patch('/settings', [UserSettingController::class, 'edit']);
 
+
+//settings list
+Route::post('/set-latest-list', [UserSettingController::class, 'setGuessList']);
+
 //REPORT
 Route::get('/deposits', [DepositController::class, 'index']);
 Route::get('/deposits/{id}', [DepositController::class, 'show']);

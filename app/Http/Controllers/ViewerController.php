@@ -39,6 +39,7 @@ class ViewerController extends Controller
             $gamesForBonus = $latestBonus->bonusHuntGames;
         }
 
-        return Inertia::render('Viewer/GuessList', ['list' => $latestBonus, 'games' => $gamesForBonus, 'type' => $type]);
+        return Inertia::render('Viewer/GuessList', ['list' => $latestBonus, 'games' => $gamesForBonus, 'type' =>
+            $type, 'is_open' => $latestBonus->is_open]);
     }
 }

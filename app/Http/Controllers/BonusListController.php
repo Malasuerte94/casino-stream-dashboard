@@ -80,6 +80,7 @@ class BonusListController extends Controller
 
         return response()->json([
             'list-id' => $latestBonus->id,
+            'is_open' => $latestBonus->is_open,
             'bonusList' => $latestBonus,
         ]);
     }

@@ -10,6 +10,11 @@ use Illuminate\Http\Request;
 
 class GuessEntriesController extends Controller
 {
+    /**
+     * @param int $bonusListId
+     * @param string $type
+     * @return bool|string
+     */
     public function showEntries(int $bonusListId, string $type): bool|string
     {
 
@@ -26,7 +31,12 @@ class GuessEntriesController extends Controller
 
     }
 
-    public function postEntries(Request $request) {
+    /**
+     * @param Request $request
+     * @return string
+     */
+    public function postEntries(Request $request): string
+    {
         try {
             $user = $request->user();
 
@@ -51,17 +61,24 @@ class GuessEntriesController extends Controller
             }
 
             if(!$bonus) {
-                throw new Exception('Bonus not found');
+                throw new Exception('Bonusul nu a fost găsit');
+            }
+            if(!$bonus->is_open) {
+                throw new Exception('Înscrieri închise');
             }
 
-            $user->guessEntries()->firstOrCreate([
+            $entry = $user->guessEntries()->firstOrCreate([
                 'bonus_hunt_id' => $type === 'buy' ? null : $bonusId,
                 'bonus_buy_id' => $type === 'buy' ? $bonusId : null,
                 ],[
                 'estimated' => $estimated,
             ]);
 
-            return 'Confirmed';
+            if ($entry->wasRecentlyCreated) {
+                return "Te-ai înscris cu success!";
+            } else {
+                return "Te-ai înscris deja!";
+            }
         } catch (Exception $e) {
             return $e->getMessage();
         }

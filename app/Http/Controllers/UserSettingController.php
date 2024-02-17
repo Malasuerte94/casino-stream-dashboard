@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BonusBuy;
+use App\Models\BonusHunt;
 use App\Models\User;
-use App\Models\UserSetting;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class UserSettingController extends Controller
@@ -11,9 +13,10 @@ class UserSettingController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function index(Request $request): \Illuminate\Http\JsonResponse
+    public function index(Request $request): JsonResponse
     {
         $user = $request->user();
         $settings = $user->userSettings;
@@ -37,9 +40,10 @@ class UserSettingController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @param int $id
+     * @return JsonResponse
      */
-    public function show(int $id): \Illuminate\Http\JsonResponse
+    public function show(int $id): JsonResponse
     {
         $user = User::findOrFail($id);
         $settings = $user->userSettings;
@@ -63,7 +67,7 @@ class UserSettingController extends Controller
     /**
      * edit the specified resource in storage.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function edit(Request $request)
     {
@@ -89,6 +93,32 @@ class UserSettingController extends Controller
         return response()->json([
             'settings' => $settingsArray,
         ]);
+    }
+
+
+    /**
+     * @param Request $request
+     */
+    public function setGuessList(Request $request)
+    {
+        $request->validate([
+            'is_open' => 'required',
+            'list_id' => 'required',
+            'type' => 'required|string'
+        ]);
+
+        $isOpen = $request->input('is_open') === 'true';
+        $listId = $request->input('list_id');
+        $type = $request->input('type');
+
+        if ($type === 'buy') {
+            $latestBonus = BonusBuy::find($listId);
+        } else {
+            $latestBonus = BonusHunt::find($listId);
+        }
+
+        $latestBonus->is_open = $isOpen === true;
+        $latestBonus->save();
     }
 
 

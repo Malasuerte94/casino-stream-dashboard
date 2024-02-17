@@ -7,6 +7,7 @@ import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
+import DonateFooter from './DonateFooter.vue'
 
 const props = defineProps({
     title: String,
@@ -291,16 +292,11 @@ const logout = () => {
                 </div>
             </header>
 
-            <div class="px-8 mt-2 items-center opacity-75">
-              <div class="flex justify-end items-center">
-                <h2 class="font-semibold text-sm text-gray-800 leading-tight">Dashboard Păcănele <a target="blank" href="https://www.youtube.com/@MalaTheMan"> by @MalaTheMan</a></h2>
-              </div>
-            </div>
-
             <!-- Page Content -->
             <main>
                 <slot />
             </main>
         </div>
     </div>
+  <DonateFooter/>
 </template>
