@@ -28,15 +28,16 @@ defineProps({
             class="hidden px-6 py-4 sm:block font-semibold text-lg"
         >
 
-          <div class="flex gap-10" v-if="$page.props.user">
+          <div class="flex gap-10 text-center" v-if="$page.props.user">
             <Link
+                v-if="$page.props.user_streamer"
                 :href="route('streamdash')"
                 class="text-lg text-black underline"
             >Dashboard Streamer
             </Link>
             <Link
                 :href="route('dashboard')"
-                class="text-lg text-black underline"
+                class="text-lg text-black underline text-center m-auto"
             >Dashboard Viewer
             </Link>
           </div>

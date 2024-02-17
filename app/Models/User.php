@@ -133,4 +133,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(GuessEntry::class);
     }
+
+    /**
+     * @return boolean
+     */
+    public function isStreamer(): bool
+    {
+        return $this->role?->identifier === 'streamer';
+    }
 }

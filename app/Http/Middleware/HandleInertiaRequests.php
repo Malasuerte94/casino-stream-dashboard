@@ -37,7 +37,9 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         return array_merge(parent::share($request), [
-            //
+            'user_streamer' => fn () => $request->user()
+                ? $request->user()->isStreamer()
+                : null,
         ]);
     }
 }
