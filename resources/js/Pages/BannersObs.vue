@@ -39,5 +39,7 @@ export default {
 </script>
 
 <style lang="scss">
-
+.footer-donate {
+  display: none !important;
+}
 </style>

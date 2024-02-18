@@ -37,6 +37,9 @@ export default {
 }
 </script>
 <style>
+.footer-donate {
+  display: none !important;
+}
 body {
     background-color: black;
     font-size: 24px;
