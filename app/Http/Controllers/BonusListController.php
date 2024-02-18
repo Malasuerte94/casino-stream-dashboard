@@ -172,7 +172,7 @@ class BonusListController extends Controller
 
             $gameWinnerWinner = $bonusEntries->where('game_winner', $gameWinnerId);
 
-            if(!$gameWinnerWinner) {
+            if ($gameWinnerWinner->isEmpty()) {
                 $gameWinnerWinnerUser = $resultWinnerUser->user;
             } else {
                 $gameWinnerWinner = $gameWinnerWinner->random();
