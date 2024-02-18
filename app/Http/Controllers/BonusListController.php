@@ -158,6 +158,7 @@ class BonusListController extends Controller
             $resultWinnerEstimated = $resultWinner->estimated;
             $resultWinnerUser = $resultWinner->user;
 
+
             $biggestMultiplierWinner = $bonusEntries->sortBy(function ($entry) use ($biggestMultiplier) {
                 return abs($entry->biggest_multi - $biggestMultiplier);
             })->first();
@@ -173,7 +174,7 @@ class BonusListController extends Controller
             $gameWinnerWinner = $bonusEntries->where('game_winner', $gameWinnerId)->first();
 
             if ($gameWinnerWinner === null) {
-                $gameWinnerWinnerUser = $resultWinnerUser->user;
+                $gameWinnerWinnerUser = $resultWinnerUser;
             } else {
                 $gameWinnerWinnerUser = $gameWinnerWinner->user;
             }
