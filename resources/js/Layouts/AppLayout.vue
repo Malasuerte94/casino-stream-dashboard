@@ -297,5 +297,4 @@ const logout = () => {
             </main>
         </div>
     </div>
-  <DonateFooter/>
 </template>

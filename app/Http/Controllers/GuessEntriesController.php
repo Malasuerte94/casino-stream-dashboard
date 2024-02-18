@@ -48,9 +48,16 @@ class GuessEntriesController extends Controller
                 'bonus_type' => 'required|string',
                 'bonus_id' => 'required|numeric',
                 'estimated_result' => 'required|string|numeric',
+                'game_winner' => 'required|numeric',
+                'lowest_multi' => 'required|numeric',
+                'biggest_multi' => 'required|numeric',
             ]);
 
             $estimated = $request->input('estimated_result');
+            $gameWinner = $request->input('game_winner');
+            $lowestMulti = $request->input('lowest_multi');
+            $biggestMulti = $request->input('biggest_multi');
+
             $type = $request->input('bonus_type');
             $bonusId = $request->input('bonus_id');
 
@@ -72,6 +79,9 @@ class GuessEntriesController extends Controller
                 'bonus_buy_id' => $type === 'buy' ? $bonusId : null,
                 ],[
                 'estimated' => $estimated,
+                'game_winner' => $gameWinner,
+                'biggest_multi' => $lowestMulti,
+                'lowest_multi' => $biggestMulti,
             ]);
 
             if ($entry->wasRecentlyCreated) {

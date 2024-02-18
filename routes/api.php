@@ -64,10 +64,6 @@ Route::get('/settings', [UserSettingController::class, 'index']);
 Route::get('/settings/{id}', [UserSettingController::class, 'show']);
 Route::patch('/settings', [UserSettingController::class, 'edit']);
 
-
-//settings list
-Route::post('/set-latest-list', [UserSettingController::class, 'setGuessList']);
-
 //REPORT
 Route::get('/deposits', [DepositController::class, 'index']);
 Route::get('/deposits/{id}', [DepositController::class, 'show']);
@@ -94,3 +90,9 @@ Route::get('/get-latest-list', [BonusListController::class, 'getUrl']);
 // ----- VIEWERS ACTIONS -----
 Route::post('/add-entry', [GuessEntriesController::class, 'postEntries']);
 Route::get('/show-entries/{id}/{type}', [GuessEntriesController::class, 'showEntries']);
+
+
+//OPTIONS BONUS HUNTS
+Route::post('/set-latest-list', [UserSettingController::class, 'setGuessList']);
+Route::post('/close-bonus-list', [BonusListController::class, 'closeBonusList']);
+Route::get('/get-bonus-winner/{id}', [BonusListController::class, 'getBonusWinner']);

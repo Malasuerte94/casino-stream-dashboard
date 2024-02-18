@@ -7,19 +7,27 @@
             {{ guessUrl }}
         </div>
       </div>
-      <div class="flex">
-        <label class="inline-flex items-center cursor-pointer">
-          <span class="ms-3 uppercase font-medium font-bold text-gray-900 dark:text-gray-300 mr-2">Înscrieri {{open_list ? ' Pornite' : ' Oprite'}}</span>
+      <div class="flex gap-2">
+        <label class="inline-flex cursor-pointer btn-primary p-2 w-full items-center justify-center">
+          <span class="uppercase mr-2">Înscrieri {{open_list ? ' Pornite' : ' Oprite'}}</span>
           <input type="checkbox" true-value="true" false-value="false" v-model="open_list" @change="setStatusGuessList" class="sr-only peer">
-          <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+          <div class="relative border-white border-solid border-[1px] w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
         </label>
+        <button
+            @click="activateDialog"
+            type="button"
+            class="w-full btn-secondary"
+        >
+          ÎNCHIDE LISTA / DECLARĂ CÂȘTIGĂTOR
+        </button>
       </div>
     </div>
     <div class="bg-gray-200 bg-opacity-25 grid grid-cols-1">
       <div class="p-6">
         <div class="grid grid-cols-2 gap-2">
           <div
-              class="flex items-center pl-4 border bg-blue-400 border-gray-200 rounded dark:border-gray-700"
+              class="flex items-center pl-4 btn-big btn-secondary"
+              :class="{'btn-active': settings.bonus_list === 'buy'}"
           >
             <input
                 @change="updateSettings"
@@ -28,16 +36,17 @@
                 value="buy"
                 v-model="settings.bonus_list"
                 name="bonus-list-display"
-                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                class="w-4 h-4"
             />
             <label
                 for="bordered-radio-2"
-                class="w-full py-4 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                class="w-full py-2 ml-2"
             >Afișează Buy</label
             >
           </div>
           <div
-              class="flex items-center pl-4 border bg-yellow-400 border-gray-200 rounded dark:border-gray-700"
+              class="flex items-center pl-4 btn-big btn-secondary "
+              :class="{'btn-active': settings.bonus_list === 'hunt'}"
           >
             <input
                 @change="updateSettings"
@@ -46,11 +55,11 @@
                 value="hunt"
                 v-model="settings.bonus_list"
                 name="bonus-list-display"
-                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                class="w-4 h-4"
             />
             <label
                 for="bordered-radio-1"
-                class="w-full py-4 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                class="w-full py-2 ml-2"
             >Afișează Hunt</label
             >
           </div>
@@ -130,8 +139,30 @@ export default {
         is_open: this.open_list,
         list_id: this.latestList,
         type: this.settings.bonus_list
+      }).then(() => {
+        this.getUrlGuessList()
       });
-    }
+    },
+    async closeBonusList() {
+      await axios.post("/api/close-bonus-list", {
+        close: true,
+        list_id: this.latestList,
+        type: this.settings.bonus_list
+      });
+    },
+    activateDialog() {
+      this.$dialog({
+        message:
+            "Ești sigur că vrei să închizi lista? Nu mai poți edita după închidere. Câștigătorii vor fi anunțați!",
+        buttons: ["da", "nu"],
+        da: () => {
+          this.closeBonusList();
+        },
+        nu: () => {
+          console.log("refuse");
+        },
+      });
+    },
   },
   computed: {
     guessUrl() {

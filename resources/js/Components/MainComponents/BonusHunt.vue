@@ -27,20 +27,20 @@
             placeholder="Rezultat (LEI)"
         />
         <button
-            @click="resetBonusHunt"
+            @click="wantToReset"
             type="button"
             tabindex="-1"
-            class="justify-center self-center focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+            class="btn-secondary"
         >
             LISTA NOUA
         </button>
     </div>
     <template v-if="bonusHuntGames">
         <div
-            class="grid grid-cols-[30px_minmax(200px,_1fr)_120px_120px_120px_120px_80px] gap-2 mt-4 text-center"
+            class="grid grid-cols-[30px_minmax(200px,_1fr)_120px_120px_120px_40px] gap-2 mt-4 text-center"
         >
             <div
-                class="w-8 h-8 justify-center self-center text-white bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:focus:ring-blue-800"
+                class="w-8 h-8 justify-center self-center text-white bg-blue-300 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:focus:ring-blue-800"
             >
                 nr
             </div>
@@ -48,15 +48,15 @@
             <div>Miză</div>
             <div>Rezultat (LEI)</div>
             <div>Multiplicator</div>
-            <div>Șterge</div>
+            <div></div>
         </div>
         <div
             v-for="(game, index) in bonusHuntGames"
             :key="index"
-            class="grid grid-cols-[30px_minmax(200px,_1fr)_120px_120px_120px_120px_40px] gap-2 mt-4"
+            class="grid grid-cols-[30px_minmax(200px,_1fr)_120px_120px_120px_40px] gap-2 mt-4"
         >
             <div
-                class="w-8 h-8 justify-center self-center text-white bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:focus:ring-blue-800"
+                class="w-8 h-8 justify-center self-center text-white bg-blue-300 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:focus:ring-blue-300"
             >
                 {{ index }}
             </div>
@@ -103,10 +103,11 @@
                 />
             </div>
             <button
+                v-if="!bonusHunt.ended"
                 type="button"
                 tabindex="-1"
                 @click="removeBonusHuntGameRow(game.id)"
-                class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center mr-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+                class="btn-secondary"
             >
                 <svg
                     aria-hidden="true"
@@ -125,11 +126,11 @@
                 </svg>
             </button>
         </div>
-        <div class="flex mt-8 center justify-center">
+        <div class="flex mt-8 center justify-center" v-if="!bonusHunt.ended">
             <button
                 @click="createNewBonusHuntGameRow"
                 type="button"
-                class="w-full focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+                class="btn-big btn-primary w-full"
             >
                 + Game
             </button>
@@ -148,8 +149,8 @@ export default {
             updateListTimer: 5, //in seconds
         };
     },
-    mounted() {
-        this.getLatestList();
+    async mounted() {
+      await this.getLatestList();
     },
     methods: {
         async getLatestList() {
@@ -178,6 +179,19 @@ export default {
                 .catch((error) => {
                     console.log(error);
                 });
+        },
+        wantToReset() {
+          this.$dialog({
+            message:
+                "Ești sigur că vrei să faci o listă nouă?",
+            buttons: ["da", "nu"],
+            da: () => {
+              this.resetBonusHunt();
+            },
+            nu: () => {
+              console.log("refuse");
+            },
+          });
         },
         //add new games row
         async createNewBonusHuntGameRow() {

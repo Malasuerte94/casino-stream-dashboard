@@ -713,6 +713,7 @@ class ComposerStaticInit69c8e8820f8dba78f915ae86794425a6
         'App\\Models\\Team' => __DIR__ . '/../..' . '/app/Models/Team.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
         'App\\Models\\UserSetting' => __DIR__ . '/../..' . '/app/Models/UserSetting.php',
+        'App\\Models\\Winner' => __DIR__ . '/../..' . '/app/Models/Winner.php',
         'App\\Models\\Withdrawal' => __DIR__ . '/../..' . '/app/Models/Withdrawal.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
         'App\\Providers\\AuthServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AuthServiceProvider.php',

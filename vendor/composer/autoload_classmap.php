@@ -56,6 +56,7 @@ return array(
     'App\\Models\\Team' => $baseDir . '/app/Models/Team.php',
     'App\\Models\\User' => $baseDir . '/app/Models/User.php',
     'App\\Models\\UserSetting' => $baseDir . '/app/Models/UserSetting.php',
+    'App\\Models\\Winner' => $baseDir . '/app/Models/Winner.php',
     'App\\Models\\Withdrawal' => $baseDir . '/app/Models/Withdrawal.php',
     'App\\Providers\\AppServiceProvider' => $baseDir . '/app/Providers/AppServiceProvider.php',
     'App\\Providers\\AuthServiceProvider' => $baseDir . '/app/Providers/AuthServiceProvider.php',

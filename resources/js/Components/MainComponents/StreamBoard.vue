@@ -1,6 +1,6 @@
 <template>
     <div class="p-6">
-        <div class="bg-red-200 p-6 mb-12 rounded border">
+        <div class="bg-red-200 p-6 mb-6 rounded border">
             <button
             @click="activateDialog"
             type="button"
@@ -13,10 +13,10 @@
             </div>
         </div>
         <div class="grid justify-between grid-cols-2 gap-2">
-            <div v-if="!loading" class="bg-green-200 rounded border p-6 w-50 block">
+            <div v-if="!loading" class="box-secondary w-50 block">
                 <DepositsStream :stream="stream"></DepositsStream>
             </div>
-            <div v-if="!loading" class="bg-blue-200 rounded border p-6 w-50 block">
+            <div v-if="!loading" class="box-secondary rounded border p-6 w-50 block">
                 <WithdrawalsStream :stream="stream"></WithdrawalsStream>
             </div>
         </div>

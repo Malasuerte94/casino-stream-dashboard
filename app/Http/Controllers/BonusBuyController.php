@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\BonusBuy;
 use App\Models\Stream;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Str;
 
 class BonusBuyController extends Controller
@@ -12,9 +14,10 @@ class BonusBuyController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function index(Request $request): \Illuminate\Http\JsonResponse
+    public function index(Request $request): JsonResponse
     {
         $user = $request->user();
         $latestStream = $user->streams()->latest()->first();
@@ -38,7 +41,7 @@ class BonusBuyController extends Controller
         if ($latestBonusBuy) {
             $gamesForBonusBuy = $latestBonusBuy->bonusBuyGames;
             if (!$gamesForBonusBuy->first()) {
-                $gamesForBonusBuy = $latestBonusBuy->bonusBuyGame()->create();
+                $gamesForBonusBuy = $latestBonusBuy->bonusBuyGames()->create();
                 $gamesForBonusBuy->save();
                 $gamesForBonusBuy = [$gamesForBonusBuy];
             }
@@ -56,10 +59,10 @@ class BonusBuyController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return void
      */
-    public function edit(Request $request)
+    public function edit(Request $request): void
     {
         $bonusBuy = BonusBuy::where('seed', $request->bonusBuy['seed'])->first();
         $bonusBuy->name = $request->bonusBuy['name'];
@@ -69,16 +72,17 @@ class BonusBuyController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
+     * @param  Request  $request
+     * @return JsonResponse
      */
-    public function store(Request $request): \Illuminate\Http\JsonResponse
+    public function store(Request $request): JsonResponse
     {
 
         $user = $request->user();
         $latestStream = $user->streams()->latest()->first();
 
         $seeder = Str::random(20);
+
         $latestBonusBuy = BonusBuy::create([
             'name' => 'Bonus Buy',
             'seed' => $seeder,
@@ -87,9 +91,9 @@ class BonusBuyController extends Controller
         ]);
 
 
-        $gamesForBonusBuy = $latestBonusBuy->bonusBuyGame;
+        $gamesForBonusBuy = $latestBonusBuy->bonusBuyGames;
         if(!$gamesForBonusBuy->first()) {
-            $gamesForBonusBuy = $latestBonusBuy->bonusBuyGame()->create();
+            $gamesForBonusBuy = $latestBonusBuy->bonusBuyGames()->create();
             $gamesForBonusBuy->save();
             $gamesForBonusBuy = [$gamesForBonusBuy];
         }

@@ -18,6 +18,9 @@ import ChangeLog from '@/Components/MainComponents/ChangeLog.vue'
                 <NavLink class="text-green-700 font-bold" :href="route('banners-obs', { id: $page.props.user.id })" :active="route().current('banners-obs')">
                     Banners - OBS
                 </NavLink>
+              <NavLink class="text-green-700 font-bold" :href="route('bonus-winner-obs', { id: $page.props.user.id })" :active="route().current('banners-obs')">
+                    Bonus Winner - OBS
+              </NavLink>
             </div>
         </template>
 
@@ -25,6 +28,7 @@ import ChangeLog from '@/Components/MainComponents/ChangeLog.vue'
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
                     <StreamBoard/>
+                  <div class="mb-12"></div>
                     <ChangeLog/>
                 </div>
             </div>

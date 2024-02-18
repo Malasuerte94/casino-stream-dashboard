@@ -35,6 +35,9 @@ Route::get('/stream-start/{id}', function ($id) {
 Route::get('/banners-obs/{id}', function ($id) {
     return Inertia::render('BannersObs', ['id' => $id]);
 })->name('banners-obs');
+Route::get('/bonus-winner-obs/{id}', function ($id) {
+    return Inertia::render('BonusWinner', ['id' => $id]);
+})->name('bonus-winner-obs');
 Route::get('/slot/{id}', function ($id) {
     return Inertia::render('Slot', ['id' => $id]);
 })->name('slot');

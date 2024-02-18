@@ -47,3 +47,71 @@
     60% { box-shadow: 0 0 10px #00c4ad; }
     100% { box-shadow: 0 0 -5px #00c489; }
 }
+
+.btn-secondary {
+    border-radius: 5px;
+    border: 1px solid #5e5eff;
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: bold;
+}
+.btn-secondary:hover {
+    background-color: rgba(94, 94, 255, 0.48);
+    box-shadow: 1px 1px #5e5eff;
+}
+.btn-secondary.btn-active {
+    background-color: rgba(94, 94, 255, 0.8);
+    box-shadow: 1px 1px #5e5eff;
+    color: white !important;
+}
+
+.btn-primary {
+    border-radius: 5px;
+    border: 1px solid #5e5eff;
+    background-color: #5e5eff;
+    padding: 10px 10px;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+}
+.btn-primary:hover {
+    background-color: rgba(94, 94, 255, 0.8);
+    box-shadow: 1px 1px #5e5eff;
+}
+.btn-primary.btn-active {
+    background-color: rgba(94, 94, 255, 0.8);
+    box-shadow: 1px 1px #5e5eff;
+}
+
+.btn-big {
+    font-size: 16px;
+    text-transform: uppercase;
+}
+
+.box-primary
+{
+    background-color: rgba(94, 94, 255, 0.8);
+    border-radius: 5px;
+    padding: 15px;
+    border: 1px solid #5e5eff;
+}
+
+.box-secondary
+{
+    border-radius: 5px;
+    padding: 15px;
+    border: 1px solid #5e5eff;
+}
+
+
+.__dialog-box {
+    background-color: rgba(94, 94, 255, 0.8) !important;
+    width: 400px !important;
+}
+.__dialog-button {
+    width: 100% !important;
+}
+
+.small-font {
+    font-size: 12px;
+}

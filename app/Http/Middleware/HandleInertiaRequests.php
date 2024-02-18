@@ -36,10 +36,13 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        //MODIFY AFTER YOUTUBE REGISTER
         return array_merge(parent::share($request), [
             'user_streamer' => fn () => $request->user()
                 ? $request->user()->isStreamer()
                 : null,
+            'user.profile_photo_url' => fn () => $request->user() ? env('app_url').'/storage/'.$request->user()
+                    ->profile_photo_path : null,
         ]);
     }
 }

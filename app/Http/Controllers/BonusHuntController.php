@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\BonusHunt;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -11,9 +12,10 @@ class BonusHuntController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function index(Request $request): \Illuminate\Http\JsonResponse
+    public function index(Request $request): JsonResponse
     {
         $user = $request->user();
 
@@ -36,7 +38,7 @@ class BonusHuntController extends Controller
 
         $gamesForBonusHunt = $latestBonusHunt ? $latestBonusHunt->bonusHuntGames : [];
         if (!$gamesForBonusHunt->first()) {
-            $gamesForBonusHunt = $latestBonusHunt->bonusHuntGame()->create();
+            $gamesForBonusHunt = $latestBonusHunt->bonusHuntGames()->create();
             $gamesForBonusHunt->save();
             $gamesForBonusHunt = [$gamesForBonusHunt];
         }
@@ -50,15 +52,16 @@ class BonusHuntController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
+     * @param  Request  $request
+     * @return JsonResponse
      */
-    public function store(Request $request): \Illuminate\Http\JsonResponse
+    public function store(Request $request): JsonResponse
     {
         $user = $request->user();
         $latestStream = $user->streams()->latest()->first();
 
         $seeder = Str::random(20);
+
         $latestBonusHunt = BonusHunt::create([
             'name' => 'Bonus Hunt',
             'seed' => $seeder,
@@ -67,9 +70,10 @@ class BonusHuntController extends Controller
         ]);
 
 
-        $gamesForBonusHunt = $latestBonusHunt->bonusHuntGame;
+        $gamesForBonusHunt = $latestBonusHunt->bonusHuntGames;
+
         if(!$gamesForBonusHunt->first()) {
-            $gamesForBonusHunt = $latestBonusHunt->bonusHuntGame()->create();
+            $gamesForBonusHunt = $latestBonusHunt->bonusHuntGames()->create();
             $gamesForBonusHunt->save();
             $gamesForBonusHunt = [$gamesForBonusHunt];
         }
@@ -84,10 +88,10 @@ class BonusHuntController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  Request  $request
+     * @return void
      */
-    public function edit(Request $request)
+    public function edit(Request $request): void
     {
         $bonusHunt = BonusHunt::where('seed', $request->bonusHunt['seed'])->first();
         $bonusHunt->name = $request->bonusHunt['name'];
@@ -96,13 +100,13 @@ class BonusHuntController extends Controller
     }
 
 
-
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function all(Request $request): \Illuminate\Http\JsonResponse
+    public function all(Request $request): JsonResponse
     {
         $user = $request->user();
 

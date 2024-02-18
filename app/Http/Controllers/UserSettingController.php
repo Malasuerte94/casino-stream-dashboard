@@ -99,7 +99,7 @@ class UserSettingController extends Controller
     /**
      * @param Request $request
      */
-    public function setGuessList(Request $request)
+    public function setGuessList(Request $request): void
     {
         $request->validate([
             'is_open' => 'required',
@@ -120,6 +120,5 @@ class UserSettingController extends Controller
         $latestBonus->is_open = $isOpen === true;
         $latestBonus->save();
     }
-
 
 }

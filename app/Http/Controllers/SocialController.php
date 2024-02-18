@@ -80,8 +80,9 @@ class SocialController extends Controller
                 return redirect('/register');
             }
 
-            $user = User::create([
+            $user = User::firstOrCreate([
                 'email' => $request->input('email'),
+            ],[
                 'name'=> $social->nickname,
                 'password' => bcrypt(Str::random(10)),
                 'profile_photo_path' => $social->avatar,

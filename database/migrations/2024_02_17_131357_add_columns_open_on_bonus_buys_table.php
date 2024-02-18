@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::table('bonus_buys', function (Blueprint $table) {
             $table->boolean('is_open')->default(false)->after('seed');
+            $table->boolean('ended')->default(false)->after('seed');
         });
     }
 
@@ -27,6 +28,7 @@ return new class extends Migration
     {
         Schema::table('bonus_buys', function (Blueprint $table) {
             $table->dropColumn('is_open');
+            $table->dropColumn('ended');
         });
     }
 };
