@@ -75,17 +75,27 @@ const submit = () => {
                 </label>
             </div>
 
-            <div class="flex items-center mt-4">
+            <div class="flex items-center mt-4 justify-between">
                 <Link v-if="canResetPassword" :href="route('password.request')" class="underline text-sm text-gray-600 hover:text-gray-900">
                     Ai uitat parola?
                 </Link>
+              <div>
                 <PrimaryButton class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                     Log in
                 </PrimaryButton>
-                <a href="/auth/youtube/redirect" class="ml-4 youtube-register self-end justify-end justify-items-end ml-auto">
-                  Login YouTube
+                <a href="/register" class="ml-4 inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring focus:ring-gray-300 disabled:opacity-25 transition">
+                  Înregistrare
                 </a>
+              </div>
             </div>
+          <div class="mt-12 text-center">
+            Așteptăm aprobarea de la Google pentru a activa înregistrarea cu YT!
+            <div class="flex items-center w-full">
+              <a href="#" class="opacity-25 disa w-full text-center mt-4 youtube-register">
+                Înregistrare cu YouTube
+              </a>
+            </div>
+          </div>
         </form>
     </AuthenticationCard>
 </template>
