@@ -172,7 +172,7 @@ class BonusListController extends Controller
 
             $gameWinnerWinner = $bonusEntries->where('game_winner', $gameWinnerId)->first();
 
-            if (!$gameWinnerWinner) {
+            if ($gameWinnerWinner === null) {
                 $gameWinnerWinnerUser = $resultWinnerUser->user;
             } else {
                 $gameWinnerWinnerUser = $gameWinnerWinner->user;
