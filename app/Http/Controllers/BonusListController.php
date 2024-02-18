@@ -170,11 +170,12 @@ class BonusListController extends Controller
             $lowestMultiplierWinnerMultiplier = $lowestMultiplierWinner->lowest_multi;
             $lowestMultiplierWinnerUser = $lowestMultiplierWinner->user;
 
-            $gameWinnerWinner = $bonusEntries->where('game_winner', $gameWinnerId)?->random();
+            $gameWinnerWinner = $bonusEntries->where('game_winner', $gameWinnerId)->get();
 
             if(!$gameWinnerWinner) {
                 $gameWinnerWinnerUser = $gameWinnerWinner->user;
             } else {
+                $gameWinnerWinner = $gameWinnerWinner->random();
                 $gameWinnerWinnerUser = $resultWinnerUser->user;
             }
 
