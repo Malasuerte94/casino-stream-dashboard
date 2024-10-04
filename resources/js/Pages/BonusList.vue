@@ -31,7 +31,8 @@
                         </span>
                         <span>{{
                             settings.bonus_list == "buy" ? "Buy" : "Hunt"
-                        }}</span>
+                        }} </span>
+
                     </div>
                     <div class="progress">
                         <div
@@ -95,7 +96,7 @@
                             ]"
                         >
                             <div class="number_game">{{ index + 1 }}</div>
-                            <div>{{ game.name }}</div>
+                            <div class="name_game">{{ game.name }}</div>
                             <div>{{ game.stake }}</div>
                             <div>{{ game.price }}</div>
                             <div>
@@ -126,7 +127,7 @@
                                 ]"
                             >
                                 <div class="number_game">{{ index + 1 }}</div>
-                                <div>{{ game.name }}</div>
+                                <div class="name_game">{{ game.name }}</div>
                                 <div>{{ game.stake }}</div>
                                 <div>{{ game.price }}</div>
                                 <div>
@@ -179,7 +180,7 @@
                             ]"
                         >
                             <div class="number_game">{{ index + 1 }}</div>
-                            <div>{{ game.name }}</div>
+                            <div class="name_game">{{ game.name }}</div>
                             <div>{{ game.stake }}</div>
                             <div>
                                 {{
@@ -209,7 +210,7 @@
                                 ]"
                             >
                                 <div class="number_game">{{ index + 1 }}</div>
-                                <div>{{ game.name }}</div>
+                                <div class="name_game">{{ game.name }}</div>
                                 <div>{{ game.stake }}</div>
                                 <div>
                                     {{
@@ -368,6 +369,23 @@ export default {
         transform: translate3d(0, var(--translate-y), 0);
     }
 }
+@keyframes spin {
+  0% {
+    transform: rotateY(0deg);
+  }
+  25% {
+    transform: rotateY(90deg);
+  }
+  50% {
+    transform: rotateY(180deg);
+  }
+  75% {
+    transform: rotateY(270deg);
+  }
+  100% {
+    transform: rotateY(360deg);
+  }
+}
 body,
 #app {
     font-size: 1.3rem;
@@ -422,9 +440,13 @@ body,
         grid-template-columns: 30px 155px 60px 80px 70px;
     }
     .number_game {
-        color: rgb(109, 109, 109);
+        color: #8d8d8d;
         font-size: 14px;
         padding: 5px;
+    }
+    .name_game {
+      overflow: hidden;
+      text-wrap: nowrap;
     }
     .current {
         background-color: rgba(255, 166, 0, 0.329);
@@ -448,11 +470,22 @@ body,
         border-bottom: 2px black solid;
         color: black;
         .img-list {
-            display: block;
-            svg {
-                width: 20px;
-                height: 20px;
+          display: block;
+          perspective: 1000px; // This is essential to create the 3D effect
+          svg {
+            width: 20px; // Adjust width and height for better visibility
+            height: 20px;
+            animation: spin 10s infinite ease-in-out;
+            transform-style: preserve-3d;
+            position: relative;
+            &::before {
+              transform: translateZ(-5px); // Back side shadow
             }
+
+            &::after {
+              transform: translateZ(5px); // Front side shadow
+            }
+          }
         }
     }
     .progress {
@@ -464,10 +497,10 @@ body,
         .details {
             z-index: 2;
             padding: 5px;
-            color: black;
+            color: #ffffff;
+            text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
         }
         .progress-bar-fill {
-            position: absolute;
             position: absolute;
             background-color: rgb(255, 196, 0);
             top: 0;
