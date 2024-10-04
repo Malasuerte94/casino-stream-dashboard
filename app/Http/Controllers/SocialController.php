@@ -6,13 +6,11 @@ use App\Models\Social;
 use App\Models\User;
 use Exception;
 use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Redirector;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Laravel\Socialite\Facades\Socialite;
@@ -30,95 +28,117 @@ class SocialController extends Controller
     }
 
     /**
-     * @param $provider
-     * @return Application|RedirectResponse|Redirector|\Inertia\Response
+     * Handle callback from provider.
+     *
+     * @param string $provider
+     * @return RedirectResponse|\Inertia\Response|Redirector|Application
      */
-    public function callback($provider): \Inertia\Response|Redirector|Application|RedirectResponse
+    public function callback($provider)
     {
         try {
-            $socialUser = Socialite::driver($provider)->user();
-            $social = Social::where('provider', $provider)->where('provider_id', $socialUser->getId())->first();
+            $socialUser = Socialite::driver($provider)->stateless()->user();
+            $social = Social::where('provider', $provider)
+                ->where('provider_id', $socialUser->getId())
+                ->first();
+
+            // If social user not found, create a new social record
             if (!$social) {
                 $social = Social::create([
                     'provider' => $provider,
                     'provider_id' => $socialUser->id,
-                    'nickname' => $socialUser->nickname,
+                    'nickname' => $socialUser->nickname ?? trim(strip_tags($socialUser->name)),
                     'avatar' => $socialUser->avatar,
                     'provider_token' => $socialUser->token,
                     'provider_refresh_token' => $socialUser->refreshToken,
                 ]);
             }
-            if ($social->user) {
-                auth()->login($social->user);
-                return redirect('/streamdash');
-            } else {
-                return Inertia::render('Auth/AddRequiredEmail', ['socialId' => $social->id]);
-            }
-        } catch (Exception $e) {
-            return redirect('/register');
-        }
 
+            // Handle Google login (with email)
+            if ($provider == 'google') {
+                return $this->handleGoogleLogin($social, $socialUser->email);
+            }
+
+            // Handle YouTube login (no email)
+            if ($provider == 'youtube') {
+                return $this->handleYouTubeLogin($social);
+            }
+
+        } catch (Exception $e) {
+            return redirect('/register')->withErrors(['error' => 'Login failed. Please try again.']);
+        }
     }
 
     /**
+     * Add email after YouTube login.
+     *
      * @param Request $request
-     * @return Redirector|Application|RedirectResponse
+     * @return RedirectResponse|Redirector|Application
      */
-    public function addRequiredEmail(Request $request): \Illuminate\Routing\Redirector|\Illuminate\Contracts\Foundation\Application|RedirectResponse
+    public function addRequiredEmail(Request $request)
     {
-        try {
-            $request->validate([
-                'email' => 'required|email',
-                'social' => 'required',
-                'remember' => 'required'
-            ]);
+        $request->validate([
+            'email' => 'required|email',
+            'social' => 'required|exists:socials,id',
+        ]);
 
-            $social = Social::findOrFail($request->input('social'));
-            $user = User::where('email', $request->input('email'))->first();
-
-            if($user) {
-                return redirect('/register');
-            }
-
-            $user = User::firstOrCreate([
-                'email' => $request->input('email'),
-            ],[
-                'name'=> $social->nickname,
+        $social = Social::findOrFail($request->input('social'));
+        $user = User::firstOrCreate(
+            ['email' => $request->input('email')],
+            [
+                'name' => $social->nickname,
                 'password' => bcrypt(Str::random(10)),
                 'profile_photo_path' => $social->avatar,
-            ]);
+            ]
+        );
 
-            $social->update(['user_id' => $user->id]);
+        $social->update(['user_id' => $user->id]);
+        Auth::login($user);
 
-            auth()->login($user);
+        return redirect('/streamdash');
+    }
 
-            return redirect('streamdash');
-        } catch (Exception $e) {
-            return redirect('/register');
+    /**
+     * Handle Google login/register process.
+     *
+     * @param Social $social
+     * @param string $email
+     * @return RedirectResponse|Redirector|Application
+     */
+    private function handleGoogleLogin(Social $social, string $email)
+    {
+        $user = User::firstOrCreate(
+            ['email' => $email],
+            [
+                'name' => $social->nickname,
+                'password' => bcrypt(Str::random(10)),
+                'profile_photo_path' => $social->avatar,
+            ]
+        );
+
+        $social->update(['user_id' => $user->id]);
+        Auth::login($user);
+
+        return redirect('/streamdash');
+    }
+
+    /**
+     * Handle YouTube login process (no email, request email).
+     *
+     * @param Social $social
+     * @return \Inertia\Response
+     */
+    private function handleYouTubeLogin(Social $social): \Inertia\Response
+    {
+        // If no associated user, redirect to AddRequiredEmail
+        if (!$social->user) {
+            return Inertia::render('Auth/AddRequiredEmail', ['socialId' => $social->id]);
         }
 
+        Auth::login($social->user);
+        return redirect('/streamdash');
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return JsonResponse
-     */
-    public function index(): JsonResponse
-    {
-        $socials = Social::all();
-        return response()->json($socials);
-    }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -146,40 +166,6 @@ class SocialController extends Controller
 
         return response()->json($social);
         
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Social  $social
-     * @return Response
-     */
-    public function show(Social $social)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Social  $social
-     * @return Response
-     */
-    public function edit(Social $social)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  Request  $request
-     * @param  \App\Models\Social  $social
-     * @return Response
-     */
-    public function update(Request $request, Social $social)
-    {
-        //
     }
 
 }

@@ -107,9 +107,12 @@ const submit = () => {
       </div>
       <div class="mt-12 text-center">
         Așteptăm aprobarea de la Google pentru a activa înregistrarea cu YT!
-        <div class="flex items-center w-full">
+        <div class="flex items-center w-full gap-5">
           <a href="#" class="opacity-25 disa w-full text-center mt-4 youtube-register">
             Înregistrare cu YouTube
+          </a>
+          <a href="/auth/google/redirect" class="w-full text-center mt-4 google-register">
+            Înregistrare cu Google
           </a>
         </div>
       </div>

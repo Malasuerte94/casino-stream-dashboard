@@ -32,9 +32,15 @@ return [
     ],
 
     'youtube' => [
+        'client_id' => env('YOUTUBE_ID'),
+        'client_secret' => env('YOUTUBE_SECRET'),
+        'redirect' => env('YOUTUBE_REDIRECT'),
+    ],
+
+    'google' => [
         'client_id' => env('GOOGLE_ID'),
         'client_secret' => env('GOOGLE_SECRET'),
         'redirect' => env('GOOGLE_REDIRECT'),
-    ],
+    ]
 
 ];

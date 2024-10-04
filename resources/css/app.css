@@ -10,6 +10,14 @@
     font-weight: bold;
 }
 
+.google-register {
+    background-color: #0080ff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+}
+
 .profile-pic {
     width: 50px;
     border-radius: 50px;
