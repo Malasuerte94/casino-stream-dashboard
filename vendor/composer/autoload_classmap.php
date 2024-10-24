@@ -53,6 +53,7 @@ return array(
     'App\\Models\\Role' => $baseDir . '/app/Models/Role.php',
     'App\\Models\\Social' => $baseDir . '/app/Models/Social.php',
     'App\\Models\\Stream' => $baseDir . '/app/Models/Stream.php',
+    'App\\Models\\StreamAccount' => $baseDir . '/app/Models/StreamAccount.php',
     'App\\Models\\Team' => $baseDir . '/app/Models/Team.php',
     'App\\Models\\User' => $baseDir . '/app/Models/User.php',
     'App\\Models\\UserSetting' => $baseDir . '/app/Models/UserSetting.php',

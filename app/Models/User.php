@@ -127,6 +127,14 @@ class User extends Authenticatable
     }
 
     /**
+     * @return HasMany
+     */
+    public function streamAccounts(): HasMany
+    {
+        return $this->hasMany(StreamAccount::class);
+    }
+
+    /**
      * @return boolean
      */
     public function isStreamer(): bool

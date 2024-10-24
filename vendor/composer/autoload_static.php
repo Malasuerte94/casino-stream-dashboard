@@ -710,6 +710,7 @@ class ComposerStaticInit69c8e8820f8dba78f915ae86794425a6
         'App\\Models\\Role' => __DIR__ . '/../..' . '/app/Models/Role.php',
         'App\\Models\\Social' => __DIR__ . '/../..' . '/app/Models/Social.php',
         'App\\Models\\Stream' => __DIR__ . '/../..' . '/app/Models/Stream.php',
+        'App\\Models\\StreamAccount' => __DIR__ . '/../..' . '/app/Models/StreamAccount.php',
         'App\\Models\\Team' => __DIR__ . '/../..' . '/app/Models/Team.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
         'App\\Models\\UserSetting' => __DIR__ . '/../..' . '/app/Models/UserSetting.php',

@@ -18,9 +18,12 @@ import ChangeLog from '@/Components/MainComponents/ChangeLog.vue'
                 <NavLink class="text-green-700 font-bold" :href="route('banners-obs', { id: $page.props.user.id })" :active="route().current('banners-obs')">
                     Banners - OBS
                 </NavLink>
-              <NavLink class="text-green-700 font-bold" :href="route('bonus-winner-obs', { id: $page.props.user.id })" :active="route().current('banners-obs')">
-                    Bonus Winner - OBS
-              </NavLink>
+                <NavLink class="text-green-700 font-bold" :href="route('bonus-winner-obs', { id: $page.props.user.id })" :active="route().current('banners-obs')">
+                      Bonus Winner - OBS
+                </NavLink>
+                <NavLink class="text-green-700 font-bold" :href="route('yt-like-view-counter', { id: $page.props.user.id })" :active="route().current('yt-like-view-counter')">
+                  Like / View Counter YT - OBS
+                </NavLink>
             </div>
         </template>
 

@@ -35,6 +35,7 @@ return [
         'client_id' => env('YOUTUBE_ID'),
         'client_secret' => env('YOUTUBE_SECRET'),
         'redirect' => env('YOUTUBE_REDIRECT'),
+        'yt_data_view'=> env('YOUTUBE_DATA_VIEW')
     ],
 
     'google' => [
