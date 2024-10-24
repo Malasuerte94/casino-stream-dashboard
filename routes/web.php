@@ -41,6 +41,9 @@ Route::get('/bonus-winner-obs/{id}', function ($id) {
 Route::get('/slot/{id}', function ($id) {
     return Inertia::render('Slot', ['id' => $id]);
 })->name('slot');
+Route::get('/yt-like-view-counter/{id}', function ($id) {
+    return Inertia::render('YtLikeViewCounter', ['id' => $id]);
+})->name('yt-like-view-counter');
 
 
 Route::get('/', function () {
@@ -87,4 +90,7 @@ Route::middleware([
     Route::get('/report', function () {
         return Inertia::render('Report');
     })->name('report');
+    Route::get('/stream-accounts', function () {
+        return Inertia::render('StreamAccounts');
+    })->name('stream-accounts');
 });
