@@ -125,13 +125,16 @@ class StreamController extends Controller
             }
 
             $videoDetails = $this->getVideoDetails($videoId);
+            $currentViewers = $videoDetails['concurrentViewers'] ?? '0';
+            $totalViews = $videoDetails['viewCount'] ?? '0';
+            $likes = $videoDetails['likeCount'] ?? '0';
 
             return response()->json([
                 'success' => true,
                 'data' => [
                     'url' => $url,
-                    'views' => $videoDetails['viewCount'] ?? null,
-                    'likes' => $videoDetails['likeCount'] ?? null,
+                    'views' => $currentViewers ==='0' ? $totalViews : $currentViewers,
+                    'likes' => $likes,
                 ]
             ]);
         } catch (\Exception $e) {
@@ -168,13 +171,20 @@ class StreamController extends Controller
     private function getVideoDetails(string $videoId): array
     {
         $response = Http::get('https://www.googleapis.com/youtube/v3/videos', [
-            'part' => 'statistics',
+            'part' => 'statistics,liveStreamingDetails',
             'id' => $videoId,
             'key' => config('services.youtube.yt_data_view'),
         ]);
 
         $data = $response->json();
-        return $data['items'][0]['statistics'] ?? [];
+
+        // Combine statistics and live streaming details if available
+        $statistics = $data['items'][0]['statistics'] ?? [];
+        $liveDetails = $data['items'][0]['liveStreamingDetails'] ?? [];
+
+        // Return a merged array containing both statistics and live details
+        return array_merge($statistics, $liveDetails);
     }
+
 
 }
