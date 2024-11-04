@@ -44,6 +44,9 @@ Route::get('/slot/{id}', function ($id) {
 Route::get('/yt-like-view-counter/{id}', function ($id) {
     return Inertia::render('YtLikeViewCounter', ['id' => $id]);
 })->name('yt-like-view-counter');
+Route::get('/picker-wheel/{id}', function ($id) {
+    return Inertia::render('PickerWheel', ['id' => $id]);
+})->name('picker-wheel');
 
 
 Route::get('/', function () {
