@@ -1,7 +1,7 @@
 <template>
   <div id="game">
     <button @click="spinWheel" class="spin-button" :disabled="isSpinning">Spin</button>
-    <div class="wheel-container">
+    <div :class="['wheel-container', { centered: isSpinning, idle: !isSpinning && !showSelectedGame }]" @transitionend="handleTransitionEnd">
       <canvas ref="wheelCanvas" :width="canvasSize" :height="canvasSize"></canvas>
       <div class="selector-arrow"></div>
     </div>
@@ -24,6 +24,7 @@ export default {
       spinDuration: 4000,
       showSelectedGame: false,
       canvasSize: 500,
+      returnToCornerTimeout: null, // Timeout for returning to corner
     };
   },
   mounted() {
@@ -73,10 +74,8 @@ export default {
       const winningIndex = Math.floor(Math.random() * numSlices);
       this.selectedGame = this.games[winningIndex];
 
-      // Calculate the target angle to land in the middle of the slice
       const extraSpins = 5;
-      // No additional offset needed since we want to align with the middle of the slice
-      const targetAngle = (extraSpins * 360) + (360 - (winningIndex * sliceAngle));
+      const targetAngle = (extraSpins * 360) + (360 - (winningIndex * sliceAngle)) - (sliceAngle / 2);
 
       // Start the animation
       const startTime = performance.now();
@@ -97,6 +96,12 @@ export default {
         } else {
           this.isSpinning = false;
           this.showSelectedGame = true;
+
+          // Set a timeout to return to the corner after 5 seconds
+          this.returnToCornerTimeout = setTimeout(() => {
+            this.showSelectedGame = false;
+            this.isSpinning = false;
+          }, 5000);
         }
       };
 
@@ -114,12 +119,27 @@ export default {
 
       this.drawWheel();
       ctx.restore();
+    },
+    handleTransitionEnd() {
+      // Reset wheel position and stop spinning after the return animation
+      if (!this.isSpinning && this.returnToCornerTimeout) {
+        clearTimeout(this.returnToCornerTimeout);
+        this.returnToCornerTimeout = null;
+        // Ensure the idle animation resumes when returning to the corner
+        this.showSelectedGame = false;
+      }
     }
   },
 };
 </script>
 
-<style scoped>
+<style>
+#app {
+  overflow: hidden;
+}
+.footer-donate {
+  display: none;
+}
 #game {
   width: 100vw;
   height: 100vh;
@@ -137,9 +157,39 @@ export default {
 }
 
 .wheel-container {
-  position: relative;
+  position: absolute;
+  bottom: -250px;
+  right: -120px;
   width: 500px;
   height: 500px;
+  transition: all 0.5s cubic-bezier(0.74, 0.2, 0.36, 1.09);
+}
+
+.wheel-container.idle {
+  animation: idle-spin 20s linear infinite;
+}
+
+.wheel-container.centered {
+  position: fixed;
+  bottom: 20%;
+  right: 60%;
+  transition: all 0.5s cubic-bezier(0.74, 0.2, 0.36, 1.09);
+  animation: none;
+}
+
+@keyframes idle-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+canvas {
+  border: 5px solid #000000;
+  overflow: visible;
+  border-radius: 50%;
 }
 
 .selector-arrow {
