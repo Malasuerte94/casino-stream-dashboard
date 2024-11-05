@@ -2,10 +2,10 @@
   <div id="game">
     <button @click="spinWheel" class="spin-button" :disabled="isSpinning">Spin</button>
     <div :class="['wheel-container', { centered: isSpinning, idle: !isSpinning && !showSelectedGame }]" @transitionend="handleTransitionEnd">
-      <canvas ref="wheelCanvas" :width="canvasSize" :height="canvasSize"></canvas>
       <div class="selector-arrow"></div>
+      <canvas ref="wheelCanvas" :width="canvasSize" :height="canvasSize"></canvas>
+      <div v-if="showSelectedGame" class="selected-game">{{ selectedGame }}</div>
     </div>
-    <div v-if="showSelectedGame" class="selected-game">{{ selectedGame }}</div>
   </div>
 </template>
 
@@ -21,7 +21,7 @@ export default {
       isSpinning: false,
       selectedAngle: 0,
       selectedGame: null,
-      spinDuration: 4000,
+      spinDuration: 2000,
       showSelectedGame: false,
       canvasSize: 500,
       returnToCornerTimeout: null, // Timeout for returning to corner
@@ -94,14 +94,11 @@ export default {
         if (progress < 1) {
           requestAnimationFrame(animate);
         } else {
-          this.isSpinning = false;
           this.showSelectedGame = true;
-
-          // Set a timeout to return to the corner after 5 seconds
           this.returnToCornerTimeout = setTimeout(() => {
-            this.showSelectedGame = false;
             this.isSpinning = false;
-          }, 5000);
+            this.showSelectedGame = false;
+          }, 3000);
         }
       };
 
@@ -187,16 +184,17 @@ export default {
 }
 
 canvas {
-  border: 5px solid #000000;
+  border: 10px solid #000000;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
   overflow: visible;
   border-radius: 50%;
 }
 
 .selector-arrow {
   position: absolute;
-  top: -20px;
+  top: -5px;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) rotateX(180deg);
   width: 0;
   height: 0;
   border-left: 10px solid transparent;
@@ -206,11 +204,21 @@ canvas {
 }
 
 .selected-game {
-  margin-top: 20px;
   padding: 10px 20px;
   background-color: #333;
   color: #fff;
   font-size: 1.5em;
   border-radius: 5px;
+  box-shadow: -1px 20px 12px 3px rgb(0 0 0 / 35%);
+  position: absolute;
+  top: 72%;
+  margin: auto;
+  left: 0;
+  right: 0;
+  display: flex;
+  width: 50%;
+  height: 18%;
+  align-items: center;
+  justify-content: center;
 }
 </style>
