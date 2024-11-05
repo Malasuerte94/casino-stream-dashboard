@@ -41,9 +41,14 @@ Route::get('/bonus-winner-obs/{id}', function ($id) {
 Route::get('/slot/{id}', function ($id) {
     return Inertia::render('Slot', ['id' => $id]);
 })->name('slot');
+
 Route::get('/yt-like-view-counter/{id}', function ($id) {
     return Inertia::render('YtLikeViewCounter', ['id' => $id]);
 })->name('yt-like-view-counter');
+
+Route::get('/picker-wheel/{id}', function ($id) {
+    return Inertia::render('PickerWheel', ['id' => $id]);
+})->name('picker-wheel');
 
 
 Route::get('/', function () {

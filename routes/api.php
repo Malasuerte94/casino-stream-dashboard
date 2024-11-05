@@ -9,6 +9,7 @@ use App\Http\Controllers\BonusListController;
 use App\Http\Controllers\DepositController;
 use App\Http\Controllers\GuessEntriesController;
 use App\Http\Controllers\SocialController;
+use App\Http\Controllers\SpinController;
 use App\Http\Controllers\StreamAccountController;
 use App\Http\Controllers\StreamController;
 use App\Http\Controllers\UserSettingController;
@@ -95,6 +96,10 @@ Route::get('/deposits/{id}', [DepositController::class, 'show']);
 Route::get('/withdrawals', [WithdrawalController::class, 'index']);
 Route::get('/withdrawals/{id}', [WithdrawalController::class, 'show']);
 Route::get('/banner', [BannerController::class, 'index']);
+
+Route::get('/spin/{id}', [SpinController::class, 'triggerSpin']);
+Route::get('/spin/check/{id}', [SpinController::class, 'checkSpin']);
+Route::post('/spin/clear/{id}', [SpinController::class, 'clearSpin']);
 
 // Public List Routes
 Route::get('/youtube-link/{id}', [StreamController::class, 'getYoutubeLink']);
