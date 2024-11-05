@@ -1,6 +1,5 @@
 <template>
   <div id="game">
-    <button @click="spinWheel" class="spin-button" :disabled="isSpinning">Spin</button>
     <div :class="['wheel-container', { centered: isSpinning }]" @transitionend="handleTransitionEnd">
       <div class="box-transform">
         <div class="selector-arrow">
@@ -41,8 +40,27 @@ export default {
   },
   mounted() {
     this.drawWheel();
+    this.pollForSpin();
   },
   methods: {
+    pollForSpin() {
+      setInterval(() => {
+        axios
+            .get(`/api/spin/check/${this.id}`)
+            .then((response) => {
+              console.log(this.id, response.data);
+              if (response.data.shouldSpin) {
+                this.spinWheel(); // Trigger the spin
+                axios.post(`/api/spin/clear/${this.id}`).catch((error) => {
+                  console.log("Error clearing spin trigger:", error);
+                });
+              }
+            })
+            .catch((error) => {
+              console.log("Error checking spin trigger:", error);
+            });
+      }, 3000); // Poll every 3 seconds or adjust as needed
+    },
     drawWheel() {
       const canvas = this.$refs.wheelCanvas;
       const ctx = canvas.getContext("2d");
