@@ -1,10 +1,15 @@
 <template>
   <div id="game">
     <button @click="spinWheel" class="spin-button" :disabled="isSpinning">Spin</button>
-    <div :class="['wheel-container', { centered: isSpinning, idle: !isSpinning && !showSelectedGame }]" @transitionend="handleTransitionEnd">
-      <div class="selector-arrow"></div>
-      <canvas ref="wheelCanvas" :width="canvasSize" :height="canvasSize"></canvas>
-      <div v-if="showSelectedGame" class="selected-game">{{ selectedGame }}</div>
+    <div :class="['wheel-container', { centered: isSpinning }]" @transitionend="handleTransitionEnd">
+      <div class="box-transform">
+        <div class="selector-arrow">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 21l-12-18h24z"/></svg>
+        </div>
+        <img class="logo" src="https://yt3.googleusercontent.com/CfIgnRwE7ROK9CugvIS1PQOjiOUfMyruXwnHwE3FmRnHu7Utw-RjZKldzKONjXFSTUl8zCfX=s160-c-k-c0x00ffffff-no-rj" alt=""/>
+        <canvas :class="[{ idle: !isSpinning && !showSelectedGame }]" ref="wheelCanvas" :width="canvasSize" :height="canvasSize"></canvas>
+        <div v-if="showSelectedGame" class="selected-game">{{ selectedGame }}</div>
+      </div>
     </div>
   </div>
 </template>
@@ -14,10 +19,17 @@ export default {
   data() {
     return {
       games: [
-        "Game 1", "Game 2", "Game 3", "Game 4", "Game 5",
-        "Game 6", "Game 7", "Game 8"
+        "Wolf Gold", "The Dog House", "Sweet Bonanza", "Great Rhino", "Chilli Heat",
+        "Mustang Gold", "Madame Destiny", "Buffalo King", "Hot Safari", "Peking Luck",
+        "Da Vinci's Treasure", "Pirate Gold", "Wild West Gold", "Aztec Gems",
+        "Joker's Jewels", "5 Lions Gold", "Triple Tigers", "Queen of Gold",
+        "Diamond Strike", "Gold Rush", "7 Monkeys", "888 Gold", "Ancient Egypt",
+        "Beowulf", "Caishen's Gold", "Dragon Kingdom", "Fire 88", "Hercules Son of Zeus",
+        "Hot Chilli", "Leprechaun Song", "Magic Crystals", "Master Chen's Fortune",
+        "Monkey Warrior", "Panda's Fortune", "Queen of Atlantis", "The Catfather",
+        "The Champions", "Vegas Magic", "Wild Gladiators", "Wild Spells"
       ],
-      colors: ['#FF6B6B', '#4ECDC4', '#FFD93D', '#95E1D3', '#A8E6CF'],
+      colors: ['#f48a00', '#022522'],
       isSpinning: false,
       selectedAngle: 0,
       selectedGame: null,
@@ -44,22 +56,36 @@ export default {
         const startAngle = (i * sliceAngle) - (Math.PI / 2);
         const endAngle = startAngle + sliceAngle;
 
+        // Set slice fill color
         ctx.fillStyle = this.colors[i % this.colors.length];
 
+        // Draw slice with border
         ctx.beginPath();
         ctx.moveTo(radius, radius);
         ctx.arc(radius, radius, radius, startAngle, endAngle);
         ctx.closePath();
         ctx.fill();
 
-        // Draw text
+        // Set border color and width
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = "#000";
+        ctx.stroke();
+
+        // Draw text with shadow
         ctx.save();
         ctx.translate(radius, radius);
         ctx.rotate(startAngle + (sliceAngle / 2));
         ctx.textAlign = "right";
         ctx.fillStyle = "#fff";
-        ctx.font = "bold 18px Arial";
-        ctx.fillText(this.games[i], radius - 30, 0);
+        ctx.font = "bold 14px Arial";
+
+        // Text shadow settings
+        ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
+        ctx.shadowBlur = 4;
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 2;
+
+        ctx.fillText(this.games[i], radius - 5, 0);
         ctx.restore();
       }
     },
@@ -155,15 +181,11 @@ export default {
 
 .wheel-container {
   position: absolute;
-  bottom: -250px;
+  bottom: -200px;
   right: -120px;
   width: 500px;
   height: 500px;
   transition: all 0.5s cubic-bezier(0.74, 0.2, 0.36, 1.09);
-}
-
-.wheel-container.idle {
-  animation: idle-spin 20s linear infinite;
 }
 
 .wheel-container.centered {
@@ -172,6 +194,32 @@ export default {
   right: 60%;
   transition: all 0.5s cubic-bezier(0.74, 0.2, 0.36, 1.09);
   animation: none;
+}
+
+.box-transform {
+  border-radius: 50%;
+  box-shadow: 8px 9px 0 3px black;
+  transition: all 0.5s cubic-bezier(0.74, 0.2, 0.36, 1.09);
+  transform: rotate3d(1, -1, 0, 54deg);
+}
+
+.wheel-container.centered .box-transform {
+  transition: all 0.5s cubic-bezier(0.74, 0.2, 0.36, 1.09);
+  transform: rotate3d(1, -1, 1, 0deg);
+}
+
+.logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+  z-index: 1;
+  transition: all 0.5s cubic-bezier(0.74, 0.2, 0.36, 1.09);
+  box-shadow: 0 0 20px 17px #cf2650;
 }
 
 @keyframes idle-spin {
@@ -184,23 +232,27 @@ export default {
 }
 
 canvas {
-  border: 10px solid #000000;
+  border: 4px solid #000000;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
   overflow: visible;
   border-radius: 50%;
 }
+canvas.idle {
+    animation: idle-spin 20s linear infinite;
+}
 
 .selector-arrow {
   position: absolute;
-  top: -5px;
-  left: 50%;
-  transform: translateX(-50%) rotateX(180deg);
-  width: 0;
-  height: 0;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-bottom: 20px solid red;
+  top: -1px;
   z-index: 10;
+  scale: 1.2;
+  left: 0;
+  right: 0;
+  margin: auto;
+  display: flex;
+  justify-content: center;
+  fill: #ff0000;
+  stroke: #000000;
 }
 
 .selected-game {
