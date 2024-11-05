@@ -98,4 +98,7 @@ Route::middleware([
     Route::get('/stream-accounts', function () {
         return Inertia::render('StreamAccounts');
     })->name('stream-accounts');
+    Route::get('/wheel-settings', function () {
+        return Inertia::render('WheelSettings');
+    })->name('wheel-settings');
 });

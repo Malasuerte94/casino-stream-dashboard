@@ -1,5 +1,5 @@
 <template>
-  <div id="game">
+  <div id="game" v-if="games.length > 0">
     <div :class="['wheel-container', { centered: isSpinning }]" @transitionend="handleTransitionEnd">
       <div class="box-transform">
         <div class="selector-arrow">
@@ -11,6 +11,7 @@
       </div>
     </div>
   </div>
+  <div v-else class="text-center text-gray-500">No games found</div>
 </template>
 
 <script>
@@ -18,37 +19,7 @@ export default {
   props: ["id"],
   data() {
     return {
-      games: [
-        "Sweet Bonanza",
-        "Gates of Olympus",
-        "The Dog House",
-        "Wolf Gold",
-        "Big Bass Bonanza",
-        "Money Train",
-        "Temple Tumble Megaways",
-        "Deadwood",
-        "Mental",
-        "Book of Shadows",
-        "Ramses",
-        "Fire in the Hole",
-        "Dead or Alive 2",
-        "Hex",
-        "Iron Bank",
-        "Book of Dead",
-        "Karen Gamblereater",
-        "Gulag",
-        "Huan",
-        "Fire Portals",
-          "Sugar",
-          "Rock Vegas",
-          "Might Of Ra",
-          "Ceva cu Vampiri",
-          "Ceva cu Lei",
-          "Nu Pragmatic",
-          "Nu Nolimit",
-          "Nu Relax"
-
-      ],
+      games: [],
       colors: ['#f48a00', '#022522'],
       isSpinning: false,
       selectedAngle: 0,
@@ -59,20 +30,33 @@ export default {
       returnToCornerTimeout: null, // Timeout for returning to corner
     };
   },
-  mounted() {
-    console.log(this.id)
-    this.drawWheel();
+  async mounted() {
+    await this.getList();
     this.pollForSpin();
   },
   methods: {
+    async getList() {
+      try {
+        const response = await axios.get(`/api/wheel-list/${this.id}`);
+        let tempGames = response.data.split('\n').map(game => game.trim()).filter(game => game);
+        if (JSON.stringify(tempGames) !== JSON.stringify(this.games)) {
+          this.games = tempGames;
+          await this.$nextTick(() => {
+            this.drawWheel();
+          });
+        }
+      } catch (error) {
+        console.log("Error checking list:", error);
+      }
+    },
     pollForSpin() {
       setInterval(() => {
         axios
             .get(`/api/spin/check/${this.id}`)
             .then((response) => {
-              console.log(response.data);
+              this.getList();
               if (response.data.shouldSpin) {
-                this.spinWheel(); // Trigger the spin
+                this.spinWheel();
                 axios.post(`/api/spin/clear/${this.id}`).catch((error) => {
                   console.log("Error clearing spin trigger:", error);
                 });

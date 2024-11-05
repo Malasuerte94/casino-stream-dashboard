@@ -81,6 +81,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/stream-accounts', [StreamAccountController::class, 'index']);
     Route::post('/stream-accounts/new', [StreamAccountController::class, 'store']);
     Route::delete('/stream-accounts/{id}', [StreamAccountController::class, 'destroy']);
+
+    Route::patch('/wheel-list', [SpinController::class, 'edit']);
 });
 
 // Public Routes (No Authentication Required)
@@ -96,6 +98,8 @@ Route::get('/deposits/{id}', [DepositController::class, 'show']);
 Route::get('/withdrawals', [WithdrawalController::class, 'index']);
 Route::get('/withdrawals/{id}', [WithdrawalController::class, 'show']);
 Route::get('/banner', [BannerController::class, 'index']);
+
+Route::get('/wheel-list/{id}', [SpinController::class, 'index']);
 
 Route::get('/spin/{id}', [SpinController::class, 'triggerSpin']);
 Route::get('/spin/check/{id}', [SpinController::class, 'checkSpin']);

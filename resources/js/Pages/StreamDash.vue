@@ -9,20 +9,23 @@ import ChangeLog from '@/Components/MainComponents/ChangeLog.vue'
     <AppLayout title="Dashboard">
         <template #header>
             <div class="flex gap-2">
-                <NavLink class="text-green-700 font-bold" target="blank" :href="route('stream-start', { id: $page.props.user.id  })" :active="route().current('stream-start')">
+                <NavLink class="text-black font-bold border-r-amber-500 border-r-2" target="blank" :href="route('stream-start', { id: $page.props.user.id  })" :active="route().current('stream-start')">
                     Casino + Depo - OBS
                 </NavLink>
-                <NavLink class="text-green-700 font-bold" :href="route('bonus-list', { id: $page.props.user.id })" :active="route().current('bonus-list')">
+                <NavLink class="text-black font-bold border-r-amber-500 border-r-2" :href="route('bonus-list', { id: $page.props.user.id })" :active="route().current('bonus-list')">
                     Bonus Buy - OBS
                 </NavLink>
-                <NavLink class="text-green-700 font-bold" :href="route('banners-obs', { id: $page.props.user.id })" :active="route().current('banners-obs')">
+                <NavLink class="text-black font-bold border-r-amber-500 border-r-2" :href="route('banners-obs', { id: $page.props.user.id })" :active="route().current('banners-obs')">
                     Banners - OBS
                 </NavLink>
-                <NavLink class="text-green-700 font-bold" :href="route('bonus-winner-obs', { id: $page.props.user.id })" :active="route().current('banners-obs')">
+                <NavLink class="text-black font-bold border-r-amber-500 border-r-2" :href="route('bonus-winner-obs', { id: $page.props.user.id })" :active="route().current('banners-obs')">
                       Bonus Winner - OBS
                 </NavLink>
-                <NavLink class="text-green-700 font-bold" :href="route('yt-like-view-counter', { id: $page.props.user.id })" :active="route().current('yt-like-view-counter')">
+                <NavLink class="text-black font-bold border-r-amber-500 border-r-2" :href="route('yt-like-view-counter', { id: $page.props.user.id })" :active="route().current('yt-like-view-counter')">
                   Like / View Counter YT - OBS
+                </NavLink>
+                <NavLink class="text-black font-bold border-r-amber-500 border-r-2" :href="route('picker-wheel', { id: $page.props.user.id })" :active="route().current('picker-wheel')">
+                  Wheel - OBS
                 </NavLink>
             </div>
         </template>
