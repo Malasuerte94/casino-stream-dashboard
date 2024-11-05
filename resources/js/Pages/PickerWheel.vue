@@ -15,6 +15,7 @@
 
 <script>
 export default {
+  props: ["id"],
   data() {
     return {
       games: [
@@ -39,6 +40,7 @@ export default {
     };
   },
   mounted() {
+    console.log(this.id)
     this.drawWheel();
     this.pollForSpin();
   },
@@ -48,7 +50,7 @@ export default {
         axios
             .get(`/api/spin/check/${this.id}`)
             .then((response) => {
-              console.log(this.id, response.data);
+              console.log(response.data);
               if (response.data.shouldSpin) {
                 this.spinWheel(); // Trigger the spin
                 axios.post(`/api/spin/clear/${this.id}`).catch((error) => {
