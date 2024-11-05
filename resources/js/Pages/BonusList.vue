@@ -103,7 +103,7 @@
                                 {{
                                     game.result == 0 || game.result == null
                                         ? ""
-                                        : "x" + game.result
+                                        : game.result
                                 }}
                             </div>
                             <div>
@@ -134,7 +134,7 @@
                                     {{
                                         game.result == 0 || game.result == null
                                             ? ""
-                                            : "x" + game.result
+                                            : game.result
                                     }}
                                 </div>
                                 <div>
