@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Stream;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
 class StreamController extends Controller
@@ -115,16 +117,23 @@ class StreamController extends Controller
                 throw new \Exception('Invalid YouTube channel URL');
             }
 
-            $videoId = $this->getLiveVideoId($channelId);
+            $cacheKey = "youtube_live_video_id_{$channelId}";
+            $videoId = Cache::get($cacheKey);
+            $videoDetails = $videoId ? $this->getVideoDetails($videoId) : null;
 
-            if (!$videoId) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'No live stream found for this channel',
-                ], 404);
+            if (!$videoDetails) {
+                $videoId = $this->getLiveVideoId($channelId);
+                if (!$videoId) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'No live stream found for this channel \ Quota Exceed',
+                    ], 404);
+                }
+                Cache::put($cacheKey, $videoId, now()->addMinutes(25));
+                $videoDetails = $this->getVideoDetails($videoId);
             }
 
-            $videoDetails = $this->getVideoDetails($videoId);
+            // Extract data from video details
             $currentViewers = $videoDetails['concurrentViewers'] ?? '0';
             $totalViews = $videoDetails['viewCount'] ?? '0';
             $likes = $videoDetails['likeCount'] ?? '0';
@@ -133,7 +142,7 @@ class StreamController extends Controller
                 'success' => true,
                 'data' => [
                     'url' => $url,
-                    'views' => $currentViewers ==='0' ? $totalViews : $currentViewers,
+                    'views' => $currentViewers === '0' ? $totalViews : $currentViewers,
                     'likes' => $likes,
                 ]
             ]);
@@ -146,6 +155,7 @@ class StreamController extends Controller
         }
     }
 
+
     private function extractChannelId(string $url): ?string
     {
         if (preg_match('/channel\/([a-zA-Z0-9_-]+)/', $url, $matches)) {
@@ -154,6 +164,12 @@ class StreamController extends Controller
         return null;
     }
 
+    /**
+     * @param string $channelId
+     *
+     * @return string|null
+     * @throws Exception
+     */
     private function getLiveVideoId(string $channelId): ?string
     {
         $response = Http::get('https://www.googleapis.com/youtube/v3/search', [
@@ -165,9 +181,19 @@ class StreamController extends Controller
         ]);
 
         $data = $response->json();
+
+        if (isset($data['error'])) {
+            throw new \Exception($data['error']['message'] ?? 'Unknown error occurred while fetching live video ID');
+        }
+
         return $data['items'][0]['id']['videoId'] ?? null;
     }
 
+    /**
+     * @param string $videoId
+     * @return array
+     * @throws Exception
+     */
     private function getVideoDetails(string $videoId): array
     {
         $response = Http::get('https://www.googleapis.com/youtube/v3/videos', [
@@ -177,6 +203,10 @@ class StreamController extends Controller
         ]);
 
         $data = $response->json();
+
+        if (isset($data['error'])) {
+            throw new \Exception($data['error']['message'] ?? 'Unknown error occurred while fetching live details');
+        }
 
         // Combine statistics and live streaming details if available
         $statistics = $data['items'][0]['statistics'] ?? [];
