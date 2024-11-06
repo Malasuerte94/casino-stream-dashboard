@@ -23,7 +23,7 @@ class ReferralController extends Controller
 
         $referral = Referral::where('user_id', $id)->where('referred_user', $referredUser)->first();
         if ($referral) {
-            return 'Ai fost adus deja de ' . $referral->parent_user;
+            return 'Ai fost adus deja de @' . $referral->parent_user;
         }
 
         $referral = Referral::where('user_id', $id)->where('parent_user', $parentUser)->where('referred_user', $referredUser)->first();
