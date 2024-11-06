@@ -50,6 +50,11 @@ Route::get('/picker-wheel/{id}', function ($id) {
     return Inertia::render('PickerWheel', ['id' => $id]);
 })->name('picker-wheel');
 
+Route::get('/referrals/{id}', function ($id) {
+    return Inertia::render('Referrals', ['id' => $id]);
+})->name('referrals');
+
+
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [

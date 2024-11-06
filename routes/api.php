@@ -8,6 +8,7 @@ use App\Http\Controllers\BonusHuntGameController;
 use App\Http\Controllers\BonusListController;
 use App\Http\Controllers\DepositController;
 use App\Http\Controllers\GuessEntriesController;
+use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\SocialController;
 use App\Http\Controllers\SpinController;
 use App\Http\Controllers\StreamAccountController;
@@ -100,12 +101,10 @@ Route::get('/withdrawals/{id}', [WithdrawalController::class, 'show']);
 Route::get('/banner', [BannerController::class, 'index']);
 
 Route::get('/wheel-list/{id}', [SpinController::class, 'index']);
-
 Route::get('/spin/{id}', [SpinController::class, 'triggerSpin']);
 Route::get('/spin/check/{id}', [SpinController::class, 'checkSpin']);
 Route::post('/spin/clear/{id}', [SpinController::class, 'clearSpin']);
 
-// Public List Routes
 Route::get('/youtube-link/{id}', [StreamController::class, 'getYoutubeLink']);
 Route::post('/get-youtube-data', [StreamController::class, 'getYoutubeData']);
 
@@ -113,6 +112,10 @@ Route::get('/bonus-list/{id}', [BonusListController::class, 'index']);
 Route::get('/stream/{id}', [StreamController::class, 'show']);
 Route::get('/banners/{id}', [BannerController::class, 'show']);
 Route::get('/get-latest-list', [BonusListController::class, 'getUrl']);
+
+
+Route::get('/referral/{id}/{parent}/{child}', [ReferralController::class, 'registerReferral']);
+Route::get('/ref-list/{id}', [ReferralController::class, 'getReferrals']);
 
 // Viewer Action Routes
 Route::get('/show-entries/{id}/{type}', [GuessEntriesController::class, 'showEntries']);
