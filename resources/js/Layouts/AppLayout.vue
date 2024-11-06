@@ -76,6 +76,11 @@ const logout = () => {
                   Raport
                 </NavLink>
               </div>
+              <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                <NavLink :href="route('referrals', { id: $page.props.user.id })" :active="route().current('referrals')">
+                  Referrals
+                </NavLink>
+              </div>
             </div>
 
             <div class="hidden sm:flex sm:items-center sm:ml-6">

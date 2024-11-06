@@ -141,4 +141,12 @@ class User extends Authenticatable
     {
         return $this->role?->identifier === 'streamer';
     }
+
+    /**
+     * @return HasMany
+     */
+    public function refferals(): HasMany
+    {
+        return $this->hasMany(Referral::class);
+    }
 }
