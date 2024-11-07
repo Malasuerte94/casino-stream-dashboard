@@ -97,7 +97,7 @@
                         >
                             <div class="number_game">{{ index + 1 }}</div>
                             <div class="name_game">{{ game.name }}</div>
-                            <div>{{ game.stake }}</div>
+                            <div class="stake">{{ game.stake }}</div>
                             <div>{{ game.price }}</div>
                             <div>
                                 {{
@@ -128,7 +128,7 @@
                             >
                                 <div class="number_game">{{ index + 1 }}</div>
                                 <div class="name_game">{{ game.name }}</div>
-                                <div>{{ game.stake }}</div>
+                                <div class="stake">{{ game.stake }}</div>
                                 <div>{{ game.price }}</div>
                                 <div>
                                     {{
@@ -181,7 +181,7 @@
                         >
                             <div class="number_game">{{ index + 1 }}</div>
                             <div class="name_game">{{ game.name }}</div>
-                            <div>{{ game.stake }}</div>
+                            <div class="stake">{{ game.stake }}</div>
                             <div>
                                 {{
                                     game.result == 0 || game.result == null
@@ -211,7 +211,7 @@
                             >
                                 <div class="number_game">{{ index + 1 }}</div>
                                 <div class="name_game">{{ game.name }}</div>
-                                <div>{{ game.stake }}</div>
+                                <div class="stake">{{ game.stake }}</div>
                                 <div>
                                     {{
                                         game.result == 0 || game.result == null
@@ -432,6 +432,7 @@ body,
         border-bottom: 1px solid #d5d5d53b;
         align-content: center;
         align-items: center;
+        max-height: 32px;
     }
     .row-game_buy {
         grid-template-columns: 30px 115px 50px 70px 70px 60px;
@@ -445,11 +446,19 @@ body,
         padding: 5px;
     }
     .name_game {
-      overflow: hidden;
-      text-wrap: nowrap;
+      overflow: hidden !important;
+      text-wrap: nowrap !important;
+      white-space: nowrap;
+      position: relative;
+    }
+    .stake {
+      padding-left: 10px;
     }
     .current {
         background-color: rgba(255, 166, 0, 0.329);
+      .name_game:before {
+        display: none;
+      }
     }
 }
 
