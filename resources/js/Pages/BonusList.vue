@@ -4,31 +4,32 @@
       <div class="table-container">
         <div class="header-list">
           <div class="header-list-title">
-            <span>Bonus</span>
             <span class="img-list">
               <SvgBh />
             </span>
-            <span>{{ huntOrBuy }} </span>
+            <span>Bonus</span>
+            <span>{{ huntOrBuy }}</span>
+            <div class="bonus-details">
+              <div class="list-cost">Cost <span>{{ startAmount }} lei</span></div>
+              <div class="list-opened">
+                <div class="details">
+                  <span>{{ gamesOpenedNr }}/</span>
+                </div>
+                <div class="details">
+                  <span>{{ gamesTotalNr }}</span>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="progress">
             <div
                 class="progress-bar-fill"
                 :style="{ width: progressPercentage + '%' }"
             ></div>
-            <div class="details">
-              DESCHISE<span>{{ gamesOpenedNr }}</span>
-            </div>
-            <div class="details">
-              TOTAL<span>{{ gamesTotalNr }}</span>
-            </div>
-            <div class="details">
-              RĂMASE<span>{{ gamesRemainingNr }}</span>
-            </div>
           </div>
           <div class="header-details">
             <div>Avg (x)<span>{{ averageMulti }}</span></div>
             <div>Top (x)<span>{{ gameHighestMulti }}</span></div>
-            <div>Cost<span>{{ bonusList.start }} lei</span></div>
             <div>Rezultat<span>{{ bonusList.result }} lei</span></div>
           </div>
         </div>
@@ -113,6 +114,9 @@ export default {
     };
   },
   computed: {
+    startAmount() {
+      return this.bonusList.start ?? 0;
+    },
     huntOrBuy() {
       return this.settings?.bonus_list === "buy" ? "Buy" : "Hunt";
     },
@@ -143,9 +147,12 @@ export default {
       ).length;
     },
     gameHighestMulti() {
-      return Math.max(
-          ...this.bonusListGames.map((game) => parseFloat(game.multiplier))
-      );
+      const multipliers = this.bonusListGames
+          .map((game) => {
+            return game?.multiplier ? parseFloat(game.multiplier.trim()) : NaN;
+          })
+          .filter((value) => !isNaN(value));
+      return multipliers.length ? Math.max(...multipliers) : 0;
     },
     progressPercentage() {
       return (this.gamesOpenedNr / this.gamesTotalNr) * 100;
@@ -293,6 +300,7 @@ body,
         font-size: 16px;
         text-transform: uppercase;
         font-weight: bold;
+        box-shadow: 0px -4px 20px 0px black;
     }
     .header-content_buy {
         display: grid;
@@ -345,8 +353,7 @@ body,
     .header-list-title {
         display: flex;
         flex-direction: row;
-        justify-content: center;
-        gap: 20px;
+        gap: 5px;
         align-items: center;
         text-transform: uppercase;
         font-weight: bold;
@@ -357,7 +364,8 @@ body,
         color: black;
         .img-list {
           display: block;
-          perspective: 1000px; // This is essential to create the 3D effect
+          perspective: 1000px;
+          margin-right: 5px;// This is essential to create the 3D effect
           svg {
             width: 20px; // Adjust width and height for better visibility
             height: 20px;
@@ -373,12 +381,30 @@ body,
             }
           }
         }
+      .bonus-details {
+        margin-left: auto;
+        display: flex;
+        gap: 5px;
+        .list-opened {
+          margin-left: auto;
+          display: flex;
+          background: #ffffffbf;
+          padding: 0 5px;
+          border-radius: 5px;
+        }
+        .list-cost {
+          background: #ffffffbf;
+          padding: 0 5px;
+          border-radius: 5px;
+        }
+      }
     }
     .progress {
         position: relative;
         display: flex;
         justify-content: space-evenly;
         font-size: 14px;
+        height: 5px;
         background-color: rgb(110 110 110);
         .details {
             z-index: 2;
@@ -388,7 +414,8 @@ body,
         }
         .progress-bar-fill {
             position: absolute;
-            background-color: rgb(255, 196, 0);
+            background: linear-gradient(90deg, rgba(255, 196, 0, 1) 0%, rgba(255, 109, 0, 1) 100%);
+            border-bottom-right-radius: 10px;
             top: 0;
             bottom: 0;
             z-index: 1;
@@ -399,7 +426,7 @@ body,
     .header-details {
         span {
             margin-left: 5px;
-            padding: 1px 2px;
+            padding: 0 5px;
             border: 1px solid #3a3a3a;
             border-radius: 4px;
             font-size: 16px;
