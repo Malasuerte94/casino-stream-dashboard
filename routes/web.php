@@ -91,6 +91,9 @@ Route::middleware([
     Route::get('/lists', function () {
         return Inertia::render('Bonuses');
     })->name('lists');
+    Route::get('/bonus-battle', function () {
+        return Inertia::render('BonusBattle');
+    })->name('bonus-battle');
     Route::get('/settings', function () {
         return Inertia::render('Settings');
     })->name('settings');
