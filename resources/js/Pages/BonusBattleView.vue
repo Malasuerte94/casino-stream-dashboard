@@ -24,18 +24,48 @@
           </div>
         </div>
         <div>
-          <div class="justify-end text-center">
-            {{bonusBattleStage.name}} | In Progres
+          <div class="justify-end text-center uppercase text-sm px-3 py-3">
+            {{bonusBattleStage.name}}
           </div>
-          <div class="battle flex gap-2 align-middle items-center justify-center">
-            <div>
-              {{bonusBattleConcurrents[0].name}}
+          <div class="battle flex gap-2 align-middle items-center justify-center relative">
+            <div class="w-100 grow flex-col flex gap-2 px-2 max-w-[190px]">
+              <div class="concurrent flex bg-blue-500 text-white px-4 py-2 rounded-md">
+                {{bonusBattleConcurrents[0]?.name|| 'N/A'}}
+              </div>
+              <div class="from-user">
+                {{bonusBattleConcurrents[0]?.for_user || 'N/A'}}
+              </div>
+              <div>
+                <ul>
+                  <li v-for="score in getConcurrentScores(bonusBattleConcurrents[0]?.id, bonusBattleStage?.id)" :key="score.id" class="text-sm">
+                    <div>Cost: {{ score.cost_buy }}</div>
+                    <div>Result: {{ score.result_buy }}</div>
+                    <div>Score: {{ score.score }}</div>
+                    <div v-if="score.winner !== null">Winner: {{ score.winner ? 'Yes' : 'No' }}</div>
+                  </li>
+                </ul>
+              </div>
             </div>
-            <div>
-vs
+            <div class="vs-symbol flex justify-center items-center text-2xl">
+              VS
             </div>
-            <div>
-              {{bonusBattleConcurrents[1].name}}
+            <div class="w-100 grow flex-col flex gap-2 px-2 max-w-[190px]">
+              <div class="concurrent flex bg-red-500 text-white px-4 py-2 rounded-md">
+                {{bonusBattleConcurrents[1]?.name || 'N/A'}}
+              </div>
+              <div class="from-user">
+                {{bonusBattleConcurrents[1]?.for_user || 'N/A'}}
+              </div>
+              <div>
+                <ul>
+                  <li v-for="score in getConcurrentScores(bonusBattleConcurrents[1]?.id, bonusBattleStage?.id)" :key="score.id" class="text-sm">
+                    <div>Cost: {{ score.cost_buy }}</div>
+                    <div>Result: {{ score.result_buy }}</div>
+                    <div>Score: {{ score.score }}</div>
+                    <div v-if="score.winner !== null">Winner: {{ score.winner ? 'Yes' : 'No' }}</div>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
@@ -56,6 +86,7 @@ export default {
       bonusBattleInfo: [],
       bonusBattleConcurrents: [],
       bonusBattleStage: [],
+      bonusBattleScores: [],
       bonusBattleWinner: [],
       bonusBattleAllConcurrents: [],
       isUpdating: false,
@@ -80,6 +111,7 @@ export default {
             this.bonusBattleConcurrents = response.data.concurrents;
             this.bonusBattleAllConcurrents = response.data.all_concurrents;
             this.bonusBattleStage = response.data.stage;
+            this.bonusBattleScores = response.data.current_score;
             this.bonusBattleWinner = response.data.winner;
           })
           .catch((error) => {
@@ -94,6 +126,17 @@ export default {
           this.isUpdating = false;
         }
       }, 8000);
+    },
+    getConcurrentScores(concurrentId, stageId) {
+      if (!concurrentId || !stageId) return [];
+      const filteredScores = [];
+      for (let i = 0; i < this.bonusBattleScores.length; i++) {
+        const score = this.bonusBattleScores[i];
+        if (score.bonus_concurrent_id === concurrentId && score.bonus_stage_id === stageId) {
+          filteredScores.push(score);
+        }
+      }
+      return filteredScores;
     }
   },
 };
@@ -144,7 +187,40 @@ body,
   display: block;
   overflow: hidden;
 }
-
+.vs-symbol {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  margin: auto;
+  background-color: #ffc400;
+  border-radius: 50px;
+  color: black;
+  font-family: "American Captain", sans-serif;
+  font-size: 36px;
+  box-shadow: 0 0 13px 4px #000000;
+  z-index: 2;
+}
+.concurrent {
+  height: 150px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 24px;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  z-index: 1;
+  border: 2px black solid;
+}
+.from-user {
+  margin-top: -15px;
+  padding-top: 5px;
+  text-align: center;
+  font-size: 16px;
+  background-color: black;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
 .header-list {
   z-index: 999;
   position: relative;

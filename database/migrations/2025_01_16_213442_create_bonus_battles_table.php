@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->index();
             $table->string('title');
-            $table->decimal('stake', 8, 2);
+            $table->string('stake')->default('Aleatorie');
             $table->boolean('active')->default(false);
             $table->timestamps();
         });

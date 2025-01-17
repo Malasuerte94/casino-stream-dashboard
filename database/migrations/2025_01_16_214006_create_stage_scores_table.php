@@ -17,6 +17,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('bonus_stage_id')->index();
             $table->foreignId('bonus_concurrent_id')->index();
+            $table->float('cost_buy')->default(0);
+            $table->float('result_buy')->default(0);
             $table->float('score')->default(0);
             $table->boolean('winner')->default(null)->nullable();
             $table->timestamps();

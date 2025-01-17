@@ -23,8 +23,10 @@ class BonusBattleController extends Controller
         }
 
         $activeInfo = $this->getCurentBattleDetails($activeBattle);
+        $activeStage = $this->getLastActiveStage($activeBattle) ?? $this->getLastEndedStage($activeBattle);
 
         $activeInfo['all_concurrents'] = $activeBattle->concurrents()->get();
+        $activeInfo['current_score'] = $activeStage->scores()->get();
 
         return response()->json($activeInfo);
     }
@@ -124,6 +126,7 @@ class BonusBattleController extends Controller
         // Retrieve IDs of scored concurrents in the current stage
         return DB::table('stage_scores')
             ->where('bonus_stage_id', $activeStage->id)
+            ->whereNotNull('winner')
             ->pluck('bonus_concurrent_id')
             ->toArray();
     }
@@ -149,20 +152,24 @@ class BonusBattleController extends Controller
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'stake' => 'required|numeric|min:0',
+            'stake' => 'string|nullable',
             'concurrents' => 'required|array|min:2',
             'concurrents.*.name' => 'required|string|max:255',
+            'concurrents.*.for_user' => 'string|max:255|nullable',
         ]);
 
         $bonusBattle = BonusBattle::create([
             'title' => $validated['title'],
-            'stake' => $validated['stake'],
+            'stake' => $validated['stake'] ?? 'Aleatorie',
             'active' => true,
             'user_id' => $user->id,
         ]);
 
         foreach ($validated['concurrents'] as $concurrent) {
-            $bonusBattle->concurrents()->create(['name' => $concurrent['name']]);
+            $bonusBattle->concurrents()->create([
+                'name' => $concurrent['name'],
+                'for_user' => $concurrent['for_user']
+            ]);
         }
 
         $bonusBattle->stages()->create(['name' => 'Stage 1']);
@@ -175,15 +182,37 @@ class BonusBattleController extends Controller
         $validated = $request->validate([
             'active_stage' => 'required|exists:bonus_stages,id',
             'active_battle' => 'required|exists:bonus_battles,id',
-            'scores' => 'required|array|min:2',
-            'scores.*.concurrent_id' => 'required|exists:bonus_concurrents,id',
-            'scores.*.total_score' => 'required|numeric|min:0',
+            'bracket' => 'required|array|min:2',
+            'bracket.*.id' => 'required|exists:bonus_concurrents,id',
+            'bracket.*.scores' => 'required|array|min:1',
+            'bracket.*.scores.*.amount' => 'required|numeric|min:0',
+            'bracket.*.scores.*.result' => 'required|numeric|min:0',
+            'bracket.*.scores.*.score' => 'required|numeric|min:0',
         ]);
 
         $stage = BonusStage::findOrFail($validated['active_stage']);
         $battle = BonusBattle::findOrFail($validated['active_battle']);
 
-        $sortedScores = collect($validated['scores'])->sortByDesc('total_score');
+        $processedBracket = collect($validated['bracket'])->map(function ($concurrent) {
+            $totalScore = 0;
+            $totalCost = 0;
+            $totalResult = 0;
+
+            foreach ($concurrent['scores'] as $score) {
+                $totalScore += $score['score'];
+                $totalCost += $score['amount'];
+                $totalResult += $score['result'];
+            }
+
+            return [
+                'concurrent_id' => $concurrent['id'],
+                'total_score' => $totalScore,
+                'total_cost' => $totalCost,
+                'total_result' => $totalResult,
+            ];
+        });
+
+        $sortedScores = $processedBracket->sortByDesc('total_score');
         $winner = $sortedScores->first();
         $loser = $sortedScores->last();
 
@@ -191,11 +220,15 @@ class BonusBattleController extends Controller
             [
                 'bonus_concurrent_id' => $winner['concurrent_id'],
                 'score' => $winner['total_score'],
+                'cost_buy' => $winner['total_cost'],
+                'result_buy' => $winner['total_result'],
                 'winner' => true,
             ],
             [
                 'bonus_concurrent_id' => $loser['concurrent_id'],
                 'score' => $loser['total_score'],
+                'cost_buy' => $loser['total_cost'],
+                'result_buy' => $loser['total_result'],
                 'winner' => false,
             ],
         ]);
@@ -224,6 +257,56 @@ class BonusBattleController extends Controller
 
         return response()->json([
             'message' => 'Next round ready!',
+        ]);
+    }
+
+    public function addScore(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'active_stage' => 'required|exists:bonus_stages,id',
+            'active_battle' => 'required|exists:bonus_battles,id',
+            'bracket' => 'required|array|min:2',
+            'bracket.*.id' => 'required|exists:bonus_concurrents,id',
+            'bracket.*.scores' => 'required|array|min:1',
+            'bracket.*.scores.*.amount' => 'required|numeric|min:0',
+            'bracket.*.scores.*.result' => 'required|numeric|min:0',
+            'bracket.*.scores.*.score' => 'required|numeric|min:0',
+        ]);
+
+        $stage = BonusStage::findOrFail($validated['active_stage']);
+
+        $processedBracket = collect($validated['bracket'])->map(function ($concurrent) {
+            $totalScore = 0;
+            $totalCost = 0;
+            $totalResult = 0;
+
+            foreach ($concurrent['scores'] as $score) {
+                $totalScore += $score['score'];
+                $totalCost += $score['amount'];
+                $totalResult += $score['result'];
+            }
+
+            return [
+                'concurrent_id' => $concurrent['id'],
+                'total_score' => $totalScore,
+                'total_cost' => $totalCost,
+                'total_result' => $totalResult,
+            ];
+        });
+
+        foreach ($processedBracket as $data) {
+            $stage->scores()->updateOrCreate(
+                ['bonus_concurrent_id' => $data['concurrent_id']],
+                [
+                    'score' => $data['total_score'],
+                    'cost_buy' => $data['total_cost'],
+                    'result_buy' => $data['total_result'],
+                ]
+            );
+        }
+
+        return response()->json([
+            'message' => 'Scores processed successfully!',
         ]);
     }
 
