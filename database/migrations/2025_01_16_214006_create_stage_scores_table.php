@@ -16,9 +16,9 @@ return new class extends Migration
         Schema::create('stage_scores', function (Blueprint $table) {
             $table->id();
             $table->foreignId('bonus_stage_id')->index();
-            $table->foreignId('bonus_concurent_id')->index();
-            $table->integer('score')->default(0);
-            $table->boolean('winner')->default(false);
+            $table->foreignId('bonus_concurrent_id')->index();
+            $table->float('score')->default(0);
+            $table->boolean('winner')->default(null)->nullable();
             $table->timestamps();
         });
     }

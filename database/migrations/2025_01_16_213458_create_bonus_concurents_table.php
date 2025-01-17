@@ -16,7 +16,6 @@ return new class extends Migration
         Schema::create('bonus_concurrents', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->integer('initial_score')->default(0);
             $table->foreignId('bonus_battle_id')->index();
             $table->timestamps();
         });

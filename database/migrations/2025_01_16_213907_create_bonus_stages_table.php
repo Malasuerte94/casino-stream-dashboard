@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('name')->nullable();
             $table->foreignId('bonus_battle_id')->index();
+            $table->boolean('active')->default(true);
             $table->timestamps();
         });
 

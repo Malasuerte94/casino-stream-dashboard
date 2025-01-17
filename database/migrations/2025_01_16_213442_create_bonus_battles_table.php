@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->decimal('stake', 8, 2);
+            $table->boolean('active')->default(false);
             $table->timestamps();
         });
     }

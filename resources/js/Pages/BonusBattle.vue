@@ -4,22 +4,40 @@ import { ref, onMounted } from 'vue';
 
 const title = ref('Bonus Battle #1');
 const stake = ref('');
-const concurrents = ref([{ name: '' }]);
-const brackets = ref([]);
-const showBrackets = ref(false);
+const concurrents = ref([]);
+
 const activeBattle = ref(null);
+const activeConcurrents = ref(null);
+const activeStage = ref(null);
+const winner = ref(null);
 const currentPair = ref([]);
 
-const addConcurent = () => {
+const addConcurrent = () => {
+  concurrents.value.push({ name: '' });
   concurrents.value.push({ name: '' });
 };
 
-const removeConcurent = (index) => {
-  concurrents.value.splice(index, 1);
+const removeConcurrent = (index) => {
+  concurrents.value.splice(index, 2);
 };
 
 const addScore = (concurrentIndex) => {
-  currentPair.value[concurrentIndex].scores.push(0);
+  currentPair.value[concurrentIndex].scores.push({
+    amount: 0,
+    result: 0,
+    score: 0,
+    confirmed: false,
+  });
+};
+
+const confirmScore = (concurrentIndex, scoreIndex) => {
+  const scoreEntry = currentPair.value[concurrentIndex].scores[scoreIndex];
+  if (scoreEntry.amount > 0) {
+    scoreEntry.score = parseFloat((scoreEntry.result / scoreEntry.amount).toFixed(2));
+    scoreEntry.confirmed = true;
+  } else {
+    alert('Amount must be greater than 0.');
+  }
 };
 
 const removeScore = (concurrentIndex, scoreIndex) => {
@@ -27,7 +45,7 @@ const removeScore = (concurrentIndex, scoreIndex) => {
 };
 
 const calculateTotalScore = (scores) => {
-  return scores.reduce((total, score) => total + (parseInt(score) || 0), 0);
+  return scores.reduce((total, score) => total + (score.confirmed ? score.score : 0), 0).toFixed(2);
 };
 
 const generateBrackets = async () => {
@@ -46,22 +64,22 @@ const generateBrackets = async () => {
 
     console.log('Bonus battle stored successfully:', response.data);
 
-    // Generate brackets locally for display
-    const pairs = [];
-    for (let i = 0; i < concurrents.value.length; i += 2) {
-      if (concurrents.value[i + 1]) {
-        pairs.push([concurrents.value[i].name, concurrents.value[i + 1].name]);
-      } else {
-        pairs.push([concurrents.value[i].name, 'BYE']);
-      }
-    }
-
-    brackets.value = pairs;
-    showBrackets.value = true;
+    fetchActiveBattle();
 
   } catch (error) {
     console.error('Failed to store bonus battle:', error.response?.data || error.message);
     alert('An error occurred while saving the bonus battle. Please try again.');
+  }
+};
+
+const endBattle = async () => {
+  try {
+    const response = await axios.post('/api/bonus-battles/end-battle', {
+      bonus_battle_id: activeBattle.value.id,
+    });
+    await fetchActiveBattle();
+  } catch (error) {
+    console.log('endBattle error:', error.response?.data || error.message);
   }
 };
 
@@ -72,23 +90,12 @@ const finishRound = async () => {
       total_score: calculateTotalScore(concurrent.scores),
     }));
 
-    await axios.post(`/api/bonus-battles/${activeBattle.value.id}/finish-round`, {
+    await axios.post(`/api/bonus-battles/finish-round`, {
       scores: scoresData,
+      active_stage: activeStage.value.id,
+      active_battle: activeBattle.value.id
     });
-
-    // Fetch the next pair of concurrents
-    const nextPairIndex = activeBattle.value.concurrents.indexOf(currentPair.value[0]) + 2;
-    const nextPair = activeBattle.value.concurrents.slice(nextPairIndex, nextPairIndex + 2);
-
-    if (nextPair.length > 0) {
-      currentPair.value = nextPair.map(concurrent => ({
-        ...concurrent,
-        scores: [],
-      }));
-    } else {
-      alert('Stage finished!');
-      currentPair.value = [];
-    }
+    await fetchActiveBattle();
   } catch (error) {
     console.error('Failed to finish round:', error.response?.data || error.message);
     alert('An error occurred while finishing the round. Please try again.');
@@ -98,15 +105,27 @@ const finishRound = async () => {
 const fetchActiveBattle = async () => {
   try {
     const response = await axios.get('/api/bonus-battles/active');
+    console.log(response.data)
     activeBattle.value = response.data.battle;
+    activeConcurrents.value = response.data.concurrents;
+    activeStage.value = response.data.stage;
+    winner.value = response.data.winner;
 
-    if (activeBattle.value) {
-      // Initialize the first pair of concurrents
-      const concurrentsList = activeBattle.value.concurrents;
+    if (activeConcurrents.value) {
+      const concurrentsList = activeConcurrents.value;
       currentPair.value = concurrentsList.slice(0, 2).map(concurrent => ({
         ...concurrent,
         scores: [],
       }));
+    }
+
+    if (activeStage.value) {
+      const currentActiveStage = activeStage.value.find(stage => stage.active === 1);
+      if (currentActiveStage) {
+        activeStage.value = currentActiveStage;
+      } else {
+        console.warn('No active stage found!');
+      }
     }
   } catch (error) {
     console.error('Failed to fetch active bonus battle:', error.response?.data || error.message);
@@ -155,27 +174,35 @@ onMounted(() => {
         <div v-if="activeBattle" class="bg-white overflow-hidden shadow-xl sm:rounded-lg mt-6">
           <div class="p-6">
             <h2 class="text-xl font-bold mb-4">Active Battle: {{ activeBattle.title }}</h2>
-            <p>Stake: {{ activeBattle.stake }}</p>
+            <p>Stake: {{ activeBattle.stake }} | Current Stage: {{ activeStage.name }}</p>
 
 
-            <div class="grid grid-cols-2 gap-4 mt-4">
+            <!-- Brackets Section -->
+            <div class="grid grid-cols-2 gap-4 mt-4" v-if="currentPair.length > 1">
               <div v-for="(concurrent, index) in currentPair" :key="index" class="border rounded-md p-4 shadow">
                 <h3 class="text-lg font-bold mb-2">{{ concurrent.name }}</h3>
                 <div>
                   <label class="block text-sm font-medium text-gray-700">Scores</label>
-                  <div v-for="(score, scoreIndex) in concurrent.scores" :key="scoreIndex" class="flex space-x-2 mt-1">
+                  <div v-for="(score, scoreIndex) in concurrent.scores" :key="scoreIndex" class="flex items-center space-x-2 mt-1">
                     <input
                         type="number"
-                        v-model="concurrent.scores[scoreIndex]"
-                        class="block w-full border-gray-300 rounded-md shadow-sm"
-                        placeholder="Enter score"
+                        v-model="concurrent.scores[scoreIndex].amount"
+                        class="block w-50 border-gray-300 rounded-md shadow-sm"
+                        placeholder="Amount"
+                    />
+                    <input
+                        type="number"
+                        v-model="concurrent.scores[scoreIndex].result"
+                        class="block w-50 border-gray-300 rounded-md shadow-sm"
+                        placeholder="Result"
+                        @input="confirmScore(index, scoreIndex)"
                     />
                     <button
                         type="button"
                         @click="removeScore(index, scoreIndex)"
                         class="text-red-600"
                     >
-                      Remove
+                      X
                     </button>
                   </div>
                   <button
@@ -186,21 +213,31 @@ onMounted(() => {
                     Add Score
                   </button>
                 </div>
-                <p class="mt-4 text-lg font-bold">Total Score: {{ calculateTotalScore(concurrent.scores) }}</p>
+                <p class="mt-4 text-lg font-bold">
+                  Total Score: {{ calculateTotalScore(concurrent.scores) }}
+                </p>
               </div>
+            </div>
+            <div v-if="winner">
+              <p class="mt-4 text-lg font-bold">Winner: {{ winner.name }}</p>
             </div>
 
             <button
+                v-if="!winner"
                 type="button"
                 @click="finishRound"
                 class="mt-6 bg-green-600 text-white px-4 py-2 rounded-md"
             >
               Finish Round
             </button>
-
-
-
-
+            <button
+                v-if="winner"
+                type="button"
+                @click="endBattle"
+                class="mt-6 bg-green-600 text-white px-4 py-2 rounded-md"
+            >
+              End Battle
+            </button>
           </div>
         </div>
       </div>

@@ -87,11 +87,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/wheel-list', [SpinController::class, 'edit']);
 
     Route::prefix('bonus-battles')->group(function () {
+        Route::post('/', [BonusBattleController::class, 'store']);
         Route::get('/active', [BonusBattleController::class, 'getActiveBattle']);
-        Route::post('/', [BonusBattleController::class, 'store']); // Create a bonus battle
-        Route::post('/{bonusBattle}/add-stage', [BonusBattleController::class, 'addStage']); // Add a stage
-        Route::post('/{bonusBattle}/add-scores', [BonusBattleController::class, 'addScores']); // Add scores for a stage
-        Route::get('/{bonusBattle}/stages', [BonusBattleController::class, 'getStages']); // Get all stages for a battle
+        Route::post('/finish-round', [BonusBattleController::class, 'finishRound']);
+        Route::post('/end-battle', [BonusBattleController::class, 'endBattle']);
     });
 });
 

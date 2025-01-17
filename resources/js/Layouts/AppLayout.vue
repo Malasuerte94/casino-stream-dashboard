@@ -57,7 +57,7 @@ const logout = () => {
                 </NavLink>
               </div>
               <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                <NavLink :href="route('bonus-battle', { id: $page.props.user.id })" :active="route().current('bonus-battle')">
+                <NavLink :href="route('bonus-battle')" :active="route().current('bonus-battle')">
                   Bonus Battle
                 </NavLink>
               </div>
