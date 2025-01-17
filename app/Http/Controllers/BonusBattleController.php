@@ -4,12 +4,30 @@ namespace App\Http\Controllers;
 
 use App\Models\BonusBattle;
 use App\Models\BonusStage;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class BonusBattleController extends Controller
 {
+
+    public function getBonusBattleInfo($id): JsonResponse
+    {
+        $userId = $id;
+        $user = User::findOrFail($userId);
+        $activeBattle = $user->bonusBattles()->where('active', true)->first();
+
+        if (!$activeBattle) {
+            return response()->json(['battle' => null, 'stage' => null, 'concurrents' => []]);
+        }
+
+        $activeInfo = $this->getCurentBattleDetails($activeBattle);
+
+        $activeInfo['all_concurrents'] = $activeBattle->concurrents()->get();
+
+        return response()->json($activeInfo);
+    }
 
     public function getActiveBattle(): JsonResponse
     {
@@ -19,6 +37,15 @@ class BonusBattleController extends Controller
         if (!$activeBattle) {
             return response()->json(['battle' => null, 'stage' => null, 'concurrents' => []]);
         }
+
+        $infoBattle = $this->getCurentBattleDetails($activeBattle);
+
+        return response()->json($infoBattle);
+    }
+
+
+    private function getCurentBattleDetails($activeBattle): array {
+
         $activeStage = $this->getLastActiveStage($activeBattle) ?? $this->getLastEndedStage($activeBattle);
 
         $remainingConcurrentIds = $this->getRemainingConcurrentsInStage($activeBattle);
@@ -30,14 +57,13 @@ class BonusBattleController extends Controller
 
         $winner = $this->getFinalWinner($activeBattle, $remainingConcurrentIds);
 
-        return response()->json([
+        return [
             'battle' => $activeBattle,
             'stage' => $activeStage,
             'concurrents' => $remainingConcurrents,
             'winner' => $winner,
-        ]);
+        ];
     }
-
 
     private function getFinalWinner($activeBattle, $remainingConcurrents)
     {
@@ -51,7 +77,6 @@ class BonusBattleController extends Controller
 
         return null;
     }
-
 
     //helpers
     private function getLastActiveStage($activeBattle)
@@ -87,24 +112,7 @@ class BonusBattleController extends Controller
             ->toArray();
     }
 
-    private function getWinnersFromActiveStage($activeBattle)
-    {
-        // Get the current active stage
-        $activeStage = $this->getLastActiveStage($activeBattle);
-
-        if (!$activeStage) {
-            return []; // Return an empty array if no active stage exists
-        }
-
-        // Get the IDs of the winners from the stage_scores table
-        return DB::table('stage_scores')
-            ->where('bonus_stage_id', $activeStage->id)
-            ->where('winner', true)
-            ->pluck('bonus_concurrent_id')
-            ->toArray();
-    }
-
-    private function getScoredConcurrentsInCurrentStage($activeBattle)
+    private function getScoredConcurrentsInCurrentStage($activeBattle): array
     {
         // Get the current active stage
         $activeStage = $this->getLastActiveStage($activeBattle);
@@ -137,6 +145,8 @@ class BonusBattleController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        $user = $request->user();
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'stake' => 'required|numeric|min:0',
@@ -148,6 +158,7 @@ class BonusBattleController extends Controller
             'title' => $validated['title'],
             'stake' => $validated['stake'],
             'active' => true,
+            'user_id' => $user->id,
         ]);
 
         foreach ($validated['concurrents'] as $concurrent) {

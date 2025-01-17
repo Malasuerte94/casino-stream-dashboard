@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('bonus_battles', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->index();
             $table->string('title');
             $table->decimal('stake', 8, 2);
             $table->boolean('active')->default(false);

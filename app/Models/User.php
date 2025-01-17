@@ -149,4 +149,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Referral::class);
     }
+
+    /**
+     * @return HasMany
+     */
+    public function bonusBattles(): HasMany
+    {
+        return $this->hasMany(BonusBattle::class);
+    }
 }

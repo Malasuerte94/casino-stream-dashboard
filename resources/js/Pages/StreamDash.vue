@@ -9,14 +9,11 @@ import ChangeLog from '@/Components/MainComponents/ChangeLog.vue'
     <AppLayout title="Dashboard">
         <template #header>
             <div class="flex gap-2">
-                <NavLink class="text-black font-bold border-r-amber-500 border-r-2" target="blank" :href="route('stream-start', { id: $page.props.user.id  })" :active="route().current('stream-start')">
-                    Casino + Depo - OBS
-                </NavLink>
                 <NavLink class="text-black font-bold border-r-amber-500 border-r-2" :href="route('bonus-list', { id: $page.props.user.id })" :active="route().current('bonus-list')">
                     Bonus Buy - OBS
                 </NavLink>
-                <NavLink class="text-black font-bold border-r-amber-500 border-r-2" :href="route('banners-obs', { id: $page.props.user.id })" :active="route().current('banners-obs')">
-                    Banners - OBS
+                <NavLink class="text-black font-bold border-r-amber-500 border-r-2" :href="route('bonus-battle-view', { id: $page.props.user.id })" :active="route().current('bonus-battle-view')">
+                  Bonus Battle - OBS
                 </NavLink>
                 <NavLink class="text-black font-bold border-r-amber-500 border-r-2" :href="route('bonus-winner-obs', { id: $page.props.user.id })" :active="route().current('banners-obs')">
                       Bonus Winner - OBS
@@ -26,6 +23,9 @@ import ChangeLog from '@/Components/MainComponents/ChangeLog.vue'
                 </NavLink>
                 <NavLink class="text-black font-bold border-r-amber-500 border-r-2" :href="route('picker-wheel', { id: $page.props.user.id })" :active="route().current('picker-wheel')">
                   Wheel - OBS
+                </NavLink>
+                <NavLink class="text-black font-bold border-r-amber-500 border-r-2" :href="route('banners-obs', { id: $page.props.user.id })" :active="route().current('banners-obs')">
+                  Banners - OBS
                 </NavLink>
             </div>
         </template>

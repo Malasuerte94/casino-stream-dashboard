@@ -138,7 +138,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <AppLayout title="Bonuses">
+  <AppLayout title="Bonus Battle">
     <div class="py-2">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <!-- Hide form if there's an active battle -->

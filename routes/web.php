@@ -46,6 +46,10 @@ Route::get('/yt-like-view-counter/{id}', function ($id) {
     return Inertia::render('YtLikeViewCounter', ['id' => $id]);
 })->name('yt-like-view-counter');
 
+Route::get('/bonus-battle-view/{id}', function ($id) {
+    return Inertia::render('BonusBattleView', ['id' => $id]);
+})->name('bonus-battle-view');
+
 Route::get('/picker-wheel/{id}', function ($id) {
     return Inertia::render('PickerWheel', ['id' => $id]);
 })->name('picker-wheel');
