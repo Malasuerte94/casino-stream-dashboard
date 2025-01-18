@@ -28,44 +28,51 @@
             {{bonusBattleStage.name}}
           </div>
           <div class="battle flex gap-2 align-middle items-center justify-center relative">
-            <div class="w-100 grow flex-col flex gap-2 px-2 max-w-[190px]">
-              <div class="concurrent flex bg-blue-500 text-white px-4 py-2 rounded-md">
-                {{bonusBattleConcurrents[0]?.name|| 'N/A'}}
+            <div
+                v-for="(concurrent, index) in bonusBattleConcurrents"
+                :key="concurrent?.id || index"
+                class="w-100 grow flex-col flex gap-2 px-2 max-w-[190px]"
+            >
+              <div
+                  :class="'concurrent flex px-4 py-2 rounded-md text-white ' + (index === 0 ? 'bg-blue-500' : 'bg-red-500')"
+              >
+                {{ concurrent?.name || 'N/A' }}
               </div>
               <div class="from-user">
-                {{bonusBattleConcurrents[0]?.for_user || 'N/A'}}
+                {{ concurrent?.for_user || 'N/A' }}
               </div>
               <div>
-                <ul>
-                  <li v-for="score in getConcurrentScores(bonusBattleConcurrents[0]?.id, bonusBattleStage?.id)" :key="score.id" class="text-sm">
-                    <div>Cost: {{ score.cost_buy }}</div>
-                    <div>Result: {{ score.result_buy }}</div>
-                    <div>Score: {{ score.score }}</div>
-                    <div v-if="score.winner !== null">Winner: {{ score.winner ? 'Yes' : 'No' }}</div>
-                  </li>
-                </ul>
+                <table class="table-auto mb-2 w-full text-sm border-collapse border border-gray-700 rounded-md overflow-hidden">
+                  <thead>
+                  <tr class="bg-black text-white">
+                    <th class="border border-gray-700 px-2 py-2">Cost</th>
+                    <th class="border border-gray-700 px-2 py-2">Rezultat</th>
+                    <th class="border border-gray-700 px-2 py-2">Scor</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr
+                      v-for="(score, scoreIndex) in getConcurrentScores(concurrent?.id, bonusBattleStage?.id)"
+                      :key="score.id || scoreIndex"
+                      class="border-t border-gray-700 bg-gray-700"
+                  >
+                    <td class="border border-gray-700 px-2 py-2">{{ score.cost_buy }}</td>
+                    <td class="border border-gray-700 px-2 py-2">{{ score.result_buy }}</td>
+                    <td
+                        class="border border-gray-700 px-2 py-2 font-bold"
+                        :class="score.score < 1 ? 'text-red-500' : 'text-green-500'"
+                    >
+                      {{ score.score }}
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
+
+            <!-- VS Symbol -->
             <div class="vs-symbol flex justify-center items-center text-2xl">
               VS
-            </div>
-            <div class="w-100 grow flex-col flex gap-2 px-2 max-w-[190px]">
-              <div class="concurrent flex bg-red-500 text-white px-4 py-2 rounded-md">
-                {{bonusBattleConcurrents[1]?.name || 'N/A'}}
-              </div>
-              <div class="from-user">
-                {{bonusBattleConcurrents[1]?.for_user || 'N/A'}}
-              </div>
-              <div>
-                <ul>
-                  <li v-for="score in getConcurrentScores(bonusBattleConcurrents[1]?.id, bonusBattleStage?.id)" :key="score.id" class="text-sm">
-                    <div>Cost: {{ score.cost_buy }}</div>
-                    <div>Result: {{ score.result_buy }}</div>
-                    <div>Score: {{ score.score }}</div>
-                    <div v-if="score.winner !== null">Winner: {{ score.winner ? 'Yes' : 'No' }}</div>
-                  </li>
-                </ul>
-              </div>
             </div>
           </div>
         </div>

@@ -13,14 +13,27 @@ class BonusStage extends Model
 
     protected $guarded = ['id'];
 
-    public function battle(): BelongsTo
+    public function bonusBattle(): BelongsTo
     {
         return $this->belongsTo(BonusBattle::class);
     }
 
-    public function scores(): HasMany
+    public function brackets(): HasMany
     {
-        return $this->hasMany(StageScore::class);
+        return $this->hasMany(Bracket::class);
+    }
+
+    /**
+     * Dynamic attribute to get the first unfinished bracket for the stage.
+     *
+     * @return HasMany|Model|null
+     */
+    public function getActiveBracketAttribute(): Model|HasMany|null
+    {
+        return $this->brackets()
+            ->where('is_finished', false)
+            ->orderBy('created_at', 'asc')
+            ->first();
     }
 
 }

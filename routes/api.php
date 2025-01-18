@@ -91,8 +91,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/active', [BonusBattleController::class, 'getActiveBattle']);
         Route::post('/finish-round', [BonusBattleController::class, 'finishRound']);
         Route::post('/end-battle', [BonusBattleController::class, 'endBattle']);
-
         Route::post('/add-score', [BonusBattleController::class, 'addScore']);
+        Route::delete('/delete-score/{id}', [BonusBattleController::class, 'deleteScore']);
     });
 });
 

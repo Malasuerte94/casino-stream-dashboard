@@ -16,6 +16,11 @@ class StageScore extends Model
         return $this->belongsTo(BonusStage::class);
     }
 
+    public function bracket(): BelongsTo
+    {
+        return $this->belongsTo(Bracket::class);
+    }
+
     public function concurrent(): BelongsTo
     {
         return $this->belongsTo(BonusConcurrent::class, 'bonus_concurrent_id');

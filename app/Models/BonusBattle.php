@@ -26,4 +26,30 @@ class BonusBattle extends Model
     {
         return $this->hasMany(BonusStage::class);
     }
+
+    /**
+     * Get the last active stage for the bonus battle.
+     *
+     * @return HasMany|Model|object
+     */
+    public function getLastActiveStageAttribute()
+    {
+        return $this->stages()
+            ->where('active', true)
+            ->orderBy('created_at', 'asc')
+            ->first();
+    }
+
+    /**
+     * Get the last ended stage for the bonus battle.
+     *
+     * @return HasMany|Model|object
+     */
+    public function getLastEndedStageAttribute()
+    {
+        return $this->stages()
+            ->where('active', false)
+            ->orderBy('created_at', 'desc')
+            ->first();
+    }
 }

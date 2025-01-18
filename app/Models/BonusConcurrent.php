@@ -18,7 +18,7 @@ class BonusConcurrent extends Model
         return $this->belongsTo(BonusBattle::class);
     }
 
-    public function stageScores(): HasMany
+    public function scores(): HasMany
     {
         return $this->hasMany(StageScore::class);
     }
