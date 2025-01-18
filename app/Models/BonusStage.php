@@ -36,4 +36,16 @@ class BonusStage extends Model
             ->first();
     }
 
+    /**
+     * Dynamic attribute to get the first unfinished bracket for the stage.
+     *
+     * @return HasMany|Model|null
+     */
+    public function getLatestBracketAttribute(): Model|HasMany|null
+    {
+        return $this->brackets()
+            ->orderBy('created_at', 'asc')
+            ->first();
+    }
+
 }

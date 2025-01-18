@@ -55,17 +55,59 @@ class BonusBattleController extends Controller
     {
         $userId = $id;
         $user = User::findOrFail($userId);
+
         $activeBattle = $user->bonusBattles()->where('active', true)->first();
 
         if (!$activeBattle) {
-            return response()->json(['battle' => null, 'stage' => null, 'concurrents' => []]);
+            $activeBattle = $user->bonusBattles()
+                ->latest('created_at')
+                ->first();
         }
 
         $activeInfo = $this->getCurentBattleDetails($activeBattle);
         $activeStage = $activeBattle->lastActiveStage ?? $activeBattle->lastEndedStage;
 
-        $activeInfo['all_concurrents'] = $activeBattle->concurrents()->get();
-        $activeInfo['current_score'] = $activeStage->scores()->get();
+        $stageBrackets = $activeStage?->brackets()->where('is_finished', true)->get()->map(function ($bracket) {
+            return [
+                'id' => $bracket->id,
+                'bonus_stage_id' => $bracket->bonus_stage_id,
+                'participant_a' => $bracket->participantA?->name ?? 'N/A',
+                'participant_b' => $bracket->participantB?->name ?? 'N/A',
+                'is_finished' => $bracket->is_finished,
+                'winner' => $bracket->winner?->name ?? 'N/A',
+            ];
+        });
+
+        $allBattleBrackets = $activeBattle->stages()
+            ->with('brackets')
+            ->get()
+            ->flatMap(function ($stage) {
+                return $stage->brackets;
+            });
+
+        $allConcurrents = $activeBattle->concurrents()->get()->map(function ($concurrent) use ($allBattleBrackets) {
+            $isEliminated = $allBattleBrackets->contains(function ($bracket) use ($concurrent) {
+                return $bracket->is_finished && $bracket->winner_id !== $concurrent->id &&
+                    ($bracket->participant_a_id === $concurrent->id || $bracket->participant_b_id === $concurrent->id);
+            });
+
+            return array_merge($concurrent->toArray(), ['is_eliminated' => $isEliminated]);
+        });
+
+        $remainingConcurrents = $allConcurrents->filter(function ($concurrent) {
+            return !$concurrent['is_eliminated'];
+        });
+
+        $battleWinner = null;
+
+        if ($remainingConcurrents->count() === 1) {
+            $battleWinner = $remainingConcurrents->first();
+        }
+
+        $activeInfo['stage_brackets'] = $stageBrackets;
+        $activeInfo['all_concurrents'] = $allConcurrents;
+        $activeInfo['current_score'] = $activeStage->activeBracket?->scores()->get();
+        $activeInfo['battle_winner'] = $battleWinner;
 
         return response()->json($activeInfo);
     }
@@ -75,7 +117,12 @@ class BonusBattleController extends Controller
     {
         $activeStage = $activeBattle->lastActiveStage ?? $activeBattle->lastEndedStage;
 
-        $activeStageScores = $activeStage->activeBracket->scores()->get();
+        $activeStageScores = $activeStage->activeBracket?->scores()->get();
+
+        if(!$activeStageScores) {
+            $activeStageScores = $activeStage->latestBracket->scores()->get();
+        }
+
         $nextConcurrents = $this->getNextConcurrents($activeBattle);
 
         return [
