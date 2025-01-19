@@ -104,10 +104,28 @@ class BonusBattleController extends Controller
             $battleWinner = $remainingConcurrents->first();
         }
 
+        $allScores = $allBattleBrackets->flatMap(function ($bracket) {
+            return $bracket->scores;
+        });
+        $bestScore = $allScores->max('score');
+        $avgScore = $allScores->avg('score');
+        $totalProfit = $allScores->sum(function ($score) {
+            return $score->result_buy - $score->cost_buy;
+        });
+        $totalCost = $allScores->sum(function ($score) {
+            return $score->cost_buy;
+        });
+
+
+
         $activeInfo['stage_brackets'] = $stageBrackets;
         $activeInfo['all_concurrents'] = $allConcurrents;
         $activeInfo['current_score'] = $activeStage->activeBracket?->scores()->get();
         $activeInfo['battle_winner'] = $battleWinner;
+        $activeInfo['best_score'] = $bestScore;
+        $activeInfo['avg_score'] = round($avgScore, 2);
+        $activeInfo['total_profit'] = $totalProfit;
+        $activeInfo['total_cost'] = $totalCost;
 
         return response()->json($activeInfo);
     }
@@ -275,10 +293,12 @@ class BonusBattleController extends Controller
         $pairs = $winners->shuffle()->chunk(2);
 
         foreach ($pairs as $pair) {
+            $pair = $pair->values();
+
             Bracket::create([
                 'bonus_stage_id' => $newStage->id,
                 'participant_a_id' => $pair[0]->id,
-                'participant_b_id' => $pair[1]->id ?? null, // Handle odd participants
+                'participant_b_id' => $pair[1]->id,
                 'is_finished' => false,
             ]);
         }

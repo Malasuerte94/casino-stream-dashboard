@@ -5,27 +5,28 @@
         <div class="header-list">
           <div class="header-list-title">
             <span class="img-list">
-              <SvgBh />
+              <SvgBh/>
             </span>
             <span>Bonus Battle</span>
             <div class="bonus-details">
               <div class="list-cost">Miză <span>{{ bonusBattleInfo.stake }} lei</span></div>
               <div class="list-opened">
                 <div class="details">
-                  <span>{{ totalConcurrents }}</span>
+                  <span>{{ totalConcurrents }} Jocuri</span>
                 </div>
               </div>
             </div>
           </div>
           <div class="header-details">
-            <div>Avg Scor<span>1</span></div>
-            <div>Top Scor<span>2</span></div>
-            <div>Rezultat<span>3 lei</span></div>
+            <div>Scor<span>AVG: {{ avgScore }}</span></div>
+            <div><span>TOP: {{ bestScore }}</span></div>
+            <div>Rezultat<span :class="{ 'text-red-500': totalProfit < 0, 'text-green-500': totalProfit >= 0 }">{{ totalProfit }} lei
+            </span></div>
           </div>
         </div>
         <div v-if="!battleWinner?.id">
-          <div class="justify-end text-center uppercase text-sm px-3 py-3 stage">
-            <span>{{bonusBattleStage.name}}</span>
+          <div class="justify-end text-center uppercase text-sm px-3 py-3 stage font-bold">
+            <span>{{ bonusBattleStage.name }}</span>
           </div>
           <div class="battle flex gap-2 align-middle items-center justify-center relative">
             <div
@@ -42,7 +43,8 @@
                 {{ concurrent?.for_user || 'N/A' }}
               </div>
               <div>
-                <table class="table-auto mb-2 w-full text-sm border-collapse border border-gray-700 rounded-md overflow-hidden">
+                <table
+                    class="table-auto mb-2 w-full text-sm border-collapse border border-gray-700 rounded-md overflow-hidden">
                   <thead>
                   <tr class="bg-black text-white uppercase text-xs">
                     <th class="border border-gray-700 px-2 py-2">Cost</th>
@@ -62,7 +64,7 @@
                         class="border border-gray-700 px-2 py-1 font-bold"
                         :class="score.score < 1 ? 'text-red-500' : 'text-green-500'"
                     >
-                      {{ score.score }}
+                      {{ score.score.toFixed(2) }}
                     </td>
                   </tr>
                   </tbody>
@@ -88,8 +90,8 @@
           <div class="flex-grow">
             <!-- Stats -->
             <div class="mb-4">
-              <p class="text-sm"><span class="font-bold">Total Score:</span> {{ battleWinner.total_score }}</p>
-              <p class="text-sm"><span class="font-bold">For User:</span> {{ battleWinner.for_user || 'N/A' }}</p>
+              <p class="text-md"><span class="font-bold">Total Scor:</span> {{ totalBalanceScore }}</p>
+              <p class="text-md"><span class="font-bold">Pentru User:</span> {{ battleWinner.for_user || 'N/A' }}</p>
             </div>
 
             <!-- Battle Cost and Profit Table -->
@@ -104,15 +106,15 @@
                 <tbody>
                 <tr>
                   <td class="p-1">Battle Cost</td>
-                  <td class="p-1 text-right">{{ battleWinner.battle_cost }}</td>
+                  <td class="p-1 text-right">{{ totalCost }}</td>
                 </tr>
                 <tr>
                   <td class="p-1">Battle Profit</td>
                   <td
                       class="p-1 text-right"
-                      :class="{ 'text-green-400': battleWinner.battle_profit > 0, 'text-red-400': battleWinner.battle_profit < 0 }"
+                      :class="{ 'text-green-400': totalProfit > 0, 'text-red-400': totalProfit < 0 }"
                   >
-                    {{ battleWinner.battle_profit }}
+                    {{ totalProfit }}
                   </td>
                 </tr>
                 </tbody>
@@ -137,16 +139,9 @@
           </div>
         </div>
 
-        <div class="shadow-md rounded-md py-3 px-3">
-          <div class="overflow-x-auto rounded-md">
-            <table class="table-auto w-full border-collapse border border-black text-xs text-gray-200">
-              <thead>
-              <tr class="bg-gray-800">
-                <th class="border border-black px-1 py-1 text-left w-5"></th>
-                <th class="border border-black px-2 py-1 text-left">Joc</th>
-                <th class="border border-black px-2 py-1 text-left">Pentru Utilizator</th>
-              </tr>
-              </thead>
+        <div class="shadow-md py-3 px-3">
+          <div class="overflow-x-auto">
+            <table class="table-auto w-full text-sm text-gray-200">
               <tbody>
               <tr
                   v-for="(concurrent, index) in bonusBattleAllConcurrents"
@@ -174,8 +169,9 @@
 
 <script>
 import SvgBh from "@/Components/MainComponents/SvgBh.vue";
+
 export default {
-  components: { SvgBh },
+  components: {SvgBh},
   props: ["id"],
   data() {
     return {
@@ -189,6 +185,10 @@ export default {
       bonusBattleAllConcurrents: [],
       bonusBattleAllBracketsCurentStage: [],
       battleWinner: [],
+      avgScore: 0,
+      bestScore: 0,
+      totalProfit: 0,
+      totalCost: 0,
       isUpdating: false,
     };
   },
@@ -196,6 +196,9 @@ export default {
     totalConcurrents() {
       return this.bonusBattleAllConcurrents.length;
     },
+    totalBalanceScore() {
+      return ((this.totalCost + this.totalProfit) / this.totalCost).toFixed(2);
+    }
   },
   async mounted() {
     await this.getActiveBonusBattle();
@@ -216,6 +219,10 @@ export default {
             this.bonusBattleScores = response.data.current_score;
             this.bonusBattleWinner = response.data.winner;
             this.battleWinner = response.data.battle_winner;
+            this.avgScore = response.data.avg_score.toFixed(2);
+            this.bestScore = response.data.best_score.toFixed(2);
+            this.totalProfit = response.data.total_profit;
+            this.totalCost = response.data.total_cost;
           })
           .catch((error) => {
             console.log(error);
@@ -254,6 +261,7 @@ export default {
   border-radius: 5px;
   color: #ffffff;
   font-family: Arial, sans-serif;
+
   .bracket-item {
     display: flex;
     align-items: center;
@@ -284,7 +292,6 @@ export default {
 }
 
 
-
 .footer-donate {
   display: none !important;
 }
@@ -306,6 +313,7 @@ body,
   display: block;
   overflow: hidden;
 }
+
 .vs-symbol {
   position: absolute;
   width: 50px;
@@ -321,6 +329,7 @@ body,
   align-items: center;
   align-self: baseline;
 }
+
 .concurrent {
   height: 100px;
   display: flex;
@@ -332,9 +341,12 @@ body,
   text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
   z-index: 1;
   border: 2px black solid;
+  line-height: 24px;
 }
+
 .stage {
   position: relative;
+
   span {
     background-color: #FFC400;
     padding: 0 10px;
@@ -343,6 +355,7 @@ body,
     z-index: 2;
     position: relative;
   }
+
   &::before {
     z-index: 1;
     content: "";
@@ -359,6 +372,7 @@ body,
     top: 20px;
   }
 }
+
 .from-user {
   margin-top: -15px;
   padding-top: 5px;
@@ -368,9 +382,11 @@ body,
   border-radius: 5px;
   margin-bottom: 15px;
 }
+
 .header-list {
   z-index: 999;
   position: relative;
+
   .header-list-title {
     display: flex;
     flex-direction: row;
@@ -383,16 +399,18 @@ body,
     background: #ffc400;
     border-bottom: 2px black solid;
     color: black;
+
     .img-list {
       display: block;
       perspective: 1000px;
-      margin-right: 5px;// This is essential to create the 3D effect
+      margin-right: 5px; // This is essential to create the 3D effect
       svg {
         width: 20px; // Adjust width and height for better visibility
         height: 20px;
         animation: spin 10s infinite ease-in-out;
         transform-style: preserve-3d;
         position: relative;
+
         &::before {
           transform: translateZ(-5px); // Back side shadow
         }
@@ -402,10 +420,12 @@ body,
         }
       }
     }
+
     .bonus-details {
       margin-left: auto;
       display: flex;
       gap: 5px;
+
       .list-opened {
         margin-left: auto;
         display: flex;
@@ -413,6 +433,7 @@ body,
         padding: 0 5px;
         border-radius: 5px;
       }
+
       .list-cost {
         background: #ffffffbf;
         padding: 0 5px;
@@ -420,6 +441,7 @@ body,
       }
     }
   }
+
   .progress {
     position: relative;
     display: flex;
@@ -427,12 +449,14 @@ body,
     font-size: 14px;
     height: 5px;
     background-color: rgb(110 110 110);
+
     .details {
       z-index: 2;
       padding: 5px;
       color: #ffffff;
       text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
     }
+
     .progress-bar-fill {
       position: absolute;
       background: linear-gradient(90deg, rgba(255, 196, 0, 1) 0%, rgba(255, 109, 0, 1) 100%);
@@ -443,6 +467,7 @@ body,
       left: 0;
     }
   }
+
   .progress,
   .header-details {
     span {
@@ -454,6 +479,7 @@ body,
       font-weight: bold;
     }
   }
+
   .header-details {
     background: black;
     display: flex;

@@ -3,7 +3,7 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import {ref, onMounted} from 'vue';
 
 const title = ref('');
-const stake = ref('');
+const stake = ref('5-10');
 const concurrents = ref([]);
 
 const activeBattle = ref(null);
@@ -17,10 +17,15 @@ const winner = ref(null);
 const currentPair = ref([]);
 
 const addConcurrent = () => {
+
+  //dev
+  const randomString = (length) => Array.from({ length }, () => Math.random().toString(36).charAt(2)).join('');
+
+
   const currentCount = concurrents.value.length;
   const nextCount = currentCount === 0 ? 2 : currentCount * 2;
   for (let i = 0; i < nextCount - currentCount; i++) {
-    concurrents.value.push({name: '', for_user: ''});
+    concurrents.value.push({name: randomString(10), for_user: randomString(6)});
   }
 };
 
