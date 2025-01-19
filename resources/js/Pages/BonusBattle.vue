@@ -17,15 +17,10 @@ const winner = ref(null);
 const currentPair = ref([]);
 
 const addConcurrent = () => {
-
-  //dev
-  const randomString = (length) => Array.from({ length }, () => Math.random().toString(36).charAt(2)).join('');
-
-
   const currentCount = concurrents.value.length;
   const nextCount = currentCount === 0 ? 2 : currentCount * 2;
   for (let i = 0; i < nextCount - currentCount; i++) {
-    concurrents.value.push({name: randomString(10), for_user: randomString(6)});
+    concurrents.value.push({name: '', for_user: ''});
   }
 };
 

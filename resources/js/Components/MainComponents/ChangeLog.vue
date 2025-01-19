@@ -14,6 +14,15 @@
                     </tr>
                 </thead>
                 <tbody>
+                  <tr class="p-2 bg-white border-b dark:bg-gray-900 dark:border-gray-700">
+                    <td class="p-2 table-cell text-left">
+                      <ul>
+                        <li>Bonus Battle</li>
+                      </ul>
+                    </td>
+                    <td class="p-2 table-cell text-left">TERMINAT</td>
+                    <td class="p-2 table-cell text-left">19/01/2025</td>
+                  </tr>
                     <tr class="p-2 bg-white border-b dark:bg-gray-900 dark:border-gray-700">
                         <td class="p-2 table-cell text-left">
                             <ul>
