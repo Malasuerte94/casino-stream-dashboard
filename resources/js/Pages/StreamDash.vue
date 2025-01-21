@@ -27,6 +27,9 @@ import ChangeLog from '@/Components/MainComponents/ChangeLog.vue'
                 <NavLink class="text-black font-bold border-r-amber-500 border-r-2" :href="route('banners-obs', { id: $page.props.user.id })" :active="route().current('banners-obs')">
                   Banners - OBS
                 </NavLink>
+              <NavLink class="text-black font-bold border-r-amber-500 border-r-2" :href="route('schedule-view', { id: $page.props.user.id })" :active="route().current('schedule-view')">
+                Schedule - OBS
+              </NavLink>
             </div>
         </template>
 

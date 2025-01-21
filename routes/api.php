@@ -10,6 +10,7 @@ use App\Http\Controllers\BonusListController;
 use App\Http\Controllers\DepositController;
 use App\Http\Controllers\GuessEntriesController;
 use App\Http\Controllers\ReferralController;
+use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SocialController;
 use App\Http\Controllers\SpinController;
 use App\Http\Controllers\StreamAccountController;
@@ -94,6 +95,17 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/add-score', [BonusBattleController::class, 'addScore']);
         Route::delete('/delete-score/{id}', [BonusBattleController::class, 'deleteScore']);
     });
+
+
+    Route::prefix('schedule')->group(function () {
+        Route::get('latest', [ScheduleController::class, 'getLatest']);
+        Route::get('all', [ScheduleController::class, 'getAll']);
+        Route::get('{schedule}', [ScheduleController::class, 'getSchedule']);
+        Route::patch('{schedule_day}/edit', [ScheduleController::class, 'editDay']);
+        Route::post('/', [ScheduleController::class, 'createSchedule']);
+        Route::patch('{schedule_day}/toggle-status', [ScheduleController::class, 'toggleStatus']);
+
+    });
 });
 
 // Public Routes (No Authentication Required)
@@ -132,3 +144,6 @@ Route::get('/show-entries/{id}/{type}', [GuessEntriesController::class, 'showEnt
 Route::get('/get-bonus-winner/{id}', [BonusListController::class, 'getBonusWinner']);
 
 Route::get('/bonus-battle-info/{id}', [BonusBattleController::class, 'getBonusBattleInfo']);
+
+//schedule
+Route::get('/schedule/weekly/{id}', [ScheduleController::class, 'getWeeklySchedule']);

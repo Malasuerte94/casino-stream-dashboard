@@ -58,6 +58,10 @@ Route::get('/referrals/{id}', function ($id) {
     return Inertia::render('Referrals', ['id' => $id]);
 })->name('referrals');
 
+Route::get('/schedule-view/{id}', function ($id) {
+    return Inertia::render('ScheduleView', ['id' => $id]);
+})->name('schedule-view');
+
 
 
 Route::get('/', function () {
@@ -113,4 +117,7 @@ Route::middleware([
     Route::get('/wheel-settings', function () {
         return Inertia::render('WheelSettings');
     })->name('wheel-settings');
+    Route::get('/schedule', function () {
+        return Inertia::render('SchedulePage');
+    })->name('schedule');
 });
