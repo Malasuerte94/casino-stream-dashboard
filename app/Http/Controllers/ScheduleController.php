@@ -48,6 +48,14 @@ class ScheduleController extends Controller
     public function toggleStatus(ScheduleDay $schedule_day)
     {
         $schedule_day->update(['active' => !$schedule_day->active]);
+
+        if(!$schedule_day->active){
+            $discord = new DiscordController();
+            $dataString = $discord->getRomanianDayName($schedule_day->date);
+            $message = "Atenție @everyone! Ziua de **" . $dataString. "** ( " . $schedule_day->date . ") a fost **ANULATĂ**";
+            $discord->sendMessage($message, $schedule_day->schedule->user);
+        }
+
         return response()->json(['message' => 'Status updated successfully.', 'day' => $schedule_day]);
     }
 
@@ -66,12 +74,18 @@ class ScheduleController extends Controller
             'days' => 'required|array',
             'days.*.info' => 'required|string',
             'days.*.date' => 'required|date',
+            'announceToDiscord' => 'boolean',
         ]);
 
         $schedule = Schedule::create(['user_id' => $user->id]);
 
         foreach ($validated['days'] as $day) {
             $schedule->days()->create($day);
+        }
+
+        if ($validated['announceToDiscord'] ?? true) {
+            $discord = new DiscordController();
+            $discord->sendScheduleMessage($schedule->id, $user);
         }
 
         return response()->json(['message' => 'Schedule created successfully.', 'schedule' => $schedule->load('days')]);

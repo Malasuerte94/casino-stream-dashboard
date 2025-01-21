@@ -8,6 +8,7 @@ use App\Http\Controllers\BonusHuntController;
 use App\Http\Controllers\BonusHuntGameController;
 use App\Http\Controllers\BonusListController;
 use App\Http\Controllers\DepositController;
+use App\Http\Controllers\DiscordController;
 use App\Http\Controllers\GuessEntriesController;
 use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\ScheduleController;
@@ -65,6 +66,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Settings Management
     Route::patch('/settings', [UserSettingController::class, 'edit']);
+    Route::post('/user-settings/save-discord-webhook', [UserSettingController::class, 'saveDiscordWebhookScheduleAnnouncer']);
 
     // Financial Reports Management
     Route::post('/deposits', [DepositController::class, 'store']);
@@ -104,7 +106,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('{schedule_day}/edit', [ScheduleController::class, 'editDay']);
         Route::post('/', [ScheduleController::class, 'createSchedule']);
         Route::patch('{schedule_day}/toggle-status', [ScheduleController::class, 'toggleStatus']);
-
+        Route::post('/{id}/announce', [DiscordController::class, 'sendScheduleMessage']);
     });
 });
 

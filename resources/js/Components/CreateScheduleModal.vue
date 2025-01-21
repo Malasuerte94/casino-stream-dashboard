@@ -27,7 +27,20 @@
           </div>
         </div>
 
-        <!-- Generate Days Button -->
+        <!-- Announce to Discord Checkbox -->
+        <div class="flex items-center">
+          <input
+              type="checkbox"
+              id="announceToDiscord"
+              v-model="announceToDiscord"
+              class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+          />
+          <label for="announceToDiscord" class="ml-2 block text-sm text-gray-700">
+            Announce to Discord
+          </label>
+        </div>
+
+        <!-- Generate Days -->
         <button
             type="button"
             @click="generateDays"
@@ -36,6 +49,7 @@
           Generate Days
         </button>
 
+        <!-- Days Inputs -->
         <div class="grid grid-cols-[0.5fr_2fr] gap-4 border-t pt-4" v-for="(day, index) in days" :key="index">
           <span class="text-gray-700 text-sm font-medium flex items-center justify-center truncate">
             {{ formatDayName(day.date) }}
@@ -76,6 +90,7 @@ export default {
       startDate: '',
       endDate: '',
       days: [],
+      announceToDiscord: true, // Default to true
     };
   },
   methods: {
@@ -93,14 +108,16 @@ export default {
       return days[new Date(date).getDay()];
     },
     submitSchedule() {
-      axios.post('/api/schedule', { days: this.days, user_id: 1 }).then(() => {
-        this.$emit('close');
-      });
+      axios
+          .post('/api/schedule', {
+            days: this.days,
+            user_id: 1,
+            announceToDiscord: this.announceToDiscord,
+          })
+          .then(() => {
+            this.$emit('close');
+          });
     },
   },
 };
 </script>
-
-<style>
-/* No additional custom styles as we rely on Tailwind CSS */
-</style>

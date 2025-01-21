@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\BonusBuy;
 use App\Models\BonusHunt;
 use App\Models\User;
+use App\Models\UserSetting;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -119,6 +120,28 @@ class UserSettingController extends Controller
 
         $latestBonus->is_open = $isOpen === true;
         $latestBonus->save();
+    }
+
+
+    /**
+     * Save Discord Webhook for Schedule Announcer.
+     *
+     * @param  Request  $request
+     * @return JsonResponse
+     */
+    public function saveDiscordWebhookScheduleAnnouncer(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'discordWebhook' => 'required|string|url',
+        ]);
+
+        $userId = $request->user()->id;
+        UserSetting::updateOrCreate(
+            ['user_id' => $userId, 'name' => 'discord_wbh_schedule'],
+            ['value' => $validated['discordWebhook']]
+        );
+
+        return response()->json(['message' => 'Webhook saved successfully.'], 200);
     }
 
 }
