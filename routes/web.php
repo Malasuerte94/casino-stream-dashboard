@@ -62,6 +62,10 @@ Route::get('/schedule-view/{id}', function ($id) {
     return Inertia::render('ScheduleView', ['id' => $id]);
 })->name('schedule-view');
 
+Route::get('/test', function () {
+    return Inertia::render('Test');
+})->name('test');
+
 
 
 Route::get('/', function () {

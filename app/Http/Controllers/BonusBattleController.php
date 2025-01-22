@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\BonusBattle;
+use App\Models\BonusBuy;
 use App\Models\BonusConcurrent;
+use App\Models\BonusHunt;
 use App\Models\Bracket;
 use App\Models\StageScore;
 use App\Models\User;
@@ -12,6 +14,22 @@ use Illuminate\Http\Request;
 
 class BonusBattleController extends Controller
 {
+
+    public function test() {
+        $message =  'nothing';
+//        $userId = auth()->user()->id;
+//        $user = User::find($userId);
+//        $webhookUrl = $user->webhookHuntBuyBattle;
+//
+//        $bonusBattle = BonusBattle::findOrFail(1);
+//        $message = $this->buildBonusBattleDiscordMessage($bonusBattle);
+//
+//        $discord = new DiscordController();
+//        $discord->sendMessage($message, $webhookUrl);
+
+        return response()->json($message);
+    }
+
 
     /**
      * Get streamer BATTLE INFO
@@ -421,6 +439,9 @@ class BonusBattleController extends Controller
 
         $bonusBattle->stages()->update(['active' => false]);
         $bonusBattle->update(['active' => false]);
+
+        $discord = new DiscordController();
+        $discord->sendBattleMessage($bonusBattle);
 
         return response()->json([
             'message' => 'Battle ended successfully!',

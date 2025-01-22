@@ -9,19 +9,17 @@
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <label class="block text-sm font-medium text-gray-700" for="startDate">Start Date</label>
-            <input
-                type="date"
-                id="startDate"
+            <flat-pickr
                 v-model="startDate"
+                :config="flatpickrConfig"
                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700" for="endDate">End Date</label>
-            <input
-                type="date"
-                id="endDate"
+            <flat-pickr
                 v-model="endDate"
+                :config="flatpickrConfig"
                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
@@ -84,13 +82,27 @@
 </template>
 
 <script>
+import axios from 'axios';
+import FlatPickr from 'vue-flatpickr-component';
+import 'flatpickr/dist/flatpickr.css';
+import { Romanian } from 'flatpickr/dist/l10n/ro.js';
+
 export default {
+  components: {
+    flatPickr: FlatPickr,
+  },
   data() {
     return {
       startDate: '',
       endDate: '',
       days: [],
       announceToDiscord: true, // Default to true
+      flatpickrConfig: {
+        locale: Romanian, // Use Romanian localization
+        weekNumbers: true, // Show week numbers
+        firstDayOfWeek: 1, // Start the week on Monday
+        dateFormat: 'Y-m-d', // Format date as YYYY-MM-DD
+      },
     };
   },
   methods: {
@@ -121,3 +133,4 @@ export default {
   },
 };
 </script>
+

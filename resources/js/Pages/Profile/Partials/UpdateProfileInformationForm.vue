@@ -20,7 +20,11 @@ const form = useForm({
   photo: null,
 });
 
-const discordWebhookForm = useForm({
+const discordWebhookFormSchedule = useForm({
+  discordWebhook: '', // Initial value for the webhook
+});
+
+const discordWebhookFormHuntBuyBattle = useForm({
   discordWebhook: '', // Initial value for the webhook
 });
 
@@ -40,8 +44,19 @@ const updateProfileInformation = () => {
   });
 };
 
-const saveDiscordWebhook = () => {
-  discordWebhookForm.post('/api/user-settings/save-discord-webhook', {
+const saveDiscordWebhookSchedule = () => {
+  discordWebhookFormSchedule.post('/api/user-settings/save-discord-webhook', {
+    onSuccess: () => {
+      alert('Discord webhook saved successfully!');
+    },
+    onError: () => {
+      alert('Failed to save the webhook. Please try again.');
+    },
+  });
+};
+
+const saveDiscordWebhookHuntBuyBattle = () => {
+  discordWebhookFormHuntBuyBattle.post('/api/user-settings/save-discord-webhook/hunt-buy-battle', {
     onSuccess: () => {
       alert('Discord webhook saved successfully!');
     },
@@ -91,33 +106,60 @@ const clearPhotoFileInput = () => {
 </script>
 
 <template>
-  <div>
+  <div class="flex gap-2">
     <!-- New Discord Webhook Form -->
-    <div class="bg-white shadow rounded-lg p-6 mb-6">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">Discord Webhook</h3>
+    <div class="bg-white shadow rounded-lg p-6 mb-6 w-50">
+      <h3 class="text-lg font-semibold text-gray-800 mb-4">Discord Webhook - Schedule</h3>
       <div class="flex items-center gap-4">
         <div class="flex-1">
           <InputLabel for="discordWebhook" value="Discord Webhook URL" />
           <TextInput
               id="discordWebhook"
-              v-model="discordWebhookForm.discordWebhook"
+              v-model="discordWebhookFormSchedule.discordWebhook"
               type="text"
               placeholder="Enter Discord Webhook URL"
               class="mt-1 block w-full"
           />
         </div>
         <PrimaryButton
-            @click="saveDiscordWebhook"
-            :class="{ 'opacity-25': discordWebhookForm.processing }"
-            :disabled="discordWebhookForm.processing"
+            @click="saveDiscordWebhookSchedule"
+            :class="{ 'opacity-25': discordWebhookFormSchedule.processing }"
+            :disabled="discordWebhookFormSchedule.processing"
         >
           Save
         </PrimaryButton>
       </div>
-      <ActionMessage :on="discordWebhookForm.recentlySuccessful" class="mt-3">
+      <ActionMessage :on="discordWebhookFormSchedule.recentlySuccessful" class="mt-3">
         Webhook Saved.
       </ActionMessage>
-      <InputError :message="discordWebhookForm.errors.discordWebhook" class="mt-2" />
+      <InputError :message="discordWebhookFormSchedule.errors.discordWebhook" class="mt-2" />
+    </div>
+
+    <div class="bg-white shadow rounded-lg p-6 mb-6 w-50">
+      <h3 class="text-lg font-semibold text-gray-800 mb-4">Discord Webhook - Hunt / Buy / Battle</h3>
+      <div class="flex items-center gap-4">
+        <div class="flex-1">
+          <InputLabel for="discordWebhook" value="Discord Webhook URL" />
+          <TextInput
+              id="discordWebhook"
+              v-model="discordWebhookFormHuntBuyBattle.discordWebhook"
+              type="text"
+              placeholder="Enter Discord Webhook URL"
+              class="mt-1 block w-full"
+          />
+        </div>
+        <PrimaryButton
+            @click="saveDiscordWebhookHuntBuyBattle"
+            :class="{ 'opacity-25': discordWebhookFormHuntBuyBattle.processing }"
+            :disabled="discordWebhookFormHuntBuyBattle.processing"
+        >
+          Save
+        </PrimaryButton>
+      </div>
+      <ActionMessage :on="discordWebhookFormHuntBuyBattle.recentlySuccessful" class="mt-3">
+        Webhook Saved.
+      </ActionMessage>
+      <InputError :message="discordWebhookFormHuntBuyBattle.errors.discordWebhook" class="mt-2" />
     </div>
   </div>
 

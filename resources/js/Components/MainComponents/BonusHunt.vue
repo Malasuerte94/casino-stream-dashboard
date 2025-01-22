@@ -170,6 +170,7 @@ export default {
             this.startTimerUpdateBonusHunt();
         },
         async resetBonusHunt() {
+            await this.closeList();
             await axios
                 .post("/api/bonus-hunt")
                 .then((response) => {
@@ -179,6 +180,13 @@ export default {
                 .catch((error) => {
                     console.log(error);
                 });
+        },
+        async closeList() {
+          await axios.post("/api/close-bonus-list", {
+            close: true,
+            list_id: this.bonusHunt.id,
+            type: 'hunt'
+          });
         },
         wantToReset() {
           this.$dialog({

@@ -67,6 +67,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Settings Management
     Route::patch('/settings', [UserSettingController::class, 'edit']);
     Route::post('/user-settings/save-discord-webhook', [UserSettingController::class, 'saveDiscordWebhookScheduleAnnouncer']);
+    Route::post('/user-settings/save-discord-webhook/hunt-buy-battle', [UserSettingController::class, 'saveDiscordWebhookHuntBattleAnnouncer']);
 
     // Financial Reports Management
     Route::post('/deposits', [DepositController::class, 'store']);
@@ -108,6 +109,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('{schedule_day}/toggle-status', [ScheduleController::class, 'toggleStatus']);
         Route::post('/{id}/announce', [DiscordController::class, 'sendScheduleMessage']);
     });
+
+
+    Route::get('/test', [BonusBattleController::class, 'test']);
 });
 
 // Public Routes (No Authentication Required)

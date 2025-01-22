@@ -50,10 +50,12 @@ class ScheduleController extends Controller
         $schedule_day->update(['active' => !$schedule_day->active]);
 
         if(!$schedule_day->active){
+            $user = $schedule_day->schedule->user;
+            $webhookUrl = $user->webhookSchedule;
             $discord = new DiscordController();
             $dataString = $discord->getRomanianDayName($schedule_day->date);
             $message = "Atenție @everyone! Ziua de **" . $dataString. "** ( " . $schedule_day->date . ") a fost **ANULATĂ**";
-            $discord->sendMessage($message, $schedule_day->schedule->user);
+            $discord->sendMessage($message, $webhookUrl);
         }
 
         return response()->json(['message' => 'Status updated successfully.', 'day' => $schedule_day]);
@@ -85,7 +87,7 @@ class ScheduleController extends Controller
 
         if ($validated['announceToDiscord'] ?? true) {
             $discord = new DiscordController();
-            $discord->sendScheduleMessage($schedule->id, $user);
+            $discord->sendScheduleMessage($schedule->id);
         }
 
         return response()->json(['message' => 'Schedule created successfully.', 'schedule' => $schedule->load('days')]);

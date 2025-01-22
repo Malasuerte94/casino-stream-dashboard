@@ -157,4 +157,33 @@ class User extends Authenticatable
     {
         return $this->hasMany(BonusBattle::class);
     }
+
+
+    /**
+     * Get the Discord webhook URL for the user's schedule announcer.
+     *
+     * @return string|null
+     */
+    public function getWebhookScheduleAttribute(): ?string
+    {
+        $setting = UserSetting::where('user_id', $this->id)
+            ->where('name', 'discord_wbh_schedule')
+            ->first();
+
+        return $setting?->value;
+    }
+
+    /**
+     * Get the Discord webhook URL for the user's schedule announcer.
+     *
+     * @return string|null
+     */
+    public function getWebhookHuntBuyBattleAttribute(): ?string
+    {
+        $setting = UserSetting::where('user_id', $this->id)
+            ->where('name', 'discord_wbh_hunt_battle')
+            ->first();
+
+        return $setting?->value;
+    }
 }

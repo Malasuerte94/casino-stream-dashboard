@@ -110,6 +110,10 @@ class BonusListController extends Controller
 
         $latestBonus->ended = true;
         $latestBonus->save();
+
+        $discord = new DiscordController();
+        $discord->sendHuntBuyMessage($latestBonus);
+
     }
 
     public function getBonusWinner(int $streamerId) {

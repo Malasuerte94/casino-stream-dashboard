@@ -184,6 +184,7 @@ export default {
             this.startTimerUpdateBonusBuy();
         },
         async resetBonusBuy() {
+            await this.closeList();
             await axios
                 .post("/api/bonus-buy")
                 .then((response) => {
@@ -193,6 +194,13 @@ export default {
                 .catch((error) => {
                     console.log(error);
                 });
+        },
+        async closeList() {
+          await axios.post("/api/close-bonus-list", {
+            close: true,
+            list_id: this.bonusBuy.id,
+            type: 'buy'
+          });
         },
         wantToReset() {
           this.$dialog({

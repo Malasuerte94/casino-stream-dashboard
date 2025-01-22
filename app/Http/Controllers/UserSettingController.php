@@ -144,4 +144,26 @@ class UserSettingController extends Controller
         return response()->json(['message' => 'Webhook saved successfully.'], 200);
     }
 
+
+    /**
+     * Save Discord Webhook for Hunt & Battle Announcer.
+     *
+     * @param  Request  $request
+     * @return JsonResponse
+     */
+    public function saveDiscordWebhookHuntBattleAnnouncer(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'discordWebhook' => 'required|string|url',
+        ]);
+
+        $userId = $request->user()->id;
+        UserSetting::updateOrCreate(
+            ['user_id' => $userId, 'name' => 'discord_wbh_hunt_battle'],
+            ['value' => $validated['discordWebhook']]
+        );
+
+        return response()->json(['message' => 'Webhook saved successfully.'], 200);
+    }
+
 }
