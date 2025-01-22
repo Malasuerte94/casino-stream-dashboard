@@ -108,12 +108,13 @@ class BonusListController extends Controller
             $latestBonus = BonusHunt::find($listId);
         }
 
-        $latestBonus->ended = true;
-        $latestBonus->save();
+        if($latestBonus->ended === false) {
+            $latestBonus->ended = true;
+            $latestBonus->save();
 
-        $discord = new DiscordController();
-        $discord->sendHuntBuyMessage($latestBonus);
-
+            $discord = new DiscordController();
+            $discord->sendHuntBuyMessage($latestBonus);
+        }
     }
 
     public function getBonusWinner(int $streamerId) {
