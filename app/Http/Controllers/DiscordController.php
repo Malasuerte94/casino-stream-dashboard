@@ -129,7 +129,7 @@ class DiscordController extends Controller
         $totalResult = 0;
 
         // Header
-        $message = ":trophy: **Am terminat un Bonus Battle! #{$bonusBattle->id}** :trophy:\n";
+        $message = ":trophy: **Am terminat un Bonus Battle @everyone! #{$bonusBattle->id}** :trophy:\n";
         $message .= ":money_with_wings: **Titlu**: {$bonusBattle->title} | **Miza**: {$bonusBattle->stake}\n\n";
 
         // Iterate through each stage
@@ -248,7 +248,7 @@ class DiscordController extends Controller
         $worstGame = $bonusBuyGames->where('multiplier', $bonusBuyGames->min('multiplier'))->first();
 
         // Header
-        $message = ":money_with_wings: **Am terminat un Bonus Buy! #{$bonusBuy->id}** :money_with_wings:\n\n";
+        $message = ":money_with_wings: **Am terminat un Bonus Buy @everyone! #{$bonusBuy->id}** :money_with_wings:\n\n";
 
         // Summary Row
         $message .= sprintf(
@@ -311,7 +311,7 @@ class DiscordController extends Controller
         $worstGame = $bonusHuntGames->where('multiplier', $bonusHuntGames->min('multiplier'))->first();
 
         // Header
-        $message = ":trophy: **Am terminat un bonus hunt! #{$bonusList->id}** :trophy:\n\n";
+        $message = ":trophy: **Am terminat un bonus hunt @everyone! #{$bonusList->id}** :trophy:\n\n";
 
         $cost = $bonusList->start ?? 0; // If `start` is null, default to 0
         $result = $bonusList->result ?? 0; // If `result` is null, default to 0
