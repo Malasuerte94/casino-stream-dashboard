@@ -10,6 +10,7 @@ use App\Models\Winner;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Throwable;
 
 class BonusListController extends Controller
 {
@@ -90,30 +91,39 @@ class BonusListController extends Controller
 
     /**
      * @param Request $request
-     * @return void
+     * @return JsonResponse
      */
-    public function closeBonusList(Request $request): void {
-        $request->validate([
-            'close' => 'required',
-            'list_id' => 'required',
-            'type' => 'required|string'
-        ]);
+    public function closeBonusList(Request $request): JsonResponse
+    {
+        try {
+            $request->validate([
+                'close' => 'required',
+                'list_id' => 'required',
+                'type' => 'required|string'
+            ]);
 
-        $listId = $request->input('list_id');
-        $type = $request->input('type');
+            $listId = $request->input('list_id');
+            $type = $request->input('type');
 
-        if ($type === 'buy') {
-            $latestBonus = BonusBuy::find($listId);
-        } else {
-            $latestBonus = BonusHunt::find($listId);
-        }
+            if ($type === 'buy') {
+                $latestBonus = BonusBuy::find($listId);
+            } else {
+                $latestBonus = BonusHunt::find($listId);
+            }
 
-        if($latestBonus->ended === false) {
-            $latestBonus->ended = true;
-            $latestBonus->save();
+            if($latestBonus->ended === 0) {
+                $latestBonus->ended = true;
+                $latestBonus->save();
 
-            $discord = new DiscordController();
-            $discord->sendHuntBuyMessage($latestBonus);
+                $discord = new DiscordController();
+                $discord->sendHuntBuyMessage($latestBonus);
+            } else {
+                return response()->json(['status' => $latestBonus->ended], 200);
+            }
+
+            return response()->json(['status' => 'success'], 200);
+        } catch (Throwable $th) {
+            return response()->json(['error' => $th->getMessage()], 500);
         }
     }
 
