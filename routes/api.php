@@ -118,8 +118,11 @@ Route::middleware('auth:sanctum')->group(function () {
 // Public Routes (No Authentication Required)
 Route::get('/stream', [StreamController::class, 'index']);
 Route::get('/bonus-buy', [BonusBuyController::class, 'index']);
+Route::get('/bonus-buy-all', [BonusBuyController::class, 'all']);
+
 Route::get('/bonus-hunt', [BonusHuntController::class, 'index']);
 Route::get('/bonus-hunt-all', [BonusHuntController::class, 'all']);
+
 Route::get('/socials', [SocialController::class, 'index']);
 Route::get('/settings', [UserSettingController::class, 'index']);
 Route::get('/settings/{id}', [UserSettingController::class, 'show']);

@@ -101,7 +101,7 @@ class BonusHuntController extends Controller
 
 
     /**
-     * Display a listing of the resource.
+     * Display a listing of the user's bonus hunts.
      *
      * @param Request $request
      * @return JsonResponse
@@ -110,7 +110,12 @@ class BonusHuntController extends Controller
     {
         $user = $request->user();
 
-        $hunts = $user->streams()->with('bonusHunts')->get()->pluck('bonusHunts')->collapse();
+        $hunts = $user->bonusHunts()
+            ->whereNotNull('start')
+            ->whereNotNull('result')
+            ->where('start', '!=', 0)
+            ->where('result', '!=', 0)
+            ->get();
 
         return response()->json([
             'hunts' => $hunts,

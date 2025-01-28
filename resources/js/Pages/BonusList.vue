@@ -16,7 +16,7 @@
                   <span>{{ gamesOpenedNr }}/</span>
                 </div>
                 <div class="details">
-                  <span>{{ gamesTotalNr }}</span>m
+                  <span>{{ gamesTotalNr }}</span>
                 </div>
               </div>
             </div>

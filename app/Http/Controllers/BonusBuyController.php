@@ -104,4 +104,26 @@ class BonusBuyController extends Controller
         ]);
     }
 
+    /**
+     * Display a listing of the user's bonus hunts.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function all(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        $buys = $user->bonusBuys()
+            ->whereNotNull('start')
+            ->whereNotNull('result')
+            ->where('start', '!=', 0)
+            ->where('result', '!=', 0)
+            ->get();
+
+        return response()->json([
+            'buys' => $buys,
+        ]);
+    }
+
 }

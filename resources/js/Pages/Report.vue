@@ -5,6 +5,7 @@
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
                     <ReportUser></ReportUser>
                     <ReportBonusHunt></ReportBonusHunt>
+                    <ReportBonusBuy></ReportBonusBuy>
                 </div>
             </div>
         </div>
@@ -14,6 +15,7 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import ReportUser from '../Components/MainComponents/ReportUser.vue';
 import ReportBonusHunt from '../Components/MainComponents/ReportBonusHunt.vue';
+import ReportBonusBuy from '../Components/MainComponents/ReportBonusBuy.vue';
 export default {
     data() {
         return {
@@ -21,6 +23,6 @@ export default {
             settings: [],
         };
     },
-    components: { AppLayout, ReportUser, ReportBonusHunt }
+    components: { AppLayout, ReportUser, ReportBonusHunt, ReportBonusBuy }
 }
 </script>

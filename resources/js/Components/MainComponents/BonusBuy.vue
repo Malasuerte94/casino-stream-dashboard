@@ -4,6 +4,8 @@
     <div class="space-y-6 mb-6">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <input
+            :disabled="isEnded"
+            :class="{'input-disabled': isEnded}"
             type="text"
             v-model="bonusBuy.name"
             @input="debounceUpdateBonusBuy"
@@ -62,6 +64,8 @@
         </template>
         <span v-else></span>
         <v-select
+            :disabled="isEnded"
+            :class="{'input-disabled': isEnded}"
             :options="gameOptions"
             label="name"
             :reduce="game => game.id"
@@ -69,6 +73,8 @@
             v-model="game.game_id"
         />
         <input
+            :disabled="isEnded"
+            :class="{'input-disabled': isEnded}"
             type="number"
             v-model="game.stake"
             @input="debounceFieldUpdate(game, 'stake')"
@@ -77,6 +83,8 @@
             placeholder="Miză"
         />
         <input
+            :disabled="isEnded"
+            :class="{'input-disabled': isEnded}"
             type="number"
             v-model="game.price"
             @input="debounceFieldUpdate(game, 'price')"
@@ -85,6 +93,8 @@
             placeholder="Preț (LEI)"
         />
         <input
+            :disabled="isEnded"
+            :class="{'input-disabled': isEnded}"
             type="number"
             v-model="game.result"
             @input="debounceFieldUpdate(game, 'result')"
@@ -99,14 +109,14 @@
             class="input-disabled text-center"
             placeholder="Multiplicator"
         />
-        <button @click="removeBonusBuyGameRow(game.id)" class="btn-danger">
+        <button v-if="!isEnded" @click="removeBonusBuyGameRow(game.id)" class="btn-danger">
           ✕
         </button>
       </div>
     </template>
 
     <!-- Add Game Button -->
-    <div class="flex justify-center mt-8">
+    <div class="flex justify-center mt-8" v-if="!isEnded">
       <button @click="createNewBonusBuyGameRow" class="btn-primary w-full max-w-md">
         + Game
       </button>
@@ -134,6 +144,9 @@ export default {
       const gameStore = useGameStore();
       return gameStore.availableGames;
     },
+    isEnded() {
+      return Boolean(this.bonusBuy.ended);
+    }
   },
   mounted() {
     this.getLatestList();

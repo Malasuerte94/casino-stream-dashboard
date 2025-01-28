@@ -4,12 +4,16 @@
     <div class="space-y-6 mb-6">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <input
+            :disabled="isEnded"
+            :class="{'input-disabled': isEnded}"
             type="text"
             v-model="bonusHunt.name"
             class="input-primary"
             placeholder="Nume Lista"
         />
         <input
+            :disabled="isEnded"
+            :class="{'input-disabled': isEnded}"
             @input="debounceUpdateBonusHunt"
             type="number"
             v-model="bonusHunt.start"
@@ -58,6 +62,8 @@
         </template>
         <span v-else></span>
         <v-select
+            :disabled="isEnded"
+            :class="{'input-disabled': isEnded}"
             :options="gameOptions"
             label="name"
             :reduce="game => game.id"
@@ -65,6 +71,8 @@
             v-model="game.game_id"
         />
         <input
+            :disabled="isEnded"
+            :class="{'input-disabled': isEnded}"
             @input="debounceFieldUpdate(game, 'stake')"
             v-model="game.stake"
             min="1"
@@ -73,6 +81,8 @@
             placeholder="Miză"
         />
         <input
+            :disabled="isEnded"
+            :class="{'input-disabled': isEnded}"
             @input="debounceFieldUpdate(game, 'result')"
             v-model="game.result"
             type="number"
@@ -87,14 +97,14 @@
             class="input-disabled text-center"
             placeholder="Multiplicator"
         />
-        <button @click="removeBonusHuntGameRow(game.id)" class="btn-danger">
+        <button v-if="!isEnded" @click="removeBonusHuntGameRow(game.id)" class="btn-danger">
           ✕
         </button>
       </div>
     </template>
 
     <!-- Add Game Button -->
-    <div class="flex justify-center mt-8">
+    <div class="flex justify-center mt-8" v-if="!isEnded">
       <button @click="createNewBonusHuntGameRow" class="btn-primary w-full max-w-md">
         + Adaugă Joc
       </button>
@@ -122,11 +132,21 @@ export default {
       const gameStore = useGameStore();
       return gameStore.availableGames;
     },
+    isEnded() {
+      return Boolean(this.bonusHunt.ended);
+    }
   },
   mounted() {
     this.getLatestList();
   },
   methods: {
+    validateBonusHuntStart() {
+      if (!this.bonusHunt.start || this.bonusHunt.start <= 0) {
+        alert("Vă rugăm să introduceți costul listei (Costul Hunt-ului).");
+        return false;
+      }
+      return true;
+    },
     debounceUpdateBonusHunt() {
       if (this.debounceTimer) {
         clearTimeout(this.debounceTimer);
@@ -175,6 +195,9 @@ export default {
           );
     },
     async updateBonusHuntGame() {
+      if (!this.validateBonusHuntStart()) {
+        return;
+      }
       try {
         let games = this.bonusHuntGames;
         await axios.put(`/api/bonus-hunt-games`, {games});
@@ -185,6 +208,9 @@ export default {
       }
     },
     async createNewBonusHuntGameRow() {
+      if (!this.validateBonusHuntStart()) {
+        return;
+      }
       try {
         await axios.post("/api/bonus-hunt-games", {
           bonusHuntId: this.bonusHunt.id,
@@ -203,6 +229,9 @@ export default {
       }
     },
     wantToReset() {
+      if (!this.validateBonusHuntStart()) {
+        return;
+      }
       this.$dialog({
         message: "Ești sigur că vrei să faci o listă nouă?",
         buttons: ["da", "nu"],

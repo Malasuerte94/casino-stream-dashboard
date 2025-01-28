@@ -91,7 +91,8 @@ export default {
     return {
       open_list: false,
       settings: [],
-      latestList: ''
+      latestList: '',
+      listCost: 0
     };
   },
   async mounted() {
@@ -132,6 +133,7 @@ export default {
           .then((response) => {
             this.latestList = response.data['list-id'];
             this.open_list = response.data['is_open'] === 1;
+            this.listCost = response.data.bonusList.start;
           });
     },
     async setStatusGuessList() {
@@ -151,6 +153,10 @@ export default {
       });
     },
     activateDialog() {
+      if(this.listCost <= 0) {
+        alert("Vă rugăm să introduceți costul listei (Costul Hunt-ului).");
+        return;
+      }
       this.$dialog({
         message:
             "Ești sigur că vrei să închizi lista? Nu mai poți edita după închidere. Câștigătorii vor fi anunțați!",

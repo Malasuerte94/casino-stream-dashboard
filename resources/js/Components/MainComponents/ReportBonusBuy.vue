@@ -6,37 +6,37 @@ export default {
   data() {
     return {
       loading: true,
-      hunts: [],
+      buys: [],
     };
   },
   async mounted() {
-    await this.fetchHunts();
-    if (this.hunts.length) {
+    await this.fetchBuys();
+    if (this.buys.length) {
       this.renderBarChart();
       this.renderLineChart();
     } else {
-      console.warn("No hunts available to display in the charts.");
+      console.warn("No buys available to display in the charts.");
     }
     this.loading = false;
   },
   methods: {
-    async fetchHunts() {
+    async fetchBuys() {
       try {
-        const response = await axios.get("/api/bonus-hunt-all");
-        this.hunts = response.data.hunts || [];
+        const response = await axios.get("/api/bonus-buy-all");
+        this.buys = response.data.buys || [];
       } catch (error) {
-        console.error("Error fetching hunts:", error);
+        console.error("Error fetching buys:", error);
       }
     },
     renderBarChart() {
-      const labels = this.hunts.map(hunt => this.formatDate(hunt.created_at));
-      const startData = this.hunts.map(hunt => parseFloat(hunt.start));
-      const resultData = this.hunts.map(hunt => parseFloat(hunt.result));
-      const profitData = this.hunts.map(
-          hunt => parseFloat(hunt.result) - parseFloat(hunt.start)
+      const labels = this.buys.map(buy => this.formatDate(buy.created_at));
+      const startData = this.buys.map(buy => parseFloat(buy.start));
+      const resultData = this.buys.map(buy => parseFloat(buy.result));
+      const profitData = this.buys.map(
+          buy => parseFloat(buy.result) - parseFloat(buy.start)
       );
 
-      new Chart(document.getElementById("barChart"), {
+      new Chart(document.getElementById("barChartBuy"), {
         type: "bar",
         data: {
           labels,
@@ -75,11 +75,11 @@ export default {
       });
     },
     renderLineChart() {
-      const labels = this.hunts.map(hunt => this.formatDate(hunt.created_at));
-      const startData = this.hunts.map(hunt => parseFloat(hunt.start));
-      const resultData = this.hunts.map(hunt => parseFloat(hunt.result));
+      const labels = this.buys.map(buy => this.formatDate(buy.created_at));
+      const startData = this.buys.map(buy => parseFloat(buy.start));
+      const resultData = this.buys.map(buy => parseFloat(buy.result));
 
-      new Chart(document.getElementById("lineChart"), {
+      new Chart(document.getElementById("lineChartBuy"), {
         type: "line",
         data: {
           labels,
@@ -124,7 +124,7 @@ export default {
       return `${day}-${month}-${year} ${hour}:${minute}`;
     },
     calculateTotal(field) {
-      return this.hunts.reduce((sum, hunt) => {
+      return this.buys.reduce((sum, hunt) => {
         const value = parseFloat(hunt[field]);
         if (isNaN(value)) {
           console.warn(`Invalid ${field} value detected: ${hunt[field]}`);
@@ -157,17 +157,17 @@ export default {
 
 <template>
   <div class="p-6 mt-6 text-center">
-    <h2 class="text-lg font-bold">BONUS HUNTS</h2>
+    <h2 class="text-lg font-bold">BONUS BUYS</h2>
   </div>
   <div>
     <!-- Bar Chart Section -->
     <div class="chart-container">
-      <div class="chart"><canvas id="barChart"></canvas></div>
+      <div class="chart"><canvas id="barChartBuy"></canvas></div>
     </div>
 
     <!-- Line Chart Section -->
     <div class="chart-container mt-8">
-      <div class="chart"><canvas id="lineChart"></canvas></div>
+      <div class="chart"><canvas id="lineChartBuy"></canvas></div>
     </div>
 
     <!-- Totals Section -->
