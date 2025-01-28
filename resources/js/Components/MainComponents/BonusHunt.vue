@@ -151,7 +151,7 @@ export default {
     },
     getGameThumbnail(gameId) {
       const selectedGame = this.gameOptions.find(game => game.id === gameId);
-      return selectedGame ? `${import.meta.env.VITE_APP_URL}/storage/games/${selectedGame.image}` : ''; // Return thumbnail URL or an empty string
+      return selectedGame ? `/storage/games/${selectedGame.image}` : ''; // Return thumbnail URL or an empty string
     },
     async getLatestList() {
       try {

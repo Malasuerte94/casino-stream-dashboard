@@ -200,7 +200,7 @@ export default {
       totalProfit: 0,
       totalCost: 0,
       isUpdating: false,
-      vsImageUrl: `${import.meta.env.VITE_APP_URL}/storage/assets/images/vs.gif`
+      vsImageUrl: `/storage/assets/images/vs.gif`
     };
   },
   computed: {
@@ -261,7 +261,7 @@ export default {
     },
     getGameThumbnail(imageName) {
       return imageName
-          ? `${import.meta.env.VITE_APP_URL}/storage/games/${imageName}`
+          ? `/storage/games/${imageName}`
           : '';
     }
   },
