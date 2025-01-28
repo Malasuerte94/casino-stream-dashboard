@@ -1,304 +1,273 @@
 <template>
-    <div
-        class="grid grid-cols-[minmax(200px,_1fr)_120px_120px_120px] gap-2 mt-2 mb-2"
-    >
+  <div class="p-6 rounded-lg shadow-md bg-gray-100 dark:bg-gray-800">
+    <!-- Bonus Hunt Info -->
+    <div class="space-y-6 mb-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <input
-            @input="startTimerUpdateBonusHunt"
             type="text"
-            id="bonus_Hunt_name"
             v-model="bonusHunt.name"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            class="input-primary"
             placeholder="Nume Lista"
         />
         <input
-            @input="startTimerUpdateBonusHunt"
+            @input="debounceUpdateBonusHunt"
             type="number"
-            id="bonus_hunt_start"
             v-model="bonusHunt.start"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            class="input-primary"
             placeholder="Cost (LEI)"
         />
         <input
             disabled
             type="number"
-            id="bonus_hunt_result"
             v-model="bonusHunt.result"
-            class="cursor-not-allowed disabled:opacity-75 bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            class="input-disabled"
             placeholder="Rezultat (LEI)"
         />
-        <button
-            @click="wantToReset"
-            type="button"
-            tabindex="-1"
-            class="btn-secondary"
-        >
-            LISTA NOUA
-        </button>
+      </div>
+      <button @click="wantToReset" class="btn-primary w-full md:w-auto">
+        LISTA NOUA
+      </button>
     </div>
-    <template v-if="bonusHuntGames">
-        <div
-            class="grid grid-cols-[30px_minmax(200px,_1fr)_120px_120px_120px_40px] gap-2 mt-4 text-center"
-        >
-            <div
-                class="w-8 h-8 justify-center self-center text-white bg-blue-300 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:focus:ring-blue-800"
-            >
-                nr
-            </div>
-            <div>Joc</div>
-            <div>Miză</div>
-            <div>Rezultat (LEI)</div>
-            <div>Multiplicator</div>
-            <div></div>
+
+    <!-- Bonus Hunt Games -->
+    <template v-if="bonusHuntGames.length > 0">
+      <div class="hidden md:grid grid-cols-[10px_50px_1fr_120px_120px_120px_50px] gap-4 text-sm font-semibold text-gray-600 dark:text-gray-300">
+        <span>#</span>
+        <span></span>
+        <span>Joc</span>
+        <span>Miză</span>
+        <span>Rezultat (LEI)</span>
+        <span>Multiplicator</span>
+        <span></span>
+      </div>
+
+      <div
+          v-for="(game, index) in bonusHuntGames"
+          :key="game.id || index"
+          class="grid grid-cols-1 md:grid-cols-[10px_50px_1fr_120px_120px_120px_50px] gap-4 items-center mb-4 p-2 rounded-lg shadow bg-white dark:bg-gray-700"
+      >
+        <div class="text-center text-gray-800 dark:text-gray-200 font-medium">
+          {{ index + 1 }}
         </div>
-        <div
-            v-for="(game, index) in bonusHuntGames"
-            :key="index"
-            class="grid grid-cols-[30px_minmax(200px,_1fr)_120px_120px_120px_40px] gap-2 mt-4"
-        >
-            <div
-                class="w-8 h-8 justify-center self-center text-white bg-blue-300 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:focus:ring-blue-300"
-            >
-                {{ index }}
-            </div>
-            <div>
-                <input
-                    @input="checkModifiedFields(game, index)"
-                    v-model="game.name"
-                    type="text"
-                    id="name"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Game Name"
-                />
-            </div>
-            <div>
-                <input
-                    @input="checkModifiedFields(game, index)"
-                    v-model="game.stake"
-                    min="1"
-                    type="number"
-                    id="stake"
-                    class="text-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Stake"
-                />
-            </div>
-            <div>
-                <input
-                    @input="checkModifiedFields(game, index)"
-                    v-model="game.result"
-                    type="number"
-                    step="0.1"
-                    id="result"
-                    class="text-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Result"
-                />
-            </div>
-            <div>
-                <input
-                    disabled
-                    v-model="game.multiplier"
-                    type="number"
-                    id="multiplier"
-                    class="cursor-not-allowed text-center disabled:opacity-75 bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Multiplier"
-                />
-            </div>
-            <button
-                v-if="!bonusHunt.ended"
-                type="button"
-                tabindex="-1"
-                @click="removeBonusHuntGameRow(game.id)"
-                class="btn-secondary"
-            >
-                <svg
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M6 18L18 6M6 6l12 12"
-                    />
-                </svg>
-            </button>
-        </div>
-        <div class="flex mt-8 center justify-center" v-if="!bonusHunt.ended">
-            <button
-                @click="createNewBonusHuntGameRow"
-                type="button"
-                class="btn-big btn-primary w-full"
-            >
-                + Game
-            </button>
-        </div>
+        <template v-if="game.game_id">
+          <img
+              :src="getGameThumbnail(game.game_id)"
+              alt="Game Thumbnail"
+              class="w-20 h-20 object-cover rounded-lg mb-2"
+          />
+        </template>
+        <span v-else></span>
+        <v-select
+            :options="gameOptions"
+            label="name"
+            :reduce="game => game.id"
+            @update:modelValue="value => debounceFieldUpdate(game, 'game_id')"
+            v-model="game.game_id"
+        />
+        <input
+            @input="debounceFieldUpdate(game, 'stake')"
+            v-model="game.stake"
+            min="1"
+            type="number"
+            class="input-primary text-center"
+            placeholder="Miză"
+        />
+        <input
+            @input="debounceFieldUpdate(game, 'result')"
+            v-model="game.result"
+            type="number"
+            step="0.1"
+            class="input-primary text-center"
+            placeholder="Rezultat (LEI)"
+        />
+        <input
+            disabled
+            v-model="game.multiplier"
+            type="number"
+            class="input-disabled text-center"
+            placeholder="Multiplicator"
+        />
+        <button @click="removeBonusHuntGameRow(game.id)" class="btn-danger">
+          ✕
+        </button>
+      </div>
     </template>
+
+    <!-- Add Game Button -->
+    <div class="flex justify-center mt-8">
+      <button @click="createNewBonusHuntGameRow" class="btn-primary w-full max-w-md">
+        + Adaugă Joc
+      </button>
+    </div>
+  </div>
 </template>
-<script >
-import axios from "axios";
+
+<script>
+import { useGameStore } from "@/stores/gameStore";
+import vSelect from "vue-select";
+import "vue-select/dist/vue-select.css";
+
 export default {
-    data() {
-        return {
-            bonusHunt: [],
-            bonusHuntGames: [],
-            timerUpdateBonusHuntGamesTimeout: null,
-            timerUpdateBonusHuntTimeout: null,
-            updateListTimer: 5, //in seconds
-        };
+  components: { vSelect },
+  data() {
+    return {
+      bonusHunt: [],
+      bonusHuntGames: [],
+      fieldUpdateTimeouts: {},
+      debounceTimer: null,
+    };
+  },
+  computed: {
+    gameOptions() {
+      const gameStore = useGameStore();
+      return gameStore.availableGames;
     },
-    async mounted() {
-      await this.getLatestList();
+  },
+  mounted() {
+    this.getLatestList();
+  },
+  methods: {
+    debounceUpdateBonusHunt() {
+      if (this.debounceTimer) {
+        clearTimeout(this.debounceTimer);
+      }
+      this.debounceTimer = setTimeout(() => {
+        this.updateBonusHunt();
+      }, 1000);
     },
-    methods: {
-        async getLatestList() {
-            await axios
-                .get("/api/bonus-hunt")
-                .then((response) => {
-                    this.bonusHunt = response.data.bonusHunt;
-                    this.bonusHuntGames = response.data.bonusHuntGames;
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
-        },
-        checkModifiedFields(game, index) {
-            this.calcCurentRowMultiplier(game, index);
-            this.startTimerUpdateBonusHuntGames();
-            this.startTimerUpdateBonusHunt();
-        },
-        async resetBonusHunt() {
-            await this.closeList();
-            await axios
-                .post("/api/bonus-hunt")
-                .then((response) => {
-                    this.bonusHunt = response.data.bonusHunt;
-                    this.bonusHuntGames = response.data.bonusHuntGames;
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
-        },
-        async closeList() {
-          await axios.post("/api/close-bonus-list", {
-            close: true,
-            list_id: this.bonusHunt.id,
-            type: 'hunt'
-          });
-        },
-        wantToReset() {
-          this.$dialog({
-            message:
-                "Ești sigur că vrei să faci o listă nouă?",
-            buttons: ["da", "nu"],
-            da: () => {
-              this.resetBonusHunt();
-            },
-            nu: () => {
-              console.log("refuse");
-            },
-          });
-        },
-        //add new games row
-        async createNewBonusHuntGameRow() {
-            this.forceUpdateBonusHuntGames();
-            let bonusHuntId = this.bonusHunt.id;
-            await axios
-                .post("/api/bonus-hunt-games", {
-                    bonusHuntId,
-                })
-                .then((response) => {
-                    this.bonusHuntGames.push(response.data);
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
-            await this.getLatestList();
-        },
-        async forceUpdateBonusHuntGames() {
-            let games = this.bonusHuntGames;
-            await axios
-                .put("/api/bonus-hunt-games", {
-                    games,
-                })
-                .then(function (response) {
-                    //console.log(response);
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
-        },
-        //remove games row
-        async removeBonusHuntGameRow(id) {
-            await axios
-                .delete("/api/bonus-hunt-games/" + id)
-                .then((response) => {
-                    this.bonusHuntGames = this.bonusHuntGames.filter(
-                        (game) => game.id != id
-                    );
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
-        },
-        //update games
-        async updateBonusHuntGames() {
-            let games = this.bonusHuntGames;
-            await axios
-                .put("/api/bonus-hunt-games", {
-                    games,
-                })
-                .then(function (response) {
-                    //console.log(response);
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
-            await this.getLatestList();
-        },
-        //update list name
-        async updateBonusHunt() {
-            let bonusHunt = this.bonusHunt;
-            await axios
-                .patch("/api/bonus-hunt", {
-                    bonusHunt,
-                })
-                .then(function (response) {
-                    //console.log(response);
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
-        },
-        startTimerUpdateBonusHunt() {
-            if (this.timerUpdateBonusHuntTimeout) {
-                clearTimeout(this.timerUpdateBonusHuntTimeout);
-            }
-            this.timerUpdateBonusHuntTimeout = setTimeout(
-                this.updateBonusHunt,
-                this.updateListTimer * 1000
-            );
-        },
-        startTimerUpdateBonusHuntGames() {
-
-            if (this.timerUpdateBonusHuntGamesTimeout) {
-                clearTimeout(this.timerUpdateBonusHuntGamesTimeout);
-            }
-            this.timerUpdateBonusHuntGamesTimeout = setTimeout(
-                this.updateBonusHuntGames,
-                this.updateListTimer * 1000
-            );
-
-        },
-        calcCurentRowMultiplier(game, index) {
-            if (game.name == "" || game.stake == "" || game.result < 0) {
-                return;
-            }
-            this.bonusHuntGames[index].multiplier = game.result == 0 ? 0 : Math.round(game.result / game.stake, 1);
-            this.bonusHuntGames[index].result = game.result;
-        },
+    debounceFieldUpdate(game, field) {
+      if (field === 'stake' || field === 'result') {
+        this.calcCurentRowMultiplier(game);
+      }
+      if (!this.fieldUpdateTimeouts[game.id]) {
+        this.fieldUpdateTimeouts[game.id] = {};
+      }
+      if (this.fieldUpdateTimeouts[game.id][field]) {
+        clearTimeout(this.fieldUpdateTimeouts[game.id][field]);
+      }
+      this.fieldUpdateTimeouts[game.id][field] = setTimeout(() => {
+        this.updateBonusHuntGame();
+      }, 1000); // Adjust debounce delay as needed
     },
+    getGameThumbnail(gameId) {
+      const selectedGame = this.gameOptions.find(game => game.id === gameId);
+      return selectedGame ? `${import.meta.env.VITE_APP_URL}/storage/games/${selectedGame.image}` : ''; // Return thumbnail URL or an empty string
+    },
+    async getLatestList() {
+      try {
+        const response = await axios.get("/api/bonus-hunt");
+        this.bonusHunt = response.data.bonusHunt;
+        this.bonusHuntGames = response.data.bonusHuntGames;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async updateBonusHunt() {
+      let bonusHunt = this.bonusHunt;
+      await axios
+          .patch("/api/bonus-hunt", {
+            bonusHunt,
+          })
+          .catch(function (error) {
+            console.log(error);
+          }).finally(
+              async () => await this.getLatestList()
+          );
+    },
+    async updateBonusHuntGame() {
+      try {
+        let games = this.bonusHuntGames;
+        await axios.put(`/api/bonus-hunt-games`, {games});
+      } catch (error) {
+        console.error(error);
+      } finally {
+        await this.getLatestList();
+      }
+    },
+    async createNewBonusHuntGameRow() {
+      try {
+        await axios.post("/api/bonus-hunt-games", {
+          bonusHuntId: this.bonusHunt.id,
+        });
+        await this.getLatestList();
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async removeBonusHuntGameRow(gameId) {
+      try {
+        await axios.delete(`/api/bonus-hunt-games/${gameId}`);
+        await this.getLatestList();
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    wantToReset() {
+      this.$dialog({
+        message: "Ești sigur că vrei să faci o listă nouă?",
+        buttons: ["da", "nu"],
+        da: this.resetBonusHunt,
+        nu: () => console.log("Canceled reset"),
+      });
+    },
+    async resetBonusHunt() {
+      try {
+        await axios.post("/api/bonus-hunt");
+        await this.getLatestList();
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    calcCurentRowMultiplier(game) {
+      const gameIndex = this.bonusHuntGames.findIndex(g => g.id === game.id);
+      if (gameIndex === -1) {
+        console.error("Game not found in bonusHuntGames.");
+        return;
+      }
+      const stake = parseFloat(game.stake);
+      const result = parseFloat(game.result);
+      if (!game.game_id || isNaN(stake) || isNaN(result) || result < 0) {
+        console.warn("Invalid game data: Missing or invalid stake or result.");
+        return;
+      }
+      const multiplier = result === 0 ? 0 : Math.round(result / stake);
+      this.bonusHuntGames[gameIndex] = {
+        ...game,
+        multiplier,
+        result,
+        stake,
+      };
+    },
+  },
 };
 </script>
+
+<style>
+/* Tailwind CSS classes for styling */
+
+/* Custom Classes */
+.input-primary {
+  @apply bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5;
+  @apply dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500;
+}
+
+.input-disabled {
+  @apply bg-gray-200 border border-gray-300 text-gray-400 text-sm rounded-lg block w-full p-2.5 cursor-not-allowed;
+  @apply dark:bg-gray-800 dark:border-gray-600 dark:text-gray-500;
+}
+
+.input-select {
+  @apply text-sm bg-white border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5;
+  @apply dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500;
+}
+
+.btn-primary {
+  @apply bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300;
+  @apply dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-800;
+}
+
+.btn-danger {
+  @apply bg-red-500 text-white font-semibold py-1 px-3 rounded-full hover:bg-red-600 focus:outline-none focus:ring-4 focus:ring-red-300;
+  @apply dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800;
+}
+</style>

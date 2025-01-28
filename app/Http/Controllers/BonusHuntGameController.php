@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BonusHunt;
 use App\Models\BonusHuntGame;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class BonusHuntGameController extends Controller
@@ -11,12 +12,11 @@ class BonusHuntGameController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
+     * @param  Request  $request
+     * @return JsonResponse
      */
-    public function store(Request $request): \Illuminate\Http\JsonResponse
+    public function store(Request $request): JsonResponse
     {
-        //on request we get BonusHunt, check if exist and if exists create new BonusBuyGame
         $bonusHunt = $request->bonusHuntId;
         $bonusHunt = BonusHunt::find($bonusHunt);
         if(!$bonusHunt) {
@@ -39,22 +39,25 @@ class BonusHuntGameController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
+     * @param  Request  $request
+     * @return JsonResponse
      */
-    public function update(Request $request): \Illuminate\Http\JsonResponse
+    public function update(Request $request): JsonResponse
     {
         $totalResult = 0;
 
         foreach ($request->games as $game) {
-            if (!$game['name']) {
+            if (!$game['game_id']) {
                 continue;
             }
+
             $bonusHuntGame = BonusHuntGame::find($game['id']);
+
             if (!$bonusHuntGame) {
                 continue;
             }
-            $bonusHuntGame->name = $game['name'];
+            $bonusHuntGame->game_id = $game['game_id'];
+            $bonusHuntGame->name = 'CUSTOM';
             $bonusHuntGame->stake = $game['stake'] ?? 0;
             $bonusHuntGame->result = $game['result'] ?? 0;
             $bonusHuntGame->multiplier = $game['multiplier'] ?? 0;
@@ -83,10 +86,11 @@ class BonusHuntGameController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
+     * @param Request $request
+     * @param int $id
+     * @return JsonResponse
      */
-    public function destroy(Request $request, int $id): \Illuminate\Http\JsonResponse
+    public function destroy(Request $request, int $id): JsonResponse
     {
         $bonusHuntGame = BonusHuntGame::find($id);
         if(!$bonusHuntGame) {

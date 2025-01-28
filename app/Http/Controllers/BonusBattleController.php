@@ -89,8 +89,8 @@ class BonusBattleController extends Controller
             return [
                 'id' => $bracket->id,
                 'bonus_stage_id' => $bracket->bonus_stage_id,
-                'participant_a' => $bracket->participantA?->name ?? 'N/A',
-                'participant_b' => $bracket->participantB?->name ?? 'N/A',
+                'participant_a' => $bracket->participantA?->game->name ?? 'N/A',
+                'participant_b' => $bracket->participantB?->game->name ?? 'N/A',
                 'is_finished' => $bracket->is_finished,
                 'winner' => $bracket->winner?->name ?? 'N/A',
             ];
@@ -108,7 +108,7 @@ class BonusBattleController extends Controller
                 return $bracket->is_finished && $bracket->winner_id !== $concurrent->id &&
                     ($bracket->participant_a_id === $concurrent->id || $bracket->participant_b_id === $concurrent->id);
             });
-
+            $concurrent->load('game');
             return array_merge($concurrent->toArray(), ['is_eliminated' => $isEliminated]);
         });
 
@@ -184,8 +184,8 @@ class BonusBattleController extends Controller
             return []; // No unfinished brackets, no concurrents to return
         }
 
-        $participantA = $nextBracket->participantA;
-        $participantB = $nextBracket->participantB;
+        $participantA = $nextBracket->participantA->load('game');
+        $participantB = $nextBracket->participantB->load('game');
 
         return array_filter([$participantA, $participantB]);
     }
@@ -204,7 +204,7 @@ class BonusBattleController extends Controller
             'title' => 'required|string|max:255',
             'stake' => 'string|nullable',
             'concurrents' => 'required|array|min:2',
-            'concurrents.*.name' => 'required|string|max:255',
+            'concurrents.*.game_id' => 'required|int',
             'concurrents.*.for_user' => 'string|max:255|nullable',
         ]);
 
@@ -217,7 +217,8 @@ class BonusBattleController extends Controller
 
         foreach ($validated['concurrents'] as $concurrent) {
             $bonusBattle->concurrents()->create([
-                'name' => $concurrent['name'],
+                'name' => 'CUSTOM',
+                'game_id' => $concurrent['game_id'],
                 'for_user' => $concurrent['for_user']
             ]);
         }
@@ -456,7 +457,7 @@ class BonusBattleController extends Controller
             ->orderBy('created_at', 'desc')
             ->first();
 
-        return $lastBracket?->winner;
+        return $lastBracket?->winner->load('game');
     }
 
 }

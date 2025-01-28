@@ -65,19 +65,6 @@ export default {
                 this.$emit('displayOnly', this.settings.bonus_list);
             }
         },
-        async updateSettings() {
-            await axios
-                .patch("/api/settings", {
-                    settings: this.settings,
-                })
-                .then((response) => {
-                    this.settings = response.data.settings;
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
-            await this.getSettings();
-        },
         async createNewStream() {
             await axios
                 .post("/api/stream/new")

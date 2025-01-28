@@ -1,6 +1,9 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import {ref, onMounted} from 'vue';
+import {ref, onMounted, computed} from 'vue';
+import vSelect from 'vue-select';
+import "vue-select/dist/vue-select.css";
+import { useGameStore } from '@/stores/gameStore';
 
 const title = ref('');
 const stake = ref('5-10');
@@ -16,11 +19,18 @@ const totalBattles = ref(null);
 const winner = ref(null);
 const currentPair = ref([]);
 
+const gameStore = useGameStore();
+const availableGames = computed(() => gameStore.availableGames);
+
+onMounted(async () => {
+  await fetchActiveBattle();
+});
+
 const addConcurrent = () => {
   const currentCount = concurrents.value.length;
   const nextCount = currentCount === 0 ? 2 : currentCount * 2;
   for (let i = 0; i < nextCount - currentCount; i++) {
-    concurrents.value.push({name: '', for_user: ''});
+    concurrents.value.push({game_id: '', for_user: ''});
   }
 };
 
@@ -91,7 +101,7 @@ const syncScores = async () => {
 }
 
 const startBattle = async () => {
-  if (!title.value || concurrents.value.some(c => !c.name)) {
+  if (!title.value || concurrents.value.some(c => !c.game_id)) {
     alert('All fields must be filled to start.');
     return;
   }
@@ -167,11 +177,13 @@ const fetchActiveBattle = async () => {
   }
 };
 
-onMounted(() => {
-  fetchActiveBattle();
-});
+const getGameThumbnail = (gameId) => {
+  const selectedGame = gameStore.availableGames.find(game => game.id === gameId);
+  return selectedGame
+      ? `${import.meta.env.VITE_APP_URL}/storage/games/${selectedGame.image}`
+      : '';
+};
 </script>
-
 <template>
   <AppLayout title="Bonus Battle">
     <div class="py-2">
@@ -190,40 +202,65 @@ onMounted(() => {
               <input type="text" v-model="stake" id="stake"
                      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"/>
             </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700">Participanți</label>
-              <div v-for="(concurrent, index) in concurrents" :key="index" class="flex space-x-2 mt-1">
-                <div class="border-solid border-black border-[1px] flex gap-2 px-2 py-2 rounded-md">
-                  <input
-                      type="text"
-                      v-model="concurrent.name"
-                      class="block w-full border-gray-300 rounded-md shadow-sm"
-                      placeholder="Nume Joc"
-                  />
-                  <input
-                      type="text"
-                      v-model="concurrent.for_user"
-                      class="block w-full border-gray-300 rounded-md shadow-sm"
-                      placeholder="Cine a ales (opțional)?"
-                  />
-                </div>
-              </div>
-              <div class="flex gap-2 mt-2">
-                <button type="button" @click="addConcurrent"
-                        class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm">Adaugă Participanți
+            <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg shadow-md space-y-4">
+              <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Participanți</h3>
+              <div v-for="(concurrent, index) in concurrents" :key="index" class="flex items-center gap-4 bg-white dark:bg-gray-700 p-4 rounded-lg shadow">
+                <img
+                    v-if="concurrent.game_id"
+                    :src="getGameThumbnail(concurrent.game_id)"
+                    alt="Game Thumbnail"
+                    class="w-16 h-16 object-cover rounded-lg"
+                />
+                <v-select
+                    :options="availableGames"
+                    label="name"
+                    :reduce="game => game.id"
+                    v-model="concurrent.game_id"
+                    placeholder="Alege Joc"
+                    class="flex-1 input-select"
+                />
+                <input
+                    type="text"
+                    v-model="concurrent.for_user"
+                    class="flex-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400 p-2.5"
+                    placeholder="Cine a ales? (opțional)"
+                />
+                <button
+                    v-if="concurrents.length > 2"
+                    @click="removeConcurrent(index)"
+                    class="btn-danger"
+                >
+                  ✕
                 </button>
-                <button type="button" @click="removeConcurrent"
-                        class="bg-red-600 text-white px-4 py-2 rounded-md text-sm">ȘTERGE
+              </div>
+              <div class="flex gap-4">
+                <button @click="addConcurrent" class="btn-primary">Adaugă Participanți</button>
+                <button @click="removeConcurrent" class="btn-danger" v-if="concurrents.length > 2">
+                  Șterge
                 </button>
               </div>
             </div>
+
             <button type="button" @click="startBattle" class="mt-4 bg-green-600 text-white px-4 py-2 rounded-md">Start
             </button>
           </div>
         </div>
         <div v-else-if="winner" class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-          <div class="p-6">
-            <h2 class="text-xl font-bold mb-4">Câștigător! - {{ winner.name }}</h2>
+          <div class="p-6 flex justify-center items-center bg-gray-100 dark:bg-gray-800">
+            <div class="w-full max-w-md bg-white dark:bg-gray-700 shadow-lg rounded-lg p-6 text-center">
+              <img
+                  v-if="winner.game.image"
+                  :src="getGameThumbnail(winner.game.id)"
+                  alt="Game Thumbnail"
+                  class="w-32 auto mx-auto object-cover rounded-lg mb-4"
+              />
+              <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+                Câștigător! - {{ winner.game.name }}
+              </h2>
+              <p class="text-lg font-medium text-gray-600 dark:text-gray-300">
+                User: {{ winner.for_user }}
+              </p>
+            </div>
           </div>
         </div>
 
@@ -237,7 +274,13 @@ onMounted(() => {
             <!-- Brackets Section -->
             <div class="grid grid-cols-2 gap-4 mt-4" v-if="currentPair.length > 1">
               <div v-for="(concurrent, index) in currentPair" :key="index" class="border rounded-md p-4 shadow">
-                <h3 class="text-lg font-bold mb-2">{{ concurrent.name }}</h3>
+                <h3 class="text-lg font-bold mb-2">{{ concurrent.game.name }}</h3>
+                <img
+                    v-if="concurrent.game.image"
+                    :src="getGameThumbnail(concurrent.game.id)"
+                    alt="Game Thumbnail"
+                    class="w-16 h-16 object-cover rounded-lg"
+                />
                 <div>
                   <div v-for="(score, scoreIndex) in concurrent.scores" :key="scoreIndex"
                        class="flex items-center space-x-2 mt-1">
@@ -294,7 +337,7 @@ onMounted(() => {
               </div>
             </div>
             <div v-if="winner">
-              <p class="mt-4 text-lg font-bold">Câștigător: {{ winner.name }}</p>
+              <p class="mt-4 text-lg font-bold">Câștigător: {{ winner.game.name }} | User: {{ winner.for_user }}</p>
             </div>
 
             <button
@@ -319,3 +362,15 @@ onMounted(() => {
     </div>
   </AppLayout>
 </template>
+
+<style>
+.btn-primary {
+  @apply bg-blue-600 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300;
+  @apply dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-800;
+}
+
+.btn-danger {
+  @apply bg-red-600 text-white px-4 py-2 rounded-md text-sm hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300;
+  @apply dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-800;
+}
+</style>

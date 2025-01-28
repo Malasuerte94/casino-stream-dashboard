@@ -3,13 +3,14 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Symfony\Component\HttpFoundation\Request;
 
 class BonusBuyGameResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
      *
-     * @param \Request $request
+     * @param Request $request
      * @return array
      */
     public function toArray($request)

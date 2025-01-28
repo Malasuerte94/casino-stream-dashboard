@@ -35,14 +35,19 @@
                 class="w-100 grow flex-col flex gap-2 px-2 max-w-[190px]"
             >
               <div
-                  :class="'concurrent flex px-4 py-2 rounded-md text-white ' + (index === 0 ? 'bg-blue-500' : 'bg-red-500')"
+                  :class="'concurrent flex rounded-md text-white '"
               >
-                {{ concurrent?.name || 'N/A' }}
+                <img
+                    :src="getGameThumbnail(concurrent.game.image)"
+                    alt="Game Thumbnail"
+                    class="w-100 rounded-lg"
+                />
               </div>
-              <div class="from-user">
+              <div class="from-user mt-2">
                 {{ concurrent?.for_user || 'N/A' }}
               </div>
-              <div>
+
+
                 <table
                     class="table-auto mb-2 w-full text-sm border-collapse border border-gray-700 rounded-md overflow-hidden">
                   <thead>
@@ -69,27 +74,32 @@
                   </tr>
                   </tbody>
                 </table>
-              </div>
+
             </div>
 
             <!-- VS Symbol -->
             <div class="vs-symbol flex justify-center items-center text-2xl">
-              VS
+              <img :src="this.vsImageUrl" alt="vs"/>
             </div>
           </div>
         </div>
 
         <div v-else class="w-full p-4 text-white rounded-lg shadow-lg flex space-x-4">
           <!-- Winner Card -->
-          <div class="bg-blue-600 p-4 rounded-md shadow-md text-center w-40 flex flex-col justify-center">
-            <span class="text-sm font-bold mb-2">Winner Winner!</span>
-            <h3 class="text-xl font-bold mb-2">{{ battleWinner.name }}</h3>
+          <div class="text-center w-40 flex flex-col justify-center">
+            <img
+                v-if="battleWinner.game.image"
+                :src="getGameThumbnail(battleWinner.game.image)"
+                alt="Game Thumbnail"
+                class="w-100 auto mx-auto object-cover rounded-lg mb-4"
+            />
           </div>
 
           <!-- Stats and Table -->
           <div class="flex-grow">
             <!-- Stats -->
             <div class="mb-4">
+              <span class="text-md font-bold mb-2">Winner Winner!</span>
               <p class="text-md"><span class="font-bold">Total Scor:</span> {{ totalBalanceScore }}</p>
               <p class="text-md"><span class="font-bold">Pentru User:</span> {{ battleWinner.for_user || 'N/A' }}</p>
             </div>
@@ -152,7 +162,7 @@
                   {{ concurrent?.is_eliminated ? '❌' : '✅' }}
                 </td>
                 <td class="border border-black px-2 py-1">
-                  {{ concurrent?.name || 'N/A' }}
+                  {{ concurrent?.game.name || 'N/A' }}
                 </td>
                 <td class="border border-black px-2 py-1">
                   {{ concurrent?.for_user || 'N/A' }}
@@ -190,6 +200,7 @@ export default {
       totalProfit: 0,
       totalCost: 0,
       isUpdating: false,
+      vsImageUrl: `${import.meta.env.VITE_APP_URL}/storage/assets/images/vs.gif`
     };
   },
   computed: {
@@ -247,6 +258,11 @@ export default {
         }
       }
       return filteredScores;
+    },
+    getGameThumbnail(imageName) {
+      return imageName
+          ? `${import.meta.env.VITE_APP_URL}/storage/games/${imageName}`
+          : '';
     }
   },
 };
@@ -316,29 +332,21 @@ body,
 
 .vs-symbol {
   position: absolute;
-  width: 50px;
-  height: 50px;
-  background-color: #ffc400;
-  border-radius: 50px;
-  color: black;
-  font-family: "American Captain", sans-serif;
-  font-size: 36px;
-  box-shadow: 0 0 13px 4px #000000;
+  width: 100px;
+  height: 100px;
   z-index: 2;
-  margin-top: 25px;
   align-items: center;
   align-self: baseline;
+  top: 69px;
 }
 
 .concurrent {
-  height: 100px;
+  height: 230px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
-  font-size: 24px;
-  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
   z-index: 1;
   border: 2px black solid;
   line-height: 24px;

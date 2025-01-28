@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\GameSyncController;
 use App\Http\Controllers\SocialController;
 use App\Http\Controllers\ViewerController;
 use Illuminate\Foundation\Application;
@@ -124,4 +125,8 @@ Route::middleware([
     Route::get('/schedule', function () {
         return Inertia::render('SchedulePage');
     })->name('schedule');
+
+
+    //sync games
+    Route::get('/sync-games', [GameSyncController::class, 'syncGames']);
 });

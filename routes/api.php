@@ -9,6 +9,7 @@ use App\Http\Controllers\BonusHuntGameController;
 use App\Http\Controllers\BonusListController;
 use App\Http\Controllers\DepositController;
 use App\Http\Controllers\DiscordController;
+use App\Http\Controllers\GameController;
 use App\Http\Controllers\GuessEntriesController;
 use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\ScheduleController;
@@ -153,3 +154,6 @@ Route::get('/bonus-battle-info/{id}', [BonusBattleController::class, 'getBonusBa
 
 //schedule
 Route::get('/schedule/weekly/{id}', [ScheduleController::class, 'getWeeklySchedule']);
+
+//get-all-games
+Route::apiResource('games', GameController::class);

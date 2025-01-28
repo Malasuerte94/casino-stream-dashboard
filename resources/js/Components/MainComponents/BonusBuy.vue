@@ -1,323 +1,258 @@
 <template>
-    <div
-        class="grid grid-cols-[minmax(200px,_1fr)_120px_120px_120px] gap-2 mt-2 mb-2"
-    >
+  <div class="p-6 rounded-lg shadow-md bg-gray-100 dark:bg-gray-800">
+    <!-- Bonus Buy Info -->
+    <div class="space-y-6 mb-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <input
-            @input="startTimerUpdateBonusBuy"
             type="text"
-            id="bonus_buy_name"
             v-model="bonusBuy.name"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            @input="debounceUpdateBonusBuy"
+            class="input-primary"
             placeholder="Nume Lista"
         />
         <input
-            @input="startTimerUpdateBonusBuy"
             type="number"
-            id="bonus_buy_start"
-            readonly
-            disabled
             v-model="bonusBuy.start"
-            class="cursor-not-allowed disabled:opacity-75 bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            disabled
+            readonly
+            class="input-disabled"
             placeholder="Cost (LEI)"
         />
         <input
+            type="number"
+            v-model="bonusBuy.result"
             disabled
             readonly
-            type="number"
-            id="bonus_buy_result"
-            v-model="bonusBuy.result"
-            class="cursor-not-allowed disabled:opacity-75 bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            class="input-disabled"
             placeholder="Rezultat (LEI)"
         />
-        <button
-            @click="wantToReset"
-            type="button"
-            tabindex="-1"
-            class="btn-secondary"
-        >
-          LISTA NOUA
-        </button>
+      </div>
+      <button @click="wantToReset" class="btn-primary w-full md:w-auto">
+        LISTA NOUA
+      </button>
     </div>
-    <template v-if="bonusBuyGames">
-        <div
-            class="grid grid-cols-[30px_minmax(200px,_1fr)_120px_120px_120px_120px_40px] gap-2 mt-4 text-center"
-        >
-            <div
-                class="w-8 h-8 justify-center self-center text-white bg-blue-300 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:focus:ring-blue-800"
-            >
-                nr
-            </div>
-            <div>Joc</div>
-            <div>Miză</div>
-            <div>Preț (LEI)</div>
-            <div>Rezultat (LEI)</div>
-            <div>Multiplicator</div>
-            <div></div>
+
+    <!-- Bonus Buy Games -->
+    <template v-if="bonusBuyGames.length > 0">
+      <div class="hidden md:grid grid-cols-[10px_50px_1fr_120px_120px_120px_120px_50px] gap-4 text-sm font-semibold text-gray-600 dark:text-gray-300">
+        <span>#</span>
+        <span></span>
+        <span>Joc</span>
+        <span>Miză</span>
+        <span>Preț (LEI)</span>
+        <span>Rezultat (LEI)</span>
+        <span>Multiplicator</span>
+        <span></span>
+      </div>
+
+      <div
+          v-for="(game, index) in bonusBuyGames"
+          :key="game.id || index"
+          class="grid grid-cols-1 md:grid-cols-[10px_50px_1fr_120px_120px_120px_120px_50px] gap-4 items-center mb-4 p-2 rounded-lg shadow bg-white dark:bg-gray-700"
+      >
+        <div class="text-center text-gray-800 dark:text-gray-200 font-medium">
+          {{ index + 1 }}
         </div>
-        <div
-            v-for="(game, index) in bonusBuyGames"
-            :key="index"
-            class="grid grid-cols-[30px_minmax(200px,_1fr)_120px_120px_120px_120px_40px] gap-2 mt-4"
-        >
-            <div
-                class="w-8 h-8 justify-center self-center text-white bg-blue-300 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:focus:ring-blue-800"
-            >
-                {{ index }}
-            </div>
-            <div>
-                <input
-                    @input="checkModifiedFields(game, index)"
-                    v-model="game.name"
-                    type="text"
-                    id="name"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Game Name"
-                />
-            </div>
-            <div>
-                <input
-                    @input="checkModifiedFields(game, index)"
-                    v-model="game.stake"
-                    type="number"
-                    min="1"
-                    id="stake"
-                    class="text-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Stake"
-                />
-            </div>
-            <div>
-                <input
-                    @input="checkModifiedFields(game, index)"
-                    v-model="game.price"
-                    type="number"
-                    id="price"
-                    class="text-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Price"
-                />
-            </div>
-            <div>
-                <input
-                    @input="checkModifiedFields(game, index)"
-                    v-model="game.result"
-                    type="number"
-                    id="result"
-                    class="text-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Result"
-                />
-            </div>
-            <div>
-                <input
-                    disabled
-                    v-model="game.multiplier"
-                    type="number"
-                    id="multiplier"
-                    class="cursor-not-allowed text-center disabled:opacity-75 bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Multiplier"
-                />
-            </div>
-            <button
-                v-if="!bonusBuy.ended"
-                type="button"
-                tabindex="-1"
-                @click="removeBonusBuyGameRow(game.id)"
-                class="btn-secondary"
-            >
-                <svg
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M6 18L18 6M6 6l12 12"
-                    />
-                </svg>
-            </button>
-        </div>
-        <div class="flex mt-8 center justify-center" v-if="!bonusBuy.ended">
-            <button
-                @click="createNewBonusBuyGameRow"
-                type="button"
-                class="btn-big btn-primary w-full"
-            >
-                + Game
-            </button>
-        </div>
+        <template v-if="game.game_id">
+          <img
+              :src="getGameThumbnail(game.game_id)"
+              alt="Game Thumbnail"
+              class="w-20 h-20 object-cover rounded-lg mb-2"
+          />
+        </template>
+        <span v-else></span>
+        <v-select
+            :options="gameOptions"
+            label="name"
+            :reduce="game => game.id"
+            @update:modelValue="value => debounceFieldUpdate(game, 'game_id')"
+            v-model="game.game_id"
+        />
+        <input
+            type="number"
+            v-model="game.stake"
+            @input="debounceFieldUpdate(game, 'stake')"
+            min="1"
+            class="input-primary text-center"
+            placeholder="Miză"
+        />
+        <input
+            type="number"
+            v-model="game.price"
+            @input="debounceFieldUpdate(game, 'price')"
+            min="0"
+            class="input-primary text-center"
+            placeholder="Preț (LEI)"
+        />
+        <input
+            type="number"
+            v-model="game.result"
+            @input="debounceFieldUpdate(game, 'result')"
+            step="0.1"
+            class="input-primary text-center"
+            placeholder="Rezultat (LEI)"
+        />
+        <input
+            type="number"
+            v-model="game.multiplier"
+            disabled
+            class="input-disabled text-center"
+            placeholder="Multiplicator"
+        />
+        <button @click="removeBonusBuyGameRow(game.id)" class="btn-danger">
+          ✕
+        </button>
+      </div>
     </template>
+
+    <!-- Add Game Button -->
+    <div class="flex justify-center mt-8">
+      <button @click="createNewBonusBuyGameRow" class="btn-primary w-full max-w-md">
+        + Game
+      </button>
+    </div>
+  </div>
 </template>
-<script >
-import axios from "axios";
+
+<script>
+import { useGameStore } from "@/stores/gameStore";
+import vSelect from "vue-select";
+import "vue-select/dist/vue-select.css";
+
 export default {
-    data() {
-        return {
-            bonusBuy: [],
-            bonusBuyGames: [],
-            timerUpdateBonusBuyGamesTimeout: null,
-            timerUpdateBonusBuyTimeout: null,
-            updateListTimer: 5, //in seconds
-        };
+  components: { vSelect },
+  data() {
+    return {
+      bonusBuy: [],
+      bonusBuyGames: [],
+      fieldUpdateTimeouts: {},
+      debounceTimer: null,
+    };
+  },
+  computed: {
+    gameOptions() {
+      const gameStore = useGameStore();
+      return gameStore.availableGames;
     },
-    async mounted() {
-      await this.getLatestList();
+  },
+  mounted() {
+    this.getLatestList();
+  },
+  methods: {
+    debounceUpdateBonusBuy() {
+      if (this.debounceTimer) clearTimeout(this.debounceTimer);
+      this.debounceTimer = setTimeout(() => this.updateBonusBuy(), 1000);
     },
-    methods: {
-        async getLatestList() {
-            await axios
-                .get("/api/bonus-buy")
-                .then((response) => {
-                    this.bonusBuy = response.data.bonusBuy;
-                    console.log(this.bonusBuy)
-                    this.bonusBuyGames = response.data.bonusBuyGames;
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
-        },
-        checkModifiedFields(game, index) {
-            this.calcCurentRowMultiplier(game, index);
-            this.startTimerUpdateBonusBuyGames();
-            this.startTimerUpdateBonusBuy();
-        },
-        async resetBonusBuy() {
-            await this.closeList();
-            await axios
-                .post("/api/bonus-buy")
-                .then((response) => {
-                    this.bonusBuy = response.data.bonusBuy;
-                    this.bonusBuyGames = response.data.bonusBuyGames;
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
-        },
-        async closeList() {
-          await axios.post("/api/close-bonus-list", {
-            close: true,
-            list_id: this.bonusBuy.id,
-            type: 'buy'
-          });
-        },
-        wantToReset() {
-          this.$dialog({
-            message:
-                "Ești sigur că vrei să faci o listă nouă?",
-            buttons: ["da", "nu"],
-            da: () => {
-              this.resetBonusBuy();
-            },
-            nu: () => {
-              console.log("refuse");
-            },
-          });
-        },
-        //add new games row
-        async createNewBonusBuyGameRow() {
-            this.forceUpdateBonusBuyGames();
-            let bonusBuyId = this.bonusBuy.id;
-            await axios
-                .post("/api/bonus-buy-games", {
-                    bonusBuyId,
-                })
-                .then((response) => {
-                    this.bonusBuyGames.push(response.data);
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
-            await this.getLatestList();
-        },
-        async forceUpdateBonusBuyGames() {
-            let games = this.bonusBuyGames;
-            await axios
-                .put("/api/bonus-buy-games", {
-                    games,
-                })
-                .then(function (response) {
-                    //console.log(response);
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
-        },
-        //remove games row
-        async removeBonusBuyGameRow(id) {
-            await axios
-                .delete("/api/bonus-buy-games/" + id)
-                .then((response) => {
-                    this.bonusBuyGames = this.bonusBuyGames.filter(
-                        (game) => game.id != id
-                    );
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
-        },
-        //update games
-        async updateBonusBuyGames() {
-            let games = this.bonusBuyGames;
-            await axios
-                .put("/api/bonus-buy-games", {
-                    games,
-                })
-                .then(function (response) {
-                    //console.log(response);
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
-            await this.getLatestList();
-        },
-        //update list name
-        async updateBonusBuy() {
-            let bonusBuy = this.bonusBuy;
-            await axios
-                .patch("/api/bonus-buy", {
-                    bonusBuy,
-                })
-                .then(function (response) {
-                    console.log(response);
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
-        },
-        startTimerUpdateBonusBuy() {
-            if (this.timerUpdateBonusBuyTimeout) {
-                clearTimeout(this.timerUpdateBonusBuyTimeout);
-            }
-            this.timerUpdateBonusBuyTimeout = setTimeout(
-                this.updateBonusBuy,
-                this.updateListTimer * 1000
-            );
-        },
-        startTimerUpdateBonusBuyGames() {
-            if (this.timerUpdateBonusBuyGamesTimeout) {
-                clearTimeout(this.timerUpdateBonusBuyGamesTimeout);
-            }
-            this.timerUpdateBonusBuyGamesTimeout = setTimeout(
-                this.updateBonusBuyGames,
-                this.updateListTimer * 1000
-            );
-        },
-        calcCurentRowMultiplier(game, index) {
-            if (
-                game.name == "" ||
-                game.stake == "" ||
-                game.price == "" ||
-                game.result < 0
-            ) {
-                return;
-            }
-            this.bonusBuyGames[index].multiplier = Math.round(
-                (game.result / game.price) * 100
-            ) / 100;
-            this.bonusBuyGames[index].result = game.result;
-        },
+    debounceFieldUpdate(game, field) {
+      if (field === "result" || field === "price") {
+        this.calcCurentRowMultiplier(game);
+      }
+      if (!this.fieldUpdateTimeouts[game.id]) {
+        this.fieldUpdateTimeouts[game.id] = {};
+      }
+      if (this.fieldUpdateTimeouts[game.id][field]) {
+        clearTimeout(this.fieldUpdateTimeouts[game.id][field]);
+      }
+      this.fieldUpdateTimeouts[game.id][field] = setTimeout(() => {
+        this.updateBonusBuyGames();
+      }, 1000);
     },
+    getGameThumbnail(gameId) {
+      const selectedGame = this.gameOptions.find((game) => game.id === gameId);
+      return selectedGame
+          ? `${import.meta.env.VITE_APP_URL}/storage/games/${selectedGame.image}`
+          : "";
+    },
+    async getLatestList() {
+      try {
+        const response = await axios.get("/api/bonus-buy");
+        this.bonusBuy = response.data.bonusBuy;
+        this.bonusBuyGames = response.data.bonusBuyGames;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async updateBonusBuy() {
+      try {
+        await axios.patch("/api/bonus-buy", { bonusBuy: this.bonusBuy });
+        await this.getLatestList();
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async updateBonusBuyGames() {
+      try {
+        await axios.put("/api/bonus-buy-games", { games: this.bonusBuyGames });
+      } catch (error) {
+        console.error(error);
+      } finally {
+        await this.getLatestList();
+      }
+    },
+    async createNewBonusBuyGameRow() {
+      try {
+        await axios.post("/api/bonus-buy-games", {
+          bonusBuyId: this.bonusBuy.id,
+        });
+        await this.getLatestList();
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async removeBonusBuyGameRow(gameId) {
+      try {
+        await axios.delete(`/api/bonus-buy-games/${gameId}`);
+        await this.getLatestList();
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    wantToReset() {
+      this.$dialog({
+        message: "Ești sigur că vrei să faci o listă nouă?",
+        buttons: ["da", "nu"],
+        da: this.resetBonusBuy,
+        nu: () => console.log("Canceled reset"),
+      });
+    },
+    async resetBonusBuy() {
+      try {
+        await axios.post("/api/bonus-buy");
+        await this.getLatestList();
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    calcCurentRowMultiplier(game) {
+      if (!game.price || !game.result || game.result < 0) return;
+      const multiplier = Math.round((game.result / game.price) * 100) / 100;
+      game.multiplier = multiplier;
+    },
+  },
 };
 </script>
+
+<style>
+/* Tailwind CSS classes for styling */
+
+/* Custom Classes */
+.input-primary {
+  @apply bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5;
+  @apply dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500;
+}
+
+.input-disabled {
+  @apply bg-gray-200 border border-gray-300 text-gray-400 text-sm rounded-lg block w-full p-2.5 cursor-not-allowed;
+  @apply dark:bg-gray-800 dark:border-gray-600 dark:text-gray-500;
+}
+
+.btn-primary {
+  @apply bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300;
+  @apply dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-800;
+}
+
+.btn-danger {
+  @apply bg-red-500 text-white font-semibold py-1 px-3 rounded-full hover:bg-red-600 focus:outline-none focus:ring-4 focus:ring-red-300;
+  @apply dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800;
+}
+</style>

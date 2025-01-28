@@ -137,9 +137,9 @@ class DiscordController extends Controller
             $message .= ":crossed_swords: **{$stage->name}**\n";
 
             foreach ($stage->brackets as $bracket) {
-                $participantA = $bracket->participantA->name ?? 'N/A';
-                $participantB = $bracket->participantB->name ?? 'N/A';
-                $winner = $bracket->winner->name ?? 'N/A';
+                $participantA = $bracket->participantA->game->name ?? 'N/A';
+                $participantB = $bracket->participantB->game->name ?? 'N/A';
+                $winner = $bracket->winner->game->name ?? 'N/A';
 
                 // Bracket Header
                 $message .= ":medal: `[Bracket #{$bracket->id} | Winner: {$winner}]`\n";
@@ -268,9 +268,9 @@ class DiscordController extends Controller
         );
         $message .= sprintf(
             ":sparkles: **Top Joc**: `%s`\n:money_with_wings: **Top Plata**: `%s`\n:skull: **Cel mai rău**: `%s`\n\n",
-            $topMultiplierGame ? $topMultiplierGame->name : 'N/A',
-            $topResultGame ? $topResultGame->name : 'N/A',
-            $worstGame ? $worstGame->name : 'N/A'
+            $topMultiplierGame ? $topMultiplierGame->game->name : 'N/A',
+            $topResultGame ? $topResultGame->game->name : 'N/A',
+            $worstGame ? $worstGame->game->name : 'N/A'
         );
 
         // Table Header
@@ -283,7 +283,7 @@ class DiscordController extends Controller
             $message .= sprintf(
                 "`| %-2d | %-21s | %-10.2f | %-10.2f | %-9.2f | %-11.2f |`\n",
                 $index + 1,
-                substr($game->name, 0, 21), // Truncate name to 21 characters for alignment
+                substr($game->game->name, 0, 21), // Truncate name to 21 characters for alignment
                 $game->stake,
                 $game->price,
                 $game->multiplier,
@@ -298,7 +298,7 @@ class DiscordController extends Controller
     }
 
 
-    private function buildBonusHuntDiscordMessage($bonusList)
+    private function buildBonusHuntDiscordMessage($bonusList): string
     {
         $bonusHuntGames = $bonusList->bonusHuntGames;
 
@@ -335,9 +335,9 @@ class DiscordController extends Controller
         );
         $message .= sprintf(
             ":sparkles: **Top Joc**: `%s`\n:money_with_wings: **Top Plata**: `%s`\n:skull: **Cel mai rău**: `%s`\n\n",
-            $topMultiplierGame ? $topMultiplierGame->name : 'N/A',
-            $topResultGame ? $topResultGame->name : 'N/A',
-            $worstGame ? $worstGame->name : 'N/A'
+            $topMultiplierGame ? $topMultiplierGame->game->name : 'N/A',
+            $topResultGame ? $topResultGame->game->name : 'N/A',
+            $worstGame ? $worstGame->game->name : 'N/A'
         );
 
         // Table Header
@@ -350,7 +350,7 @@ class DiscordController extends Controller
             $message .= sprintf(
                 "`| %-2d | %-21s | %-10.2f | %-9.2f | %-11.2f |`\n",
                 $index + 1,
-                substr($game->name, 0, 21), // Truncate name to 21 characters for alignment
+                substr($game->game->name, 0, 21), // Truncate name to 21 characters for alignment
                 $game->stake,
                 $game->multiplier,
                 $game->result

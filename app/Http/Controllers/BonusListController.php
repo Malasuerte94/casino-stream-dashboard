@@ -113,12 +113,13 @@ class BonusListController extends Controller
 
             if($latestBonus->ended === 0) {
                 $latestBonus->ended = true;
+                $latestBonus->is_open = false;
                 $latestBonus->save();
 
                 $discord = new DiscordController();
                 $discord->sendHuntBuyMessage($latestBonus);
             } else {
-                return response()->json(['status' => $latestBonus->ended], 200);
+                return response()->json(['status' => 'deja inchis'], 200);
             }
 
             return response()->json(['status' => 'success'], 200);

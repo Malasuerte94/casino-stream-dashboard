@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\BonusBuy;
 use App\Models\BonusBuyGame;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class BonusBuyGameController extends Controller
 {
@@ -12,12 +13,11 @@ class BonusBuyGameController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
+     * @param  Request  $request
+     * @return JsonResponse
      */
-    public function store(Request $request): \Illuminate\Http\JsonResponse
+    public function store(Request $request): JsonResponse
     {
-        //on request we get BonusBuy, check if exist and if exists create new BonusBuyGame
         $bonusBuy = $request->bonusBuyId;
         $bonusBuy = BonusBuy::find($bonusBuy);
         if(!$bonusBuy) {
@@ -40,23 +40,24 @@ class BonusBuyGameController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
+     * @param  Request  $request
+     * @return JsonResponse
      */
-    public function update(Request $request): \Illuminate\Http\JsonResponse
+    public function update(Request $request): JsonResponse
     {
         $totalResult = 0;
         $priceList = 0;
 
         foreach ($request->games as $game) {
-            if (!$game['name']) {
+            if (!$game['game_id']) {
                 continue;
             }
             $bonusBuyGame = BonusBuyGame::find($game['id']);
             if (!$bonusBuyGame) {
                 continue;
             }
-            $bonusBuyGame->name = $game['name'];
+            $bonusBuyGame->game_id = $game['game_id'];
+            $bonusBuyGame->name = 'CUSTOM';
             $bonusBuyGame->stake = $game['stake'] ?? 0;
             $bonusBuyGame->price = $game['price'] ?? 0;
             $bonusBuyGame->result = $game['result'] ?? 0;
@@ -89,10 +90,11 @@ class BonusBuyGameController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
+     * @param Request $request
+     * @param int $id
+     * @return JsonResponse
      */
-    public function destroy(Request $request, int $id): \Illuminate\Http\JsonResponse
+    public function destroy(Request $request, int $id): JsonResponse
     {
         //destory the row that has the id, the payload contains the id
         $bonusBuyGame = BonusBuyGame::find($id);
