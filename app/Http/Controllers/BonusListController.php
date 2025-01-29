@@ -37,13 +37,13 @@ class BonusListController extends Controller
                 ->bonusBuys()
                 ->latest()
                 ->first();
-            $gamesForBonus = $latestBonus->bonusBuyGames;
+            $gamesForBonus = $latestBonus->bonusBuyGames->load('game');
         } else {
             $latestBonus = $latestStream
                 ->bonusHunts()
                 ->latest()
                 ->first();
-            $gamesForBonus = $latestBonus->bonusHuntGames;
+            $gamesForBonus = $latestBonus->bonusHuntGames->load('game');
         }
 
         return response()->json([

@@ -55,7 +55,7 @@
                   :class="{ 'current': firstEmptyResultId === game.id }"
               >
                 <div class="number_game">{{ index % bonusListGames.length + 1 }}</div>
-                <div class="name_game">{{ game.name }}</div>
+                <div class="name_game">{{ game.game.name }}</div>
                 <div class="stake">{{ game.stake }}</div>
                 <div class="result">{{ game.price === '0' || game.price == null ? '' : game.price }}</div>
                 <div class="result">{{ game.result === '0' || game.result == null ? '' : game.result }}</div>
@@ -85,7 +85,7 @@
                   :class="{ 'current': firstEmptyResultId === game.id }"
               >
                 <div class="number_game">{{ index % bonusListGames.length + 1 }}</div>
-                <div class="name_game">{{ game.name }}</div>
+                <div class="name_game">{{ game.game.name }}</div>
                 <div class="stake">{{ game.stake }}</div>
                 <div>{{ game.result === '0' || game.result == null ? '' : game.result }}</div>
                 <div>{{ game.multiplier === '0' || game.multiplier == null ? '' : 'x' + game.multiplier }}</div>
