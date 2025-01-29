@@ -64,8 +64,8 @@
         </template>
         <span v-else></span>
         <v-select
-            :disabled="isEnded"
-            :class="{'input-disabled': isEnded}"
+            :disabled="isEnded  || loading"
+            :class="{'input-disabled': isEnded  || loading}"
             :options="gameOptions"
             label="name"
             :reduce="game => game.id"
@@ -73,8 +73,8 @@
             v-model="game.game_id"
         />
         <input
-            :disabled="isEnded"
-            :class="{'input-disabled': isEnded}"
+            :disabled="isEnded  || loading"
+            :class="{'input-disabled': isEnded  || loading}"
             type="number"
             v-model="game.stake"
             @input="debounceFieldUpdate(game, 'stake')"
@@ -83,8 +83,8 @@
             placeholder="Miză"
         />
         <input
-            :disabled="isEnded"
-            :class="{'input-disabled': isEnded}"
+            :disabled="isEnded  || loading"
+            :class="{'input-disabled': isEnded  || loading}"
             type="number"
             v-model="game.price"
             @input="debounceFieldUpdate(game, 'price')"
@@ -137,6 +137,7 @@ export default {
       bonusBuyGames: [],
       fieldUpdateTimeouts: {},
       debounceTimer: null,
+      loading: false,
     };
   },
   computed: {
@@ -195,11 +196,13 @@ export default {
     },
     async updateBonusBuyGames() {
       try {
+        this.loading = true;
         await axios.put("/api/bonus-buy-games", { games: this.bonusBuyGames });
       } catch (error) {
         console.error(error);
       } finally {
         await this.getLatestList();
+        this.loading = false;
       }
     },
     async createNewBonusBuyGameRow() {
@@ -232,6 +235,7 @@ export default {
       try {
         await axios.post("/api/bonus-buy");
         await this.getLatestList();
+        this.$emit("newlist");
       } catch (error) {
         console.error(error);
       }

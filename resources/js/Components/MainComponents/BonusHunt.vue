@@ -62,8 +62,8 @@
         </template>
         <span v-else></span>
         <v-select
-            :disabled="isEnded"
-            :class="{'input-disabled': isEnded}"
+            :disabled="isEnded || loading"
+            :class="{'input-disabled': isEnded || loading}"
             :options="gameOptions"
             label="name"
             :reduce="game => game.id"
@@ -71,8 +71,8 @@
             v-model="game.game_id"
         />
         <input
-            :disabled="isEnded"
-            :class="{'input-disabled': isEnded}"
+            :disabled="isEnded || loading"
+            :class="{'input-disabled': isEnded || loading}"
             @input="debounceFieldUpdate(game, 'stake')"
             v-model="game.stake"
             min="1"
@@ -81,8 +81,8 @@
             placeholder="Miză"
         />
         <input
-            :disabled="isEnded"
-            :class="{'input-disabled': isEnded}"
+            :disabled="isEnded || loading"
+            :class="{'input-disabled': isEnded || loading}"
             @input="debounceFieldUpdate(game, 'result')"
             v-model="game.result"
             type="number"
@@ -125,6 +125,7 @@ export default {
       bonusHuntGames: [],
       fieldUpdateTimeouts: {},
       debounceTimer: null,
+      loading: false,
     };
   },
   computed: {
@@ -184,6 +185,7 @@ export default {
     },
     async updateBonusHunt() {
       let bonusHunt = this.bonusHunt;
+      this.loading = true
       await axios
           .patch("/api/bonus-hunt", {
             bonusHunt,
@@ -191,7 +193,10 @@ export default {
           .catch(function (error) {
             console.log(error);
           }).finally(
-              async () => await this.getLatestList()
+              async () => {
+                await this.getLatestList()
+                this.loading = false
+              }
           );
     },
     async updateBonusHuntGame() {
@@ -199,12 +204,14 @@ export default {
         return;
       }
       try {
+        this.loading = true;
         let games = this.bonusHuntGames;
         await axios.put(`/api/bonus-hunt-games`, {games});
       } catch (error) {
         console.error(error);
       } finally {
         await this.getLatestList();
+        this.loading = false;
       }
     },
     async createNewBonusHuntGameRow() {
@@ -243,6 +250,7 @@ export default {
       try {
         await axios.post("/api/bonus-hunt");
         await this.getLatestList();
+        this.$emit("newlist");
       } catch (error) {
         console.error(error);
       }

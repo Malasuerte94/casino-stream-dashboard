@@ -14,6 +14,8 @@
           <div class="relative border-white border-solid border-[1px] w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
         </label>
         <button
+            :disabled="isEnded"
+            :class="{'input-disabled': isEnded}"
             @click="activateDialog"
             type="button"
             class="w-full btn-secondary"
@@ -65,15 +67,14 @@
           </div>
         </div>
       </div>
-
-      <div v-if="settings.bonus_list == 'buy'" class="p-6">
+      <div v-if="settings.bonus_list == 'buy'" class="p-6" :key="componentKey">
         <h5 class="text-lg font-bold">Bonus Buy - List</h5>
-        <BonusBuy/>
+        <BonusBuy @newlist="getUrlGuessList()"/>
       </div>
 
-      <div v-if="settings.bonus_list == 'hunt'" class="p-6">
+      <div v-if="settings.bonus_list == 'hunt'" class="p-6" :key="componentKey">
         <h5 class="text-lg font-bold">Bonus Hunt - List</h5>
-        <BonusHunt/>
+        <BonusHunt @newlist="getUrlGuessList()"/>
       </div>
     </div>
   </div>
@@ -92,7 +93,9 @@ export default {
       open_list: false,
       settings: [],
       latestList: '',
-      listCost: 0
+      listCost: 0,
+      componentKey: 0,
+      listEnded: 0
     };
   },
   async mounted() {
@@ -131,6 +134,7 @@ export default {
       await axios
           .get("/api/get-latest-list")
           .then((response) => {
+            this.listEnded = response.data.bonusList.ended;
             this.latestList = response.data['list-id'];
             this.open_list = response.data['is_open'] === 1;
             this.listCost = response.data.bonusList.start;
@@ -150,7 +154,11 @@ export default {
         close: true,
         list_id: this.latestList,
         type: this.settings.bonus_list
-      });
+      }).finally(
+          () => {
+            this.componentKey++;
+          }
+      );
     },
     activateDialog() {
       if(this.listCost <= 0) {
@@ -174,6 +182,9 @@ export default {
     guessUrl() {
       const host = window.location.origin;
       return `${host}/guess-list/${this.latestList}/${this.settings.bonus_list}`;
+    },
+    isEnded() {
+      return Boolean(this.listEnded);
     }
   },
   watch: {
