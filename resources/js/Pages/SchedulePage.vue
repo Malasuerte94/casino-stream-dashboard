@@ -42,7 +42,7 @@
                     <div class="text-sm text-gray-700" :class="{ 'line-through text-gray-400': !day.active }">
                       <span class="font-medium">{{ formatDayName(day.date) }}</span>: {{ day.info }}
                     </div>
-                    <div class="flex space-x-2">
+                    <div class="flex space-x-2" v-if="!isPastDay(day.date)">
                       <button
                           @click="openEditDayModal(day)"
                           class="text-indigo-600 text-sm font-medium hover:underline"
@@ -84,38 +84,6 @@
                 </button>
               </div>
             </div>
-
-            <!-- Modals -->
-            <CreateScheduleModal v-if="showCreateModal" @close="closeAndRefresh()" />
-            <EditDayModal
-                v-if="showEditDayModal"
-                :day="selectedDay"
-                @close="showEditDayModal = false"
-                @updated="fetchSchedules"
-            />
-            <div
-                v-if="showDiscordModal"
-                class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50"
-            >
-              <div class="bg-white p-6 rounded-lg shadow-lg">
-                <h3 class="text-xl font-bold text-gray-700 mb-4">Announce to Discord</h3>
-                <p class="text-gray-600 mb-4">Are you sure you want to announce this schedule to Discord?</p>
-                <div class="flex gap-4 justify-end">
-                  <button
-                      @click="announceToDiscord()"
-                      class="px-4 py-2 bg-purple-600 text-white rounded-md shadow hover:bg-purple-500 focus:outline-none focus:ring focus:ring-purple-300"
-                  >
-                    Yes
-                  </button>
-                  <button
-                      @click="closeDiscordModal"
-                      class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md shadow hover:bg-gray-200"
-                  >
-                    No
-                  </button>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -146,6 +114,12 @@ export default {
       axios.get("/api/schedule/all").then((response) => {
         this.schedules = response.data;
       });
+    },
+    isPastDay(date) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const dayDate = new Date(date);
+      return dayDate < today;
     },
     formatDate(date) {
       return new Date(date).toLocaleDateString("ro-RO");

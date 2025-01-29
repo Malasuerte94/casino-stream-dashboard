@@ -62,18 +62,13 @@ const logout = () => {
                 </NavLink>
               </div>
               <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                <NavLink :href="route('stream-accounts')" :active="route().current('stream-accounts')">
-                  Conturi Stream
-                </NavLink>
-              </div>
-              <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                 <NavLink :href="route('wheel-settings')" :active="route().current('wheel-settings')">
                   Wheel Config
                 </NavLink>
               </div>
               <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                <NavLink :href="route('banners')" :active="route().current('banners')">
-                  Banners
+                <NavLink :href="route('schedule')" :active="route().current('schedule')">
+                  Schedule
                 </NavLink>
               </div>
               <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
@@ -86,11 +81,7 @@ const logout = () => {
                   Referrals
                 </NavLink>
               </div>
-              <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                <NavLink :href="route('schedule')" :active="route().current('schedule')">
-                  Schedule
-                </NavLink>
-              </div>
+
             </div>
 
             <div class="hidden sm:flex sm:items-center sm:ml-6">
@@ -196,6 +187,14 @@ const logout = () => {
 
                     <DropdownLink v-if="$page.props.jetstream.hasApiFeatures" :href="route('api-tokens.index')">
                       API Tokens
+                    </DropdownLink>
+
+                    <DropdownLink :href="route('stream-accounts')" :active="route().current('stream-accounts')">
+                      Conturi Stream
+                    </DropdownLink>
+
+                    <DropdownLink :href="route('banners')" :active="route().current('banners')">
+                      Banners
                     </DropdownLink>
 
                     <div class="border-t border-gray-100"/>
