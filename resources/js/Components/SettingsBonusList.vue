@@ -208,7 +208,7 @@
             <div class="scroll-wrapper">
               <div class="games" :style="{
                 'color': settings.tableBodyFontColor,
-                'font-size': settings.tableBodyFontSize
+                'font-size': settings.tableBodyFontSize + 'px'
               }">
                 <div class="game-single row-game_hunt" :style="{
                   'border-bottom': '1px solid ' + settings.tableDividerColor

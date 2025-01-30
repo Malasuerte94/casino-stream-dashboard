@@ -43,11 +43,11 @@
                 'color': settings.subheaderFontColor,
                 'font-size': settings.subheaderFontSize + 'px'
               }">
-            <div class="flex flex-col text-center">Req (x)<span>112</span></div>
+            <div class="flex flex-col text-center">Req (x)<span>{{ requiredAverageX }}</span></div>
             <div class="flex flex-col text-center">Avg (x)<span>{{ averageMulti }}</span></div>
             <div class="flex flex-col text-center">Top (x)<span>{{ gameHighestMulti }}</span></div>
-            <div class="flex flex-col text-center">Top (plata)<span>764</span></div>
-            <div class="flex flex-col text-center">Rezultat<span>{{ bonusList.result }} lei</span></div>
+            <div class="flex flex-col text-center">Top (plata)<span>{{gameHighestResult}} {{settings.currency}}</span></div>
+            <div class="flex flex-col text-center">Rezultat<span>{{ bonusList.result }} {{settings.currency}}</span></div>
           </div>
         </div>
 
@@ -70,7 +70,7 @@
           <div class="scroll-wrapper" ref="scrollWrapper">
             <div class="games" :style="{
                 'color': settings.tableBodyFontColor,
-                'font-size': settings.tableBodyFontSize
+                'font-size': settings.tableBodyFontSize + 'px'
               }" ref="gamesList">
               <div
                   v-for="(game, index) in duplicatedGames"
@@ -114,7 +114,7 @@
           <div class="scroll-wrapper" ref="scrollWrapperHunt">
             <div class="games" :style="{
                 'color': settings.tableBodyFontColor,
-                'font-size': settings.tableBodyFontSize
+                'font-size': settings.tableBodyFontSize + 'px'
               }" ref="gamesListHunt">
               <div
                   v-for="(game, index) in duplicatedGames"
@@ -193,6 +193,14 @@ export default {
           .filter((value) => !isNaN(value));
       return multipliers.length ? Math.max(...multipliers) : 0;
     },
+    gameHighestResult() {
+      const validResults = this.bonusListGames
+          .filter(game => game.result && game.result !== "0")
+          .map(game => parseFloat(game.result));
+
+      if (validResults.length === 0) return 0;
+      return Math.max(...validResults);
+    },
     progressPercentage() {
       return (this.gamesOpenedNr / this.gamesTotalNr) * 100;
     },
@@ -207,6 +215,33 @@ export default {
       );
       return Math.round(totalMultiplier / validGames.length);
     },
+    requiredAverageX() {
+      const listCost = this.bonusList.start; // Total cost to break even
+      const totalPayout = this.bonusListGames.reduce(
+          (sum, game) => sum + (game.result ? parseFloat(game.result) : 0),
+          0
+      );
+      const remainingCost = Math.max(listCost - totalPayout, 0);
+      const remainingGames = this.bonusListGames.filter(
+          (game) => !game.result || game.result === "0"
+      ).length;
+      if (remainingGames === 0) return 0;
+      const costPerGame = remainingCost / remainingGames;
+
+      let totalRequiredX = 0;
+
+      this.bonusListGames.forEach((game) => {
+        const gameStake = parseFloat(game.stake);
+
+        if (game.result && game.result !== "0") {
+          return;
+        }
+        const requiredX = costPerGame / gameStake;
+        totalRequiredX += requiredX;
+      });
+
+      return Math.round(totalRequiredX / remainingGames);
+    }
   },
   async mounted() {
     await this.getSettings();

@@ -197,6 +197,10 @@ const logout = () => {
                       Banners
                     </DropdownLink>
 
+                    <DropdownLink :href="route('settings')" :active="route().current('settings')">
+                      OBS Settings
+                    </DropdownLink>
+
                     <div class="border-t border-gray-100"/>
 
                     <!-- Authentication -->
