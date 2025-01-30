@@ -1,7 +1,6 @@
 <template>
   <template v-if="!loading">
     <div class="table-list" :style="{
-          'background-color': settings.tableBgColor,
           'border': settings.borderEnabled ? settings.borderWidth + 'px ' + settings.borderColor + ' solid' : 'unset',
         }" ref="viewport">
       <div class="table-container">
@@ -67,7 +66,7 @@
               <div>Multi</div>
             </div>
           </div>
-          <div class="scroll-wrapper" ref="scrollWrapper">
+          <div class="scroll-wrapper" ref="scrollWrapper" :style="{'background-color': settings.tableBgColor}">
             <div class="games" :style="{
                 'color': settings.tableBodyFontColor,
                 'font-size': settings.tableBodyFontSize + 'px'
@@ -111,7 +110,7 @@
               <div>Multi</div>
             </div>
           </div>
-          <div class="scroll-wrapper" ref="scrollWrapperHunt">
+          <div class="scroll-wrapper" ref="scrollWrapperHunt" :style="{'background-color': settings.tableBgColor}">
             <div class="games" :style="{
                 'color': settings.tableBodyFontColor,
                 'font-size': settings.tableBodyFontSize + 'px'
@@ -326,6 +325,7 @@ export default {
 
 <style lang="scss">
 .scroll-wrapper {
+  backdrop-filter: blur(10px);
   overflow: hidden;
   position: relative;
   max-height: 100vh;
@@ -355,6 +355,7 @@ export default {
 
 body,
 #app {
+  //background-image: url(https://gratisography.com/wp-content/uploads/2025/01/gratisography-dog-vacation-800x525.jpg);
   font-size: 1.3rem;
   width: 400px;
   height: 100vh;
@@ -362,7 +363,6 @@ body,
 
 .table-list {
   width: 100%;
-  background-color: #000000ba;
   color: white;
   border: 4px black solid;
   border-radius: 5px;
@@ -372,6 +372,7 @@ body,
 }
 
 .header {
+  backdrop-filter: blur(10px);
   position: relative;
   z-index: 1;
   background-color: #454545;
@@ -442,6 +443,7 @@ body,
   position: relative;
 
   .header-list-title {
+    backdrop-filter: blur(10px);
     display: flex;
     flex-direction: row;
     gap: 5px;
@@ -535,6 +537,7 @@ body,
   }
 
   .header-details {
+    backdrop-filter: blur(10px);
     background: black;
     display: flex;
     justify-content: space-evenly;

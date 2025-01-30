@@ -24,7 +24,7 @@
             </span></div>
           </div>
         </div>
-        <div v-if="!battleWinner?.id">
+        <div v-if="!battleWinner?.id" class="main-battle">
           <div class="justify-end text-center uppercase text-sm px-3 py-3 stage font-bold">
             <span>{{ bonusBattleStage.name }}</span>
           </div>
@@ -133,6 +133,7 @@
           </div>
         </div>
 
+        <div class="second-battle">
         <div class="bracket-container py-3 px-3">
           <div v-for="bracket in bonusBattleAllBracketsCurentStage" :key="bracket.id" class="bracket-item">
             <div
@@ -171,6 +172,7 @@
               </tbody>
             </table>
           </div>
+        </div>
         </div>
       </div>
     </div>
@@ -314,6 +316,7 @@ export default {
 
 body,
 #app {
+  //background-image: url(https://gratisography.com/wp-content/uploads/2025/01/gratisography-dog-vacation-800x525.jpg);
   font-size: 1.3rem;
   width: 400px;
   height: 100vh;
@@ -321,13 +324,20 @@ body,
 
 .table {
   width: 100%;
-  background-color: #000000ba;
   color: white;
   border: 4px black solid;
   border-radius: 5px;
   max-height: 100vh;
   display: block;
   overflow: hidden;
+  .main-battle {
+    background-color: rgba(0, 0, 0, 0.7294117647);
+    backdrop-filter: blur(10px);
+  }
+  .second-battle {
+    background-color: rgba(0, 0, 0, 0.7294117647);
+    backdrop-filter: blur(10px);
+  }
 }
 
 .vs-symbol {
@@ -450,35 +460,13 @@ body,
     }
   }
 
-  .progress {
-    position: relative;
+  .header-details {
+    background: black;
     display: flex;
     justify-content: space-evenly;
-    font-size: 14px;
-    height: 5px;
-    background-color: rgb(110 110 110);
-
-    .details {
-      z-index: 2;
-      padding: 5px;
-      color: #ffffff;
-      text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-    }
-
-    .progress-bar-fill {
-      position: absolute;
-      background: linear-gradient(90deg, rgba(255, 196, 0, 1) 0%, rgba(255, 109, 0, 1) 100%);
-      border-bottom-right-radius: 10px;
-      top: 0;
-      bottom: 0;
-      z-index: 1;
-      left: 0;
-    }
-  }
-
-  .progress,
-  .header-details {
-    span {
+    font-size: 16px;
+    padding: 5px 0px;
+      span {
       margin-left: 5px;
       padding: 0 5px;
       border: 1px solid #3a3a3a;
@@ -486,14 +474,6 @@ body,
       font-size: 16px;
       font-weight: bold;
     }
-  }
-
-  .header-details {
-    background: black;
-    display: flex;
-    justify-content: space-evenly;
-    font-size: 16px;
-    padding: 5px 0px;
   }
 }
 </style>
