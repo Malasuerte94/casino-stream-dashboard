@@ -8,6 +8,7 @@
               v-for="schedule in weeklySchedules"
               :key="schedule.id"
               class="schedule-card bg-gray-900 p-4 rounded-lg shadow-md border border-gray-700"
+              :style="{'background-color': settings.cellBg, 'color': settings.cellFontColor}"
           >
             <h3 class="text-md font-semibold text-gray-200">Program</h3>
             <ul class="mt-4 space-y-2">
@@ -16,13 +17,12 @@
                   :key="day.id"
                   class="flex justify-between items-center p-2 rounded shadow-sm border border-gray-600"
                   :class="{
-                  'bg-[#FFC400] text-gray-900': isCurrentDay(day.date), // Highlight current day
-                  'opacity-50 line-through text-white': !day.active, // Strike-through canceled days
-                  'bg-gray-800': !isCurrentDay(day.date), // Default background
+                  'opacity-50 line-through text-white': !day.active,
                 }"
+                  :style="{'background-color': !isCurrentDay(day.date) ? settings.cellBgShort : settings.cellBgActive}"
               >
-                <span class="text-lg font-bold">{{ formatDayName(day.date) }}</span>
-                <span class="text-lg">{{ day.info }}</span>
+                <span class="text-lg font-bold" :style="{'font-size': settings.cellTitleFontSize + 'px'}">{{ formatDayName(day.date) }}</span>
+                <span class="text-lg" :style="{'font-size': settings.cellSubtitleFontSize + 'px'}">{{ day.info }}</span>
               </li>
             </ul>
           </div>
@@ -47,12 +47,13 @@
             'bg-gray-800 opacity-75 line-through': !day.active,
             'bg-gray-900': day.active && !isCurrentDay(day.date),
           }"
+                  :style="{'background-color': !isCurrentDay(day.date)? settings.cellBgShort : settings.cellBgActive, 'color': settings.cellFontColor}"
                   class="p-2 rounded-lg shadow-md text-left"
               >
-                <div class="font-bold text-lg mb-1">
+                <div class="font-bold text-lg mb-1" :style="{'font-size': settings.cellTitleFontSize + 'px'}">
                   {{ formatDayName(day.date) }}
                 </div>
-                <div class="text-sm">
+                <div class="text-sm" :style="{'font-size': settings.cellSubtitleFontSize + 'px'}">
                   {{ day.info }}
                 </div>
               </div>
@@ -77,14 +78,34 @@ export default {
       loading: true,
       weeklySchedules: [],
       groupedDays: [],
+      settings: {},
     };
   },
   async mounted() {
+    await this.getSettings();
     await this.fetchWeeklySchedules();
     this.loading = false;
     this.groupDaysIntoRows();
   },
   methods: {
+    async getSettings() {
+      let settingName = "obs_schedule";
+      try {
+        this.loading = true;
+        const response = await axios.get(`/api/get-setting-public`, {
+          params: {setting_name: settingName, user_id: this.id},
+        });
+        if (response.data.setting_value) {
+          this.settings = JSON.parse(response.data.setting_value);
+        }
+        console.log(this.settings);
+      } catch (error) {
+        console.error(`Error loading setting "${settingName}":`, error);
+        this.error = `Failed to load setting: ${settingName}`;
+      } finally {
+        this.loading = false;
+      }
+    },
     async fetchWeeklySchedules() {
       try {
         const response = await axios.get(`/api/schedule/weekly/${this.id}`);

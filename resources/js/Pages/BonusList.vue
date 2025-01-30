@@ -1,17 +1,26 @@
 <template>
   <template v-if="!loading">
-    <div class="table" ref="viewport">
+    <div class="table-list" :style="{
+          'background-color': settings.tableBgColor,
+          'border': settings.borderEnabled ? settings.borderWidth + 'px ' + settings.borderColor + ' solid' : 'unset',
+        }" ref="viewport">
       <div class="table-container">
         <div class="header-list">
-          <div class="header-list-title">
-            <span class="img-list">
-              <SvgBh />
+          <div class="header-list-title" :style="{
+                'background-color': settings.headerBgColor,
+                'color': settings.headerFontColor,
+                'font-size': settings.headerFontSize + 'px',
+              }">
+            <span class="img-list" v-if="settings.showIcon">
+              <SvgBh/>
             </span>
             <span>Bonus</span>
             <span>{{ huntOrBuy }}</span>
             <div class="bonus-details">
-              <div class="list-cost">Cost <span>{{ startAmount }} lei</span></div>
-              <div class="list-opened">
+              <div class="list-cost" :style="{'background-color': settings.headerCellBgColor}">Cost <span>{{
+                  startAmount
+                }} {{ settings.currency }}</span></div>
+              <div class="list-opened" :style="{'background-color': settings.headerCellBgColor}">
                 <div class="details">
                   <span>{{ gamesOpenedNr }}/</span>
                 </div>
@@ -21,22 +30,34 @@
               </div>
             </div>
           </div>
-          <div class="progress">
+          <div class="progress" :style="{
+                'height': settings.progressBarHeight + 'px'
+              }">
             <div
                 class="progress-bar-fill"
-                :style="{ width: progressPercentage + '%' }"
+                :style="{ width: progressPercentage + '%', 'background': 'linear-gradient(90deg, '+ settings.progressBarLow +' 0%, '+ settings.progressBarHigh +' 100%)' }"
             ></div>
           </div>
-          <div class="header-details">
-            <div>Avg (x)<span>{{ averageMulti }}</span></div>
-            <div>Top (x)<span>{{ gameHighestMulti }}</span></div>
-            <div>Rezultat<span>{{ bonusList.result }} lei</span></div>
+          <div class="header-details" :style="{
+                'background-color': settings.subheaderBgColor,
+                'color': settings.subheaderFontColor,
+                'font-size': settings.subheaderFontSize + 'px'
+              }">
+            <div class="flex flex-col text-center">Req (x)<span>112</span></div>
+            <div class="flex flex-col text-center">Avg (x)<span>{{ averageMulti }}</span></div>
+            <div class="flex flex-col text-center">Top (x)<span>{{ gameHighestMulti }}</span></div>
+            <div class="flex flex-col text-center">Top (plata)<span>764</span></div>
+            <div class="flex flex-col text-center">Rezultat<span>{{ bonusList.result }} lei</span></div>
           </div>
         </div>
 
         <!-- Buy Section -->
         <template v-if="huntOrBuy === 'Buy'">
-          <div class="header">
+          <div class="header" :style="{
+              'background-color': settings.tableHeaderBgColor,
+              'color': settings.tableHeaderFontColor,
+              'font-size': settings.tableHeaderFontSize + 'px'
+            }">
             <div class="header-content_buy header-content">
               <div class="text-center">#</div>
               <div>Joc</div>
@@ -47,11 +68,18 @@
             </div>
           </div>
           <div class="scroll-wrapper" ref="scrollWrapper">
-            <div class="games" ref="gamesList">
+            <div class="games" :style="{
+                'color': settings.tableBodyFontColor,
+                'font-size': settings.tableBodyFontSize
+              }" ref="gamesList">
               <div
                   v-for="(game, index) in duplicatedGames"
                   :key="'a-' + index"
                   class="game-single row-game_buy"
+                  :style="{
+                  'border-bottom': '1px solid ' + settings.tableDividerColor,
+                  'background-color': firstEmptyResultId === game.id ? settings.tableCurrentGameColor : 'unset'
+                }"
                   :class="{ 'current': firstEmptyResultId === game.id }"
               >
                 <div class="number_game">{{ index % bonusListGames.length + 1 }}</div>
@@ -59,7 +87,10 @@
                 <div class="stake">{{ game.stake }}</div>
                 <div class="result">{{ game.price === '0' || game.price == null ? '' : game.price }}</div>
                 <div class="result">{{ game.result === '0' || game.result == null ? '' : game.result }}</div>
-                <div class="multi">{{ game.multiplier === '0' || game.multiplier == null ? '' : 'x' + game.multiplier }}</div>
+                <div class="multi">{{
+                    game.multiplier === '0' || game.multiplier == null ? '' : 'x' + game.multiplier
+                  }}
+                </div>
               </div>
             </div>
           </div>
@@ -67,7 +98,11 @@
 
         <!-- Hunt Section -->
         <template v-else>
-          <div class="header">
+          <div class="header" :style="{
+              'background-color': settings.tableHeaderBgColor,
+              'color': settings.tableHeaderFontColor,
+              'font-size': settings.tableHeaderFontSize + 'px'
+            }">
             <div class="header-content_hunt header-content">
               <div class="text-center">#</div>
               <div>Joc</div>
@@ -77,11 +112,17 @@
             </div>
           </div>
           <div class="scroll-wrapper" ref="scrollWrapperHunt">
-            <div class="games" ref="gamesListHunt">
+            <div class="games" :style="{
+                'color': settings.tableBodyFontColor,
+                'font-size': settings.tableBodyFontSize
+              }" ref="gamesListHunt">
               <div
                   v-for="(game, index) in duplicatedGames"
                   :key="'b-' + index"
                   class="game-single row-game_hunt"
+                  :style="{
+                  'border-bottom': '1px solid ' + settings.tableDividerColor
+                }"
                   :class="{ 'current': firstEmptyResultId === game.id }"
               >
                 <div class="number_game">{{ index % bonusListGames.length + 1 }}</div>
@@ -100,15 +141,17 @@
 
 <script>
 import SvgBh from "@/Components/MainComponents/SvgBh.vue";
+
 export default {
-  components: { SvgBh },
+  components: {SvgBh},
   props: ["id"],
   data() {
     return {
       loading: true,
       bonusList: [],
       bonusListGames: [],
-      settings: null,
+      allSettings: null,
+      settings: {},
       isUpdating: false,
       scrollSpeed: 500,
       itWasDuplicated: true
@@ -119,10 +162,10 @@ export default {
       return this.bonusList.start ?? 0;
     },
     huntOrBuy() {
-      return this.settings?.bonus_list === "buy" ? "Buy" : "Hunt";
+      return this.allSettings?.bonus_list === "buy" ? "Buy" : "Hunt";
     },
     duplicatedGames() {
-      if(this.shouldScroll()) {
+      if (this.shouldScroll()) {
         this.itWasDuplicated = true;
         return [...this.bonusListGames, ...this.bonusListGames];
       } else {
@@ -141,11 +184,6 @@ export default {
     },
     gamesTotalNr() {
       return this.bonusListGames.length;
-    },
-    gamesRemainingNr() {
-      return this.bonusListGames.filter(
-          (game) => !game.result || game.result === '0'
-      ).length;
     },
     gameHighestMulti() {
       const multipliers = this.bonusListGames
@@ -197,21 +235,25 @@ export default {
       gameItems.forEach(item => {
         totalHeight += item.getBoundingClientRect().height;
       });
-      if(this.itWasDuplicated) {
-        totalHeight = totalHeight/2
+      if (this.itWasDuplicated) {
+        totalHeight = totalHeight / 2
       }
-      return totalHeight+20 > availableHeight;
+      return totalHeight + 20 > availableHeight;
     },
 
     async getSettings() {
       await axios
           .get("/api/settings/" + this.id)
           .then((response) => {
-            this.settings = response.data.settings;
+            this.allSettings = response.data.settings;
+            this.loadSettings()
           })
           .catch((error) => {
             console.log(error);
           });
+    },
+    async loadSettings() {
+      this.settings = JSON.parse(this.allSettings.obs_bonus_list);
     },
     async getLatestList() {
       await axios
@@ -257,6 +299,7 @@ export default {
 .games {
   display: flex;
   flex-direction: column;
+
   &.scrolling {
     animation: scrollAnimation 15s linear infinite;
   }
@@ -282,7 +325,7 @@ body,
   height: 100vh;
 }
 
-.table {
+.table-list {
   width: 100%;
   background-color: #000000ba;
   color: white;
@@ -294,152 +337,174 @@ body,
 }
 
 .header {
-    position: relative;
-    z-index: 1;
-    background-color: #454545;
-    .header-content {
-        font-size: 16px;
-        text-transform: uppercase;
-        font-weight: bold;
-        box-shadow: 0px -4px 20px 0px black;
-    }
-    .header-content_buy {
-        display: grid;
-        grid-template-columns: 30px 115px 50px 70px 70px 60px;
-    }
-    .header-content_hunt {
-        display: grid;
-        grid-template-columns: 30px 155px 60px 80px 70px;
-    }
+  position: relative;
+  z-index: 1;
+  background-color: #454545;
+
+  .header-content {
+    font-size: 16px;
+    text-transform: uppercase;
+    font-weight: bold;
+    box-shadow: 0px -4px 20px 0px black;
+  }
+
+  .header-content_buy {
+    display: grid;
+    grid-template-columns: 30px 115px 50px 70px 70px 60px;
+  }
+
+  .header-content_hunt {
+    display: grid;
+    grid-template-columns: 30px 155px 60px 80px 70px;
+  }
 }
 
 .games {
-    box-sizing: border-box;
-    font-size: 16px;
-    overflow: inherit;
-    .game-single {
-        display: grid;
-        border-bottom: 1px solid #d5d5d53b;
-        align-content: center;
-        align-items: center;
-    }
-    .row-game_buy {
-        grid-template-columns: 30px 115px 50px 70px 70px 60px;
-    }
-    .row-game_hunt {
-        grid-template-columns: 30px 155px 60px 80px 70px;
-    }
+  box-sizing: border-box;
+  font-size: 16px;
+  overflow: inherit;
+
+  .game-single {
+    display: grid;
+    border-bottom: 1px solid #d5d5d53b;
+    align-content: center;
+    align-items: center;
+  }
+
+  .row-game_buy {
+    grid-template-columns: 30px 115px 50px 70px 70px 60px;
+  }
+
+  .row-game_hunt {
+    grid-template-columns: 30px 155px 60px 80px 70px;
+  }
+
+  .number_game {
+    color: #8d8d8d;
+    font-size: 14px;
+    padding: 5px;
+  }
+
+  .stake {
+    padding-left: 10px;
+  }
+
+  .current {
+    background-color: rgba(255, 166, 0, 0.329);
+
     .number_game {
-        color: #8d8d8d;
-        font-size: 14px;
-        padding: 5px;
+      color: #ffc400;
     }
-    .stake {
-      padding-left: 10px;
+
+    .name_game:before {
+      display: none;
     }
-    .current {
-        background-color: rgba(255, 166, 0, 0.329);
-      .number_game {
-        color: #ffc400;
-      }
-      .name_game:before {
-        display: none;
-      }
-    }
+  }
 }
 
 .header-list {
-    z-index: 999;
-    position: relative;
-    .header-list-title {
-        display: flex;
-        flex-direction: row;
-        gap: 5px;
-        align-items: center;
-        text-transform: uppercase;
-        font-weight: bold;
-        font-size: 16px;
-        padding: 10px;
-        background: #ffc400;
-        border-bottom: 2px black solid;
-        color: black;
-        .img-list {
-          display: block;
-          perspective: 1000px;
-          margin-right: 5px;// This is essential to create the 3D effect
-          svg {
-            width: 20px; // Adjust width and height for better visibility
-            height: 20px;
-            animation: spin 10s infinite ease-in-out;
-            transform-style: preserve-3d;
-            position: relative;
-            &::before {
-              transform: translateZ(-5px); // Back side shadow
-            }
+  z-index: 999;
+  position: relative;
 
-            &::after {
-              transform: translateZ(5px); // Front side shadow
-            }
-          }
+  .header-list-title {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    align-items: center;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 16px;
+    padding: 10px;
+    background: #ffc400;
+    border-bottom: 2px black solid;
+    color: black;
+
+    .img-list {
+      display: block;
+      perspective: 1000px;
+      margin-right: 5px; // This is essential to create the 3D effect
+      svg {
+        width: 20px; // Adjust width and height for better visibility
+        height: 20px;
+        animation: spin 10s infinite ease-in-out;
+        transform-style: preserve-3d;
+        position: relative;
+
+        &::before {
+          transform: translateZ(-5px); // Back side shadow
         }
-      .bonus-details {
-        margin-left: auto;
-        display: flex;
-        gap: 5px;
-        .list-opened {
-          margin-left: auto;
-          display: flex;
-          background: #ffffffbf;
-          padding: 0 5px;
-          border-radius: 5px;
-        }
-        .list-cost {
-          background: #ffffffbf;
-          padding: 0 5px;
-          border-radius: 5px;
+
+        &::after {
+          transform: translateZ(5px); // Front side shadow
         }
       }
     }
-    .progress {
-        position: relative;
+
+    .bonus-details {
+      margin-left: auto;
+      display: flex;
+      gap: 5px;
+
+      .list-opened {
+        margin-left: auto;
         display: flex;
-        justify-content: space-evenly;
-        font-size: 14px;
-        height: 5px;
-        background-color: rgb(110 110 110);
-        .details {
-            z-index: 2;
-            padding: 5px;
-            color: #ffffff;
-            text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-        }
-        .progress-bar-fill {
-            position: absolute;
-            background: linear-gradient(90deg, rgba(255, 196, 0, 1) 0%, rgba(255, 109, 0, 1) 100%);
-            border-bottom-right-radius: 10px;
-            top: 0;
-            bottom: 0;
-            z-index: 1;
-            left: 0;
-        }
+        background: #ffffffbf;
+        padding: 0 5px;
+        border-radius: 5px;
+      }
+
+      .list-cost {
+        background: #ffffffbf;
+        padding: 0 5px;
+        border-radius: 5px;
+      }
     }
-    .progress,
-    .header-details {
-        span {
-            margin-left: 5px;
-            padding: 0 5px;
-            border: 1px solid #3a3a3a;
-            border-radius: 4px;
-            font-size: 16px;
-            font-weight: bold;
-        }
+  }
+
+  .progress {
+    position: relative;
+    display: flex;
+    justify-content: space-evenly;
+    font-size: 14px;
+    height: 5px;
+    background-color: rgb(110 110 110);
+
+    .details {
+      z-index: 2;
+      padding: 5px;
+      color: #ffffff;
+      text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
     }
-    .header-details {
-        background: black;
-        display: flex;
-        justify-content: space-evenly;
-        font-size: 16px;
-        padding: 5px 0px;
+
+    .progress-bar-fill {
+      position: absolute;
+      background: linear-gradient(90deg, rgba(255, 196, 0, 1) 0%, rgba(255, 109, 0, 1) 100%);
+      border-bottom-right-radius: 10px;
+      top: 0;
+      bottom: 0;
+      z-index: 1;
+      left: 0;
     }
+  }
+
+  .progress,
+  .header-details {
+    span {
+      margin-left: 5px;
+      padding: 0 5px;
+      border: 1px solid #3a3a3a;
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+  }
+
+  .header-details {
+    background: black;
+    display: flex;
+    justify-content: space-evenly;
+    font-size: 16px;
+    padding: 5px 0px;
+  }
 }
 </style>

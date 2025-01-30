@@ -66,7 +66,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/socials', [SocialController::class, 'store']);
 
     // Settings Management
+    Route::get('/get-setting', [UserSettingController::class, 'getSetting']);
+
     Route::patch('/settings', [UserSettingController::class, 'edit']);
+    Route::post('/settings/save', [UserSettingController::class, 'saveSettings']);
+
     Route::post('/user-settings/save-discord-webhook', [UserSettingController::class, 'saveDiscordWebhookScheduleAnnouncer']);
     Route::post('/user-settings/save-discord-webhook/hunt-buy-battle', [UserSettingController::class, 'saveDiscordWebhookHuntBattleAnnouncer']);
 
@@ -126,6 +130,7 @@ Route::get('/bonus-hunt-all', [BonusHuntController::class, 'all']);
 Route::get('/socials', [SocialController::class, 'index']);
 Route::get('/settings', [UserSettingController::class, 'index']);
 Route::get('/settings/{id}', [UserSettingController::class, 'show']);
+Route::get('/get-setting-public', [UserSettingController::class, 'getSettingPublic']);
 Route::get('/deposits', [DepositController::class, 'index']);
 Route::get('/deposits/{id}', [DepositController::class, 'show']);
 Route::get('/withdrawals', [WithdrawalController::class, 'index']);
