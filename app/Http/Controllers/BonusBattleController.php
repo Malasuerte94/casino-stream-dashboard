@@ -92,7 +92,7 @@ class BonusBattleController extends Controller
                 'participant_a' => $bracket->participantA?->game->name ?? 'N/A',
                 'participant_b' => $bracket->participantB?->game->name ?? 'N/A',
                 'is_finished' => $bracket->is_finished,
-                'winner' => $bracket->winner?->name ?? 'N/A',
+                'winner' => $bracket->winner?->game->name ?? 'N/A',
             ];
         });
 
@@ -447,6 +447,22 @@ class BonusBattleController extends Controller
         return response()->json([
             'message' => 'Battle ended successfully!',
             'winner' => $this->getTheWinner($bonusBattle),
+        ]);
+    }
+
+    public function editConcurrent(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'id' => 'required|exists:bonus_concurrents,id',
+            'game_id' => 'required|exists:games,id',
+        ]);
+
+        $concurrent = BonusConcurrent::findOrFail($validated['id']);
+        $concurrent->game_id = $validated['game_id'];
+        $concurrent->save();
+
+        return response()->json([
+            'message' => 'Concurrent edited successfully!',
         ]);
     }
 

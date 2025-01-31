@@ -148,6 +148,18 @@ const finishRound = async () => {
   }
 };
 
+const updateGame = async (concurrentId, gameId) => {
+  try {
+    await axios.put(`/api/bonus-battles/edit-concurrent`, {
+      id: concurrentId,
+      game_id: gameId
+    });
+    await fetchActiveBattle();
+  } catch (error) {
+    alert('Please try again.');
+  }
+};
+
 const fetchActiveBattle = async () => {
   try {
     const response = await axios.get('/api/bonus-battles/active');
@@ -274,13 +286,23 @@ const getGameThumbnail = (gameId) => {
             <!-- Brackets Section -->
             <div class="grid grid-cols-2 gap-4 mt-4" v-if="currentPair.length > 1">
               <div v-for="(concurrent, index) in currentPair" :key="index" class="border rounded-md p-4 shadow">
-                <h3 class="text-lg font-bold mb-2">{{ concurrent.game.name }}</h3>
+                <h3 class="text-lg font-bold mb-2">{{ concurrent.game.name }} - {{ concurrent.for_user}}</h3>
+                <div class="flex gap-2 items-center mb-2 bg-blend-darken  p-2 rounded border-blue-900 border">
                 <img
                     v-if="concurrent.game.image"
                     :src="getGameThumbnail(concurrent.game.id)"
                     alt="Game Thumbnail"
                     class="w-16 h-16 object-cover rounded-lg"
                 />
+                <v-select
+                    :options="availableGames"
+                    label="name"
+                    :reduce="game => game.id"
+                    @update:modelValue="updateGame(concurrent.id, $event)"
+                    placeholder="Schimbi jocul?"
+                    class="flex-1"
+                />
+                </div>
                 <div>
                   <div v-for="(score, scoreIndex) in concurrent.scores" :key="scoreIndex"
                        class="flex items-center space-x-2 mt-1">
@@ -310,7 +332,7 @@ const getGameThumbnail = (gameId) => {
                           disabled
                           type="number"
                           v-model="concurrent.scores[scoreIndex].score"
-                          class="block w-20 border-gray-300 rounded-md shadow-sm disabled"
+                          class="block w-20 border-gray-300 rounded-md shadow-sm disabled input-disabled"
                           placeholder="Result"
                       />
                     </label>

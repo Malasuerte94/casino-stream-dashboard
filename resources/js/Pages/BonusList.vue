@@ -325,7 +325,6 @@ export default {
 
 <style lang="scss">
 .scroll-wrapper {
-  backdrop-filter: blur(10px);
   overflow: hidden;
   position: relative;
   max-height: 100vh;
@@ -353,6 +352,7 @@ export default {
   display: none !important;
 }
 
+html,
 body,
 #app {
   //background-image: url(https://gratisography.com/wp-content/uploads/2025/01/gratisography-dog-vacation-800x525.jpg);
@@ -368,11 +368,9 @@ body,
   border-radius: 5px;
   max-height: 100vh;
   display: block;
-  overflow: hidden;
 }
 
 .header {
-  backdrop-filter: blur(10px);
   position: relative;
   z-index: 1;
   background-color: #454545;
@@ -443,7 +441,6 @@ body,
   position: relative;
 
   .header-list-title {
-    backdrop-filter: blur(10px);
     display: flex;
     flex-direction: row;
     gap: 5px;
@@ -537,7 +534,6 @@ body,
   }
 
   .header-details {
-    backdrop-filter: blur(10px);
     background: black;
     display: flex;
     justify-content: space-evenly;

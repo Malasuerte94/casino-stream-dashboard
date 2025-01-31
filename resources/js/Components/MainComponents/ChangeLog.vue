@@ -1,14 +1,7 @@
 <template>
   <div class="flex flex-row w-full">
     <div class="w-1/2 p-4">
-      <iframe
-          class="w-full h-[600px]"
-          src="https://www.youtube.com/embed/LUAl7TN0OB4?si=xzfpOlpIxILzO7TZ"
-          title="YouTube video player"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowfullscreen>
-      </iframe>
+      Tutorials Soon
     </div>
     <div class="w-1/2 p-6">
       <h2 class="text-lg font-bold mb-4">Changelog - Updateuri</h2>

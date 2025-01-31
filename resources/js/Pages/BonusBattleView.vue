@@ -18,62 +18,68 @@
             </div>
           </div>
           <div class="header-details">
-            <div>Scor<span>AVG: {{ avgScore }}</span></div>
+            <div class="text-center uppercase text-sm stage font-bold flex justify-center items-center">
+              {{ bonusBattleStage.name }}
+            </div>
+            <div><span>AVG: {{ avgScore }}</span></div>
             <div><span>TOP: {{ bestScore }}</span></div>
-            <div>Rezultat<span :class="{ 'text-red-500': totalProfit < 0, 'text-green-500': totalProfit >= 0 }">{{ totalProfit }} lei
+            <div><span :class="{ 'text-red-500': totalProfit < 0, 'text-green-500': totalProfit >= 0 }">{{
+                totalProfit
+              }} lei
             </span></div>
           </div>
         </div>
         <div v-if="!battleWinner?.id" class="main-battle">
-          <div class="justify-end text-center uppercase text-sm px-3 py-3 stage font-bold">
-            <span>{{ bonusBattleStage.name }}</span>
-          </div>
           <div class="battle flex gap-2 align-middle items-center justify-center relative">
             <div
                 v-for="(concurrent, index) in bonusBattleConcurrents"
                 :key="concurrent?.id || index"
                 class="w-100 grow flex-col flex gap-2 px-2 max-w-[190px]"
             >
-              <div
-                  :class="'concurrent flex rounded-md text-white '"
-              >
-                <img
-                    :src="getGameThumbnail(concurrent.game.image)"
-                    alt="Game Thumbnail"
-                    class="w-100 rounded-lg"
-                />
-              </div>
-              <div class="from-user mt-2">
-                {{ concurrent?.for_user || 'N/A' }}
+
+              <div class="flex flex-col gap-2 mt-2">
+                <div
+                    :class="'concurrent flex rounded-md text-white '"
+                >
+                  <img
+                      :src="getGameThumbnail(concurrent.game.image)"
+                      alt="Game Thumbnail"
+                      class="w-[100px] rounded-lg"
+                  />
+                </div>
+                <div class="from-user" v-if="concurrent?.for_user !== null">
+                  {{ concurrent?.for_user || 'N/A' }}
+                </div>
               </div>
 
 
-                <table
-                    class="table-auto mb-2 w-full text-sm border-collapse border border-gray-700 rounded-md overflow-hidden">
-                  <thead>
-                  <tr class="bg-black text-white uppercase text-xs">
-                    <th class="border border-gray-700 px-2 py-2">Cost</th>
-                    <th class="border border-gray-700 px-2 py-2">Rezultat</th>
-                    <th class="border border-gray-700 px-2 py-2">Scor</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <tr
-                      v-for="(score, scoreIndex) in getConcurrentScores(concurrent?.id, bonusBattleBracket?.id)"
-                      :key="score.id || scoreIndex"
-                      class="border-t border-gray-700 bg-gray-700"
+              <table
+                  v-if="getConcurrentScores(concurrent?.id, bonusBattleBracket?.id).length > 0"
+                  class="table-auto mb-2 w-full text-sm border-collapse border border-gray-700 rounded-md overflow-hidden">
+                <thead>
+                <tr class="bg-black text-white uppercase text-xs">
+                  <th class="border border-gray-700 px-1 py-1">Cost</th>
+                  <th class="border border-gray-700 px-1 py-1">Rezultat</th>
+                  <th class="border border-gray-700 px-1 py-1">Scor</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr
+                    v-for="(score, scoreIndex) in getConcurrentScores(concurrent?.id, bonusBattleBracket?.id)"
+                    :key="score.id || scoreIndex"
+                    class="border-t border-gray-700 bg-gray-700"
+                >
+                  <td class="border border-gray-700 px-2 py-1">{{ score.cost_buy }}</td>
+                  <td class="border border-gray-700 px-2 py-1">{{ score.result_buy }}</td>
+                  <td
+                      class="border border-gray-700 px-2 py-1 font-bold"
+                      :class="score.score < 1 ? 'text-red-500' : 'text-green-500'"
                   >
-                    <td class="border border-gray-700 px-2 py-1">{{ score.cost_buy }}</td>
-                    <td class="border border-gray-700 px-2 py-1">{{ score.result_buy }}</td>
-                    <td
-                        class="border border-gray-700 px-2 py-1 font-bold"
-                        :class="score.score < 1 ? 'text-red-500' : 'text-green-500'"
-                    >
-                      {{ score.score.toFixed(2) }}
-                    </td>
-                  </tr>
-                  </tbody>
-                </table>
+                    {{ score.score.toFixed(2) }}
+                  </td>
+                </tr>
+                </tbody>
+              </table>
 
             </div>
 
@@ -84,14 +90,14 @@
           </div>
         </div>
 
-        <div v-else class="w-full p-4 text-white rounded-lg shadow-lg flex space-x-4">
+        <div v-else class="w-full p-4 text-white shadow-lg flex space-x-4 winner-battle">
           <!-- Winner Card -->
           <div class="text-center w-40 flex flex-col justify-center">
             <img
                 v-if="battleWinner.game.image"
                 :src="getGameThumbnail(battleWinner.game.image)"
                 alt="Game Thumbnail"
-                class="w-100 auto mx-auto object-cover rounded-lg mb-4"
+                class="w-100 auto mx-auto object-cover rounded-lg"
             />
           </div>
 
@@ -134,45 +140,45 @@
         </div>
 
         <div class="second-battle">
-        <div class="bracket-container py-3 px-3">
-          <div v-for="bracket in bonusBattleAllBracketsCurentStage" :key="bracket.id" class="bracket-item">
-            <div
-                :class="['participant', { loser: bracket.winner !== bracket.participant_a && bracket.winner !== 'N/A' }]"
-            >
-              {{ bracket.participant_a }}
-            </div>
-            <div class="vs">VS</div>
-            <div
-                :class="['participant', { loser: bracket.winner !== bracket.participant_b && bracket.winner !== 'N/A' }]"
-            >
-              {{ bracket.participant_b }}
-            </div>
-          </div>
-        </div>
-
-        <div class="shadow-md py-3 px-3">
-          <div class="overflow-x-auto">
-            <table class="table-auto w-full text-sm text-gray-200">
-              <tbody>
-              <tr
-                  v-for="(concurrent, index) in bonusBattleAllConcurrents"
-                  :key="concurrent?.id"
-                  :class="index % 2 === 0 ? 'bg-gray-900' : 'bg-gray-800'"
+          <div class="bracket-container py-2 px-2" v-if="bonusBattleAllBracketsCurentStage.length > 0">
+            <div v-for="bracket in bonusBattleAllBracketsCurentStage" :key="bracket.id" class="bracket-item">
+              <div
+                  :class="['participant', { loser: bracket.winner !== bracket.participant_a && bracket.winner !== 'N/A' }]"
               >
-                <td class="border border-black px-1 py-1">
-                  {{ concurrent?.is_eliminated ? '❌' : '✅' }}
-                </td>
-                <td class="border border-black px-2 py-1">
-                  {{ concurrent?.game.name || 'N/A' }}
-                </td>
-                <td class="border border-black px-2 py-1">
-                  {{ concurrent?.for_user || 'N/A' }}
-                </td>
-              </tr>
-              </tbody>
-            </table>
+                {{ bracket.participant_a }}
+              </div>
+              <div class="vs">VS</div>
+              <div
+                  :class="['participant', { loser: bracket.winner !== bracket.participant_b && bracket.winner !== 'N/A' }]"
+              >
+                {{ bracket.participant_b }}
+              </div>
+            </div>
           </div>
-        </div>
+
+          <div class="shadow-md py-2 px-2">
+            <div class="overflow-x-auto">
+              <table class="table-auto w-full text-sm text-gray-200">
+                <tbody>
+                <tr
+                    v-for="(concurrent, index) in bonusBattleAllConcurrents"
+                    :key="concurrent?.id"
+                    :class="index % 2 === 0 ? 'bg-gray-900' : 'bg-gray-800'"
+                >
+                  <td class="border border-black px-1 py-1 shrink w-0">
+                    {{ concurrent?.is_eliminated ? '❌' : '✅' }}
+                  </td>
+                  <td class="border border-black px-2 py-1">
+                    {{ concurrent?.game.name || 'N/A' }}
+                  </td>
+                  <td class="border border-black px-2 py-1">
+                    {{ concurrent?.for_user || 'N/A' }}
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -330,13 +336,16 @@ body,
   max-height: 100vh;
   display: block;
   overflow: hidden;
+
   .main-battle {
     background-color: rgba(0, 0, 0, 0.7294117647);
-    backdrop-filter: blur(10px);
   }
+
   .second-battle {
     background-color: rgba(0, 0, 0, 0.7294117647);
-    backdrop-filter: blur(10px);
+  }
+  .winner-battle  {
+    background-color: rgba(0, 0, 0, 0.7294117647);
   }
 }
 
@@ -347,58 +356,31 @@ body,
   z-index: 2;
   align-items: center;
   align-self: baseline;
-  top: 69px;
+  top: 24px;
 }
 
 .concurrent {
-  height: 230px;
+  height: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
   z-index: 1;
-  border: 2px black solid;
-  line-height: 24px;
-}
-
-.stage {
-  position: relative;
-
-  span {
-    background-color: #FFC400;
-    padding: 0 10px;
-    border-radius: 5px;
-    color: black;
-    z-index: 2;
-    position: relative;
-  }
-
-  &::before {
-    z-index: 1;
-    content: "";
-    position: absolute;
-    height: 50px;
-    background-color: trasparent;
-    border-left: 2px solid black;
-    border-right: 2px solid black;
-    border-top: 2px solid black;
-    width: 200px;
-    left: 0;
-    right: 0;
-    margin: auto;
-    top: 20px;
-  }
 }
 
 .from-user {
-  margin-top: -15px;
-  padding-top: 5px;
   text-align: center;
-  font-size: 16px;
+  font-size: 14px;
   background-color: black;
   border-radius: 5px;
-  margin-bottom: 15px;
+}
+
+.stage {
+  background-color: #FFC400;
+  padding: 0 10px;
+  border-radius: 5px;
+  color: black;
 }
 
 .header-list {
@@ -463,10 +445,11 @@ body,
   .header-details {
     background: black;
     display: flex;
-    justify-content: space-evenly;
+    justify-content: space-between;
     font-size: 16px;
-    padding: 5px 0px;
-      span {
+    padding: 5px 5px;
+
+    span {
       margin-left: 5px;
       padding: 0 5px;
       border: 1px solid #3a3a3a;
