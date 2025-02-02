@@ -5,20 +5,23 @@ use App\Models\Schedule;
 use App\Models\ScheduleDay;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ScheduleController extends Controller
 {
     // Get the latest schedule
     public function getLatest()
     {
-        $schedule = Schedule::with('days')->latest()->first();
+        $user = Auth::user();
+        $schedule = $user->schedules()->with('days')->latest()->first();
         return response()->json($schedule);
     }
 
     // Get all schedules
     public function getAll()
     {
-        $schedules = Schedule::with('days')->orderByDesc('id')->get();
+        $user = Auth::user();
+        $schedules = $user->schedules()->with('days')->orderByDesc('id')->get();
         return response()->json($schedules);
     }
 
