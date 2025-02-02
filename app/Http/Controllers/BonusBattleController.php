@@ -57,8 +57,52 @@ class BonusBattleController extends Controller
             ]);
         }
 
+
+        //history
+        $stageBrackets = $activeBattle->stages()
+            ->with(['brackets' => function ($query) {
+                $query->where('is_finished', true);
+            }])
+            ->get()
+            ->flatMap(function ($stage) {
+                return $stage->brackets->map(function ($bracket) {
+                    return [
+                        'id' => $bracket->id,
+                        'bonus_stage_id' => $bracket->bonus_stage_id,
+                        'participant_a' => $bracket->participantA?->game->name ?? 'N/A',
+                        'participant_a_score' => $bracket->scores()
+                            ->where('bonus_concurrent_id', $bracket->participantA->id)
+                            ->sum('score') ?: '0',
+                        'participant_b' => $bracket->participantB?->game->name ?? 'N/A',
+                        'participant_b_score' => $bracket->scores()
+                            ->where('bonus_concurrent_id', $bracket->participantB->id)
+                            ->sum('score') ?: '0',
+                        'is_finished' => $bracket->is_finished,
+                        'winner' => $bracket->winner?->game->name ?? 'N/A',
+                    ];
+                });
+            });
+
+        $allBattleBrackets = $activeBattle->stages()
+            ->with('brackets')
+            ->get()
+            ->flatMap(function ($stage) {
+                return $stage->brackets;
+            });
+        $allConcurrents = $activeBattle->concurrents()->get()->map(function ($concurrent) use ($allBattleBrackets) {
+            $isEliminated = $allBattleBrackets->contains(function ($bracket) use ($concurrent) {
+                return $bracket->is_finished && $bracket->winner_id !== $concurrent->id &&
+                    ($bracket->participant_a_id === $concurrent->id || $bracket->participant_b_id === $concurrent->id);
+            });
+            $concurrent->load('game');
+            return array_merge($concurrent->toArray(), ['is_eliminated' => $isEliminated]);
+        });
+        //history
+
         $infoBattle = $this->getCurentBattleDetails($activeBattle);
         $infoBattle['total_battles'] = $totalBattlesCount;
+        $infoBattle['history']['concurrents'] = $allConcurrents;
+        $infoBattle['history']['stage_brackets'] = $stageBrackets;
 
         return response()->json($infoBattle);
     }
@@ -90,7 +134,13 @@ class BonusBattleController extends Controller
                 'id' => $bracket->id,
                 'bonus_stage_id' => $bracket->bonus_stage_id,
                 'participant_a' => $bracket->participantA?->game->name ?? 'N/A',
+                'participant_a_score' => $bracket->scores()
+                    ->where('bonus_concurrent_id', $bracket->participantA->id)
+                    ->sum('score') ?: '0',
                 'participant_b' => $bracket->participantB?->game->name ?? 'N/A',
+                'participant_b_score' => $bracket->scores()
+                    ->where('bonus_concurrent_id', $bracket->participantB->id)
+                    ->sum('score') ?: '0',
                 'is_finished' => $bracket->is_finished,
                 'winner' => $bracket->winner?->game->name ?? 'N/A',
             ];
@@ -203,6 +253,8 @@ class BonusBattleController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'stake' => 'string|nullable',
+            'prize' => 'string|nullable',
+            'buys' => 'int|nullable',
             'concurrents' => 'required|array|min:2',
             'concurrents.*.game_id' => 'required|int',
             'concurrents.*.for_user' => 'string|max:255|nullable',
@@ -211,6 +263,8 @@ class BonusBattleController extends Controller
         $bonusBattle = BonusBattle::create([
             'title' => $validated['title'],
             'stake' => $validated['stake'] ?? 'Aleatorie',
+            'prize' => $validated['prize'] ?? null,
+            'buys' => $validated['buys'] ?? 1,
             'active' => true,
             'user_id' => $user->id,
         ]);
@@ -387,7 +441,7 @@ class BonusBattleController extends Controller
             'bracket.*.scores.*.bonus_concurrent_id' => 'required|exists:bonus_concurrents,id',
             'bracket.*.scores.*.cost_buy' => 'required|numeric|min:0',
             'bracket.*.scores.*.result_buy' => 'required|numeric|min:0',
-            'bracket.*.scores.*.score' => 'required|numeric|min:0',
+            'bracket.*.scores.*.score' => 'required|numeric|min:0|regex:/^\d+(\.\d{1,5})?$/'
         ]);
 
         $bracket = Bracket::findOrFail($validated['active_bracket']);

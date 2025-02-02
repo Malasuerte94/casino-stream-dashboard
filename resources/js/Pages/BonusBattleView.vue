@@ -1,15 +1,19 @@
 <template>
   <template v-if="!loading">
-    <div class="table" ref="viewport">
+    <div class="table-list" ref="viewport" :style="{
+          'background-color': settings.tableBgColor,
+          'border': settings.borderEnabled ? settings.borderWidth + 'px ' + settings.borderColor + ' solid' : 'unset',
+        }">
       <div class="table-container">
         <div class="header-list">
-          <div class="header-list-title">
-            <span class="img-list">
-              <SvgBh/>
-            </span>
-            <span>Bonus Battle</span>
+          <div class="header-list-title" :style="{
+                'background-color': settings.headerBgColor,
+                'color': settings.headerFontColor,
+                'font-size': settings.headerFontSize + 'px',
+              }">
+            <span>{{ bonusBattleInfo.title }}</span>
             <div class="bonus-details">
-              <div class="list-cost">Miză <span>{{ bonusBattleInfo.stake }} lei</span></div>
+              <div class="list-cost">Miză <span>{{ bonusBattleInfo.stake }} {{ settings.currency }}</span></div>
               <div class="list-opened">
                 <div class="details">
                   <span>{{ totalConcurrents }} Jocuri</span>
@@ -17,15 +21,22 @@
               </div>
             </div>
           </div>
-          <div class="header-details">
-            <div class="text-center uppercase text-sm stage font-bold flex justify-center items-center">
+          <div class="header-details" :style="{
+                'background-color': settings.subheaderBgColor,
+                'color': settings.subheaderFontColor,
+                'font-size': settings.subheaderFontSize + 'px',
+              }">
+            <div class="text-center uppercase text-sm stage font-bold flex justify-center items-center" :style="{
+                  'background-color': settings.subheaderBgColorRound,
+                  'color': settings.subheaderFontColorRound,
+                }">
               {{ bonusBattleStage.name }}
             </div>
             <div><span>AVG: {{ avgScore }}</span></div>
             <div><span>TOP: {{ bestScore }}</span></div>
             <div><span :class="{ 'text-red-500': totalProfit < 0, 'text-green-500': totalProfit >= 0 }">{{
                 totalProfit
-              }} lei
+              }} {{ settings.currency }}
             </span></div>
           </div>
         </div>
@@ -47,7 +58,11 @@
                       class="w-[100px] rounded-lg"
                   />
                 </div>
-                <div class="from-user" v-if="concurrent?.for_user !== null">
+                <div class="from-user" v-if="concurrent?.for_user !== null" :style="{
+                  'background-color': settings.tableParticipantBgColor,
+                  'color': settings.tableParticipantFontColor,
+                  'font-size': settings.tableParticipantFontSize + 'px',
+                }">
                   {{ concurrent?.for_user || 'N/A' }}
                 </div>
               </div>
@@ -55,9 +70,15 @@
 
               <table
                   v-if="getConcurrentScores(concurrent?.id, bonusBattleBracket?.id).length > 0"
-                  class="table-auto mb-2 w-full text-sm border-collapse border border-gray-700 rounded-md overflow-hidden">
+                  :style="{
+                  'color': settings.tableScoresFontColor,
+                  'font-size': settings.tableScoresFontSize + 'px',
+                }"
+                  class="table-auto mb-2 w-full border-collapse border border-gray-700 rounded-md overflow-hidden">
                 <thead>
-                <tr class="bg-black text-white uppercase text-xs">
+                <tr class="bg-black text-white uppercase" :style="{
+                  'background-color': settings.tableScoresLabelBgColor,
+                }">
                   <th class="border border-gray-700 px-1 py-1">Cost</th>
                   <th class="border border-gray-700 px-1 py-1">Rezultat</th>
                   <th class="border border-gray-700 px-1 py-1">Scor</th>
@@ -67,12 +88,14 @@
                 <tr
                     v-for="(score, scoreIndex) in getConcurrentScores(concurrent?.id, bonusBattleBracket?.id)"
                     :key="score.id || scoreIndex"
-                    class="border-t border-gray-700 bg-gray-700"
+                    :style="{
+                  'background-color': settings.tableScoresBgColor
+                }"
                 >
-                  <td class="border border-gray-700 px-2 py-1">{{ score.cost_buy }}</td>
-                  <td class="border border-gray-700 px-2 py-1">{{ score.result_buy }}</td>
+                  <td class="px-2 py-1">{{ score.cost_buy }}</td>
+                  <td class="px-2 py-1">{{ score.result_buy }}</td>
                   <td
-                      class="border border-gray-700 px-2 py-1 font-bold"
+                      class="px-2 py-1 font-bold"
                       :class="score.score < 1 ? 'text-red-500' : 'text-green-500'"
                   >
                     {{ score.score.toFixed(2) }}
@@ -104,14 +127,20 @@
           <!-- Stats and Table -->
           <div class="flex-grow">
             <!-- Stats -->
-            <div class="mb-4">
-              <span class="text-md font-bold mb-2">Winner Winner!</span>
-              <p class="text-md"><span class="font-bold">Total Scor:</span> {{ totalBalanceScore }}</p>
-              <p class="text-md"><span class="font-bold">Pentru User:</span> {{ battleWinner.for_user || 'N/A' }}</p>
+            <div class="mb-4" :style="{
+                'font-size': (settings.headerFontSize * 1.2) + 'px',
+              }">
+              <span class="font-bold mb-2">Winner Winner!</span>
+              <p><span class="font-bold">Total Scor:</span> {{ totalBalanceScore }}</p>
+              <p><span class="font-bold">Pentru User:</span> {{ battleWinner.for_user || 'N/A' }}</p>
             </div>
 
             <!-- Battle Cost and Profit Table -->
-            <div class="bg-gray-800 rounded-md p-2">
+            <div class="bg-gray-800 rounded-md p-2" :style="{
+                'background-color': settings.headerBgColor,
+                'color': settings.headerFontColor,
+                'font-size': settings.headerFontSize + 'px',
+              }">
               <table class="w-full text-sm text-gray-200">
                 <thead>
                 <tr>
@@ -145,25 +174,29 @@
               <div
                   :class="['participant', { loser: bracket.winner !== bracket.participant_a && bracket.winner !== 'N/A' }]"
               >
-                {{ bracket.participant_a }}
+                {{ bracket.participant_a }} - {{ bracket.participant_a_score }}
               </div>
               <div class="vs">VS</div>
               <div
                   :class="['participant', { loser: bracket.winner !== bracket.participant_b && bracket.winner !== 'N/A' }]"
               >
-                {{ bracket.participant_b }}
+                {{ bracket.participant_b }} - {{ bracket.participant_b_score }}
               </div>
             </div>
           </div>
 
           <div class="shadow-md py-2 px-2">
             <div class="overflow-x-auto">
-              <table class="table-auto w-full text-sm text-gray-200">
+              <table class="table-auto w-full text-gray-200" :style="{
+                  'font-size': settings.tableBodyFontSize + 'px'
+                }">
                 <tbody>
                 <tr
                     v-for="(concurrent, index) in bonusBattleAllConcurrents"
                     :key="concurrent?.id"
-                    :class="index % 2 === 0 ? 'bg-gray-900' : 'bg-gray-800'"
+                    :style="{
+                  'background-color': index % 2 === 0 ? settings.tableHistoryBgOddColor : settings.tableHistoryBgEvenColor
+                }"
                 >
                   <td class="border border-black px-1 py-1 shrink w-0">
                     {{ concurrent?.is_eliminated ? '❌' : '✅' }}
@@ -194,6 +227,7 @@ export default {
   data() {
     return {
       loading: true,
+      settings: {},
       bonusBattleInfo: [],
       bonusBattleConcurrents: [],
       bonusBattleStage: [],
@@ -220,6 +254,7 @@ export default {
     }
   },
   async mounted() {
+    await this.getSettings();
     await this.getActiveBonusBattle();
     this.loading = false;
     await this.updateTheListFromTimeToTime();
@@ -247,10 +282,26 @@ export default {
             console.log(error);
           });
     },
+    async getSettings() {
+      let settingName = "obs_bonus_battle";
+      try {
+        const response = await axios.get(`/api/get-setting-public`, {
+          params: {setting_name: settingName, user_id: this.id},
+        });
+        if (response.data.setting_value) {
+          this.settings = JSON.parse(response.data.setting_value);
+        }
+        console.log(this.settings);
+      } catch (error) {
+        console.error(`Error loading setting "${settingName}":`, error);
+        this.error = `Failed to load setting: ${settingName}`;
+      }
+    },
     async updateTheListFromTimeToTime() {
       setInterval(async () => {
         if (!this.isUpdating) {
           this.isUpdating = true;
+          await this.getSettings();
           await this.getActiveBonusBattle();
           this.isUpdating = false;
         }
@@ -275,8 +326,18 @@ export default {
   },
 };
 </script>
-
 <style lang="scss">
+.footer-donate {
+  display: none !important;
+}
+
+body,
+#app {
+  //background-image: url(https://gratisography.com/wp-content/uploads/2025/01/gratisography-dog-vacation-800x525.jpg);
+  font-size: 1.3rem;
+  width: 400px;
+  height: 100vh;
+}
 
 .bracket-container {
   display: flex;
@@ -315,38 +376,13 @@ export default {
   }
 }
 
-
-.footer-donate {
-  display: none !important;
-}
-
-body,
-#app {
-  //background-image: url(https://gratisography.com/wp-content/uploads/2025/01/gratisography-dog-vacation-800x525.jpg);
-  font-size: 1.3rem;
-  width: 400px;
-  height: 100vh;
-}
-
-.table {
+.table-list {
   width: 100%;
-  color: white;
   border: 4px black solid;
   border-radius: 5px;
   max-height: 100vh;
   display: block;
   overflow: hidden;
-
-  .main-battle {
-    background-color: rgba(0, 0, 0, 0.7294117647);
-  }
-
-  .second-battle {
-    background-color: rgba(0, 0, 0, 0.7294117647);
-  }
-  .winner-battle  {
-    background-color: rgba(0, 0, 0, 0.7294117647);
-  }
 }
 
 .vs-symbol {
@@ -394,11 +430,8 @@ body,
     align-items: center;
     text-transform: uppercase;
     font-weight: bold;
-    font-size: 16px;
     padding: 10px;
-    background: #ffc400;
     border-bottom: 2px black solid;
-    color: black;
 
     .img-list {
       display: block;
@@ -429,13 +462,13 @@ body,
       .list-opened {
         margin-left: auto;
         display: flex;
-        background: #ffffffbf;
+        background: rgb(255 255 255 / 27%);
         padding: 0 5px;
         border-radius: 5px;
       }
 
       .list-cost {
-        background: #ffffffbf;
+        background: rgb(255 255 255 / 27%);
         padding: 0 5px;
         border-radius: 5px;
       }
@@ -446,7 +479,6 @@ body,
     background: black;
     display: flex;
     justify-content: space-between;
-    font-size: 16px;
     padding: 5px 5px;
 
     span {
@@ -454,7 +486,6 @@ body,
       padding: 0 5px;
       border: 1px solid #3a3a3a;
       border-radius: 4px;
-      font-size: 16px;
       font-weight: bold;
     }
   }

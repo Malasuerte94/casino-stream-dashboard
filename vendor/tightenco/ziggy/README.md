@@ -336,7 +336,7 @@ export { Ziggy };
 You can import Ziggy like any other JavaScript library. Without the `@routes` Blade directive Ziggy's config is not available globally, so it must be passed to the `route()` function manually:
 
 ```js
-import route from '../../vendor/tightenco/ziggy/dist';
+import route from '../../vendor/tightenco/ziggy';
 import { Ziggy } from './ziggy.js';
 
 route('home', undefined, undefined, Ziggy);
@@ -350,8 +350,8 @@ To simplify importing the `route()` function, you can create an alias to the ven
 export default defineConfig({
     resolve: {
         alias: {
-            'ziggy-js': 'vendor/tightenco/ziggy/dist',
-            // 'vendor/tightenco/ziggy/dist/vue.es' if using the Vue plugin
+            'ziggy-js': path.resolve('vendor/tightenco/ziggy'),
+            // 'vendor/tightenco/ziggy/dist/vue.es.js' if using the Vue plugin
         },
     },
 });
@@ -392,7 +392,7 @@ import App from './App.vue';
 createApp(App).use(ZiggyVue, Ziggy);
 ```
 
-If you use the Vue plugin with the `ziggy-js` import alias shown above, make sure to update the alias to `vendor/tightenco/ziggy/dist/vue.es`.
+If you use the Vue plugin with the `ziggy-js` import alias shown above, make sure to update the alias to `'vendor/tightenco/ziggy/dist/vue.es.js'`.
 
 ### React
 
@@ -435,7 +435,7 @@ globalThis.Ziggy = Ziggy;
 
 Ziggy's `route()` function is available as an NPM package, for use in JavaScript projects managed separately from their Laravel backend (i.e. without Composer or a `vendor` directory). You can install the NPM package with `npm install ziggy-js`.
 
-To make your routes available on the frontend for this function to use, you can either run `php artisan ziggy:generate` and add the generated config file to your frontend project, or you can return Ziggy's config as JSON from an endpoint in your Laravel API (see [Retrieving Ziggy's config from an API endpoint](#retrieving-ziggys-routes-from-an-api-endpoint) below for an example of how to set this up).
+To make your routes available on the frontend for this function to use, you can either run `php artisan ziggy:generate` and add the generated config file to your frontend project, or you can return Ziggy's config as JSON from an endpoint in your Laravel API (see [Retrieving Ziggy's config from an API endpoint](#retrieving-ziggys-config-from-an-api-endpoint) below for an example of how to set this up).
 
 ## Filtering Routes
 

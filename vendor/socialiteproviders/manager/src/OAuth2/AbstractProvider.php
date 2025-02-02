@@ -46,7 +46,7 @@ abstract class AbstractProvider extends BaseProvider implements ProviderInterfac
         }
 
         if ($this->hasInvalidState()) {
-            throw new InvalidStateException();
+            throw new InvalidStateException;
         }
 
         $response = $this->getAccessTokenResponse($this->getCode());
@@ -61,8 +61,9 @@ abstract class AbstractProvider extends BaseProvider implements ProviderInterfac
         }
 
         return $this->user->setToken($token)
-                    ->setRefreshToken($this->parseRefreshToken($response))
-                    ->setExpiresIn($this->parseExpiresIn($response));
+            ->setRefreshToken($this->parseRefreshToken($response))
+            ->setExpiresIn($this->parseExpiresIn($response))
+            ->setApprovedScopes($this->parseApprovedScopes($response));
     }
 
     /**
@@ -96,5 +97,26 @@ abstract class AbstractProvider extends BaseProvider implements ProviderInterfac
     protected function parseExpiresIn($body)
     {
         return Arr::get($body, 'expires_in');
+    }
+
+    /**
+     * Get the approved scopes from the token response body.
+     *
+     * @param  array  $body
+     * @return array
+     */
+    protected function parseApprovedScopes($body)
+    {
+        $scopesRaw = Arr::get($body, 'scope', null);
+
+        if (! is_array($scopesRaw) && ! is_string($scopesRaw)) {
+            return [];
+        }
+
+        if (is_array($scopesRaw)) {
+            return $scopesRaw;
+        }
+
+        return explode($this->scopeSeparator, (string) Arr::get($body, 'scope', ''));
     }
 }

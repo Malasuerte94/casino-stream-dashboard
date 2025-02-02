@@ -26,6 +26,11 @@
           <label class="font-semibold">Enable Border</label>
         </div>
 
+        <div class="flex items-center col-span-2 gap-2">
+          <label class="font-semibold">Currency</label>
+          <input type="text" v-model="settings.currency" class="mr-2">
+        </div>
+
         <!-- Header Settings -->
         <div class="col-span-2 mt-4 border-t pt-2">
           <h3 class="text-lg font-semibold">Header</h3>

@@ -39,13 +39,15 @@ class ConfigRetriever implements ConfigRetrieverInterface
         $this->providerName = $providerName;
         $this->getConfigFromServicesArray($providerName);
 
-        $this->additionalConfigKeys = $additionalConfigKeys = array_unique($additionalConfigKeys + ['guzzle']);
+        $this->additionalConfigKeys = $additionalConfigKeys = array_unique(
+            array_merge($additionalConfigKeys, ['guzzle']),
+        );
 
         return new Config(
             $this->getFromServices('client_id'),
             $this->getFromServices('client_secret'),
             $this->getFromServices('redirect'),
-            $this->getConfigItems($additionalConfigKeys, fn($key) => $this->getFromServices(strtolower($key)))
+            $this->getConfigItems($additionalConfigKeys, fn ($key) => $this->getFromServices(strtolower((string) $key)))
         );
     }
 
@@ -112,9 +114,9 @@ class ConfigRetriever implements ConfigRetrieverInterface
             // If we are running in console we should spoof values to make Socialite happy...
             if (app()->runningInConsole()) {
                 $configArray = [
-                    'client_id' => "{$this->providerIdentifier}_KEY",
+                    'client_id'     => "{$this->providerIdentifier}_KEY",
                     'client_secret' => "{$this->providerIdentifier}_SECRET",
-                    'redirect' => "{$this->providerIdentifier}_REDIRECT_URI",
+                    'redirect'      => "{$this->providerIdentifier}_REDIRECT_URI",
                 ];
             } else {
                 throw new MissingConfigException("There is no services entry for $providerName");

@@ -5,16 +5,22 @@ import vSelect from 'vue-select';
 import "vue-select/dist/vue-select.css";
 import { useGameStore } from '@/stores/gameStore';
 
+const loading = ref(true);
 const title = ref('');
 const stake = ref('5-10');
-const concurrents = ref([]);
-
+const prize = ref('');
+const buys = ref('2');
+const concurrents = ref([
+  { game_id: null, for_user: null },
+  { game_id: null, for_user: null }
+]);
 const activeBattle = ref(null);
 const activeConcurrents = ref(null);
 const activeStage = ref(null);
 const activeBracket = ref(null);
-const activeScores = ref(null);
+const activeScores = ref([{}]);
 const totalBattles = ref(null);
+const history = ref([]);
 
 const winner = ref(null);
 const currentPair = ref([]);
@@ -26,12 +32,24 @@ onMounted(async () => {
   await fetchActiveBattle();
 });
 
-const addConcurrent = () => {
-  const currentCount = concurrents.value.length;
-  const nextCount = currentCount === 0 ? 2 : currentCount * 2;
-  for (let i = 0; i < nextCount - currentCount; i++) {
-    concurrents.value.push({game_id: '', for_user: ''});
+const cantStart = computed(() => {
+  if (concurrents.value.length < 2) return true;
+  return concurrents.value.some(concurrent => !concurrent.game_id);
+});
+
+const canGoNext = computed(() => {
+  if(activeScores.value) {
+    if (activeScores.value.length < 2) return false;
+    return activeScores.value.every(score => score.cost_buy > 0);
   }
+  return false
+});
+
+const addConcurrent = (number) => {
+  concurrents.value = Array.from({ length: number }, () => ({
+    game_id: '',
+    for_user: '',
+  }));
 };
 
 const removeConcurrent = () => {
@@ -61,19 +79,20 @@ const addScore = async () => {
 const removeScore = async (concurrentIndex, scoreIndex) => {
   await deleteScore(currentPair.value[concurrentIndex].scores[scoreIndex].id);
   currentPair.value[concurrentIndex].scores.splice(scoreIndex, 1);
+  await fetchActiveBattle();
 };
 
 const recalculateScore = async (concurrentIndex, scoreIndex) => {
   const scoreEntry = currentPair.value[concurrentIndex].scores[scoreIndex];
   if (scoreEntry.cost_buy > 0) {
-    scoreEntry.score = parseFloat((scoreEntry.result_buy / scoreEntry.cost_buy).toFixed(2));
+    scoreEntry.score = parseFloat((scoreEntry.result_buy / scoreEntry.cost_buy).toFixed(3));
     await syncScores();
   } else {
     alert('Amount must be greater than 0.');
   }
 };
 const calculateTotalScore = (scores) => {
-  return scores.reduce((total, score) => total + score.score, 0).toFixed(2);
+  return scores.reduce((total, score) => total + score.score, 0).toFixed(3);
 };
 
 const deleteScore = async (score_id) => {
@@ -110,6 +129,8 @@ const startBattle = async () => {
     const response = await axios.post('/api/bonus-battles', {
       title: title.value,
       stake: stake.value,
+      prize: prize.value,
+      buys: buys.value,
       concurrents: concurrents.value,
     });
 
@@ -169,6 +190,7 @@ const fetchActiveBattle = async () => {
     activeStage.value = response.data.stage;
     activeBracket.value = response.data.bracket;
     activeScores.value = response.data.scores;
+    history.value = response.data.history;
     title.value = 'Bonus Battle #' + (totalBattles.value + 1);
 
     if (activeConcurrents.value) {
@@ -184,8 +206,20 @@ const fetchActiveBattle = async () => {
       });
     }
 
+    const hasNoScores = currentPair.value.some(concurrent => concurrent.scores.length === 0);
+    if (hasNoScores) {
+      const buys = activeBattle.value?.buys || 0;
+      if (buys > 0) {
+        for (let i = 0; i < buys; i++) {
+          await addScore();
+        }
+      }
+    }
+
   } catch (error) {
     console.error('Failed to fetch active bonus battle:', error.message);
+  } finally {
+    loading.value = false;
   }
 };
 
@@ -197,25 +231,44 @@ const getGameThumbnail = (gameId) => {
 };
 </script>
 <template>
-  <AppLayout title="Bonus Battle">
+  <AppLayout title="Bonus Battle" v-if="!loading">
     <div class="py-2">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <!-- Hide form if there's an active battle -->
         <div v-if="!activeBattle && !winner" class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
           <div class="p-6 space-y-4">
             <!-- Input Form -->
-            <div>
-              <label for="title" class="block text-sm font-medium text-gray-700">Titlu Bonus Battle</label>
-              <input type="text" v-model="title" id="title"
-                     class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"/>
-            </div>
-            <div>
-              <label for="stake" class="block text-sm font-medium text-gray-700">Miză (eg: 5-8, 5, 10-20, etc.)</label>
-              <input type="text" v-model="stake" id="stake"
-                     class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"/>
+            <div class="flex flex-row gap-2">
+              <div>
+                <label for="title" class="block text-sm font-medium text-gray-700">Titlu Bonus Battle</label>
+                <input type="text" v-model="title" id="title"
+                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"/>
+              </div>
+              <div>
+                <label for="stake" class="block text-sm font-medium text-gray-700">Miză (eg: 5-8, 5, 10-20, etc.)</label>
+                <input type="text" v-model="stake" id="stake"
+                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"/>
+              </div>
+              <div>
+                <label for="stake" class="block text-sm font-medium text-gray-700">Premiu</label>
+                <input type="text" v-model="prize" id="prize"
+                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"/>
+              </div>
+              <div>
+                <label for="stake" class="block text-sm font-medium text-gray-700">Câte buys per joc (poți face ulterior câte vrei)</label>
+                <input type="text" v-model="buys" id="buys"
+                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"/>
+              </div>
             </div>
             <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg shadow-md space-y-4">
-              <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Participanți</h3>
+              <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 flex gap-2 items-center">Participanți
+                <div class="flex gap-4">
+                  <button @click="addConcurrent(2)" class="btn-primary">2</button>
+                  <button @click="addConcurrent(4)" class="btn-primary">4</button>
+                  <button @click="addConcurrent(6)" class="btn-primary">8</button>
+                  <button @click="addConcurrent(16)" class="btn-primary">16</button>
+                </div>
+              </h3>
               <div v-for="(concurrent, index) in concurrents" :key="index" class="flex items-center gap-4 bg-white dark:bg-gray-700 p-4 rounded-lg shadow">
                 <img
                     v-if="concurrent.game_id"
@@ -245,19 +298,13 @@ const getGameThumbnail = (gameId) => {
                   ✕
                 </button>
               </div>
-              <div class="flex gap-4">
-                <button @click="addConcurrent" class="btn-primary">Adaugă Participanți</button>
-                <button @click="removeConcurrent" class="btn-danger" v-if="concurrents.length > 2">
-                  Șterge
-                </button>
-              </div>
             </div>
-
-            <button type="button" @click="startBattle" class="mt-4 bg-green-600 text-white px-4 py-2 rounded-md">Start
-            </button>
+            <button :disabled="cantStart"
+                    :class="{'input-disabled opacity-50': cantStart}"
+                    type="button" @click="startBattle" class="mt-4 bg-green-600 text-white px-4 py-2 rounded-md">Start</button>
           </div>
         </div>
-        <div v-else-if="winner" class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+        <div v-if="winner && !activeBattle" class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
           <div class="p-6 flex justify-center items-center bg-gray-100 dark:bg-gray-800">
             <div class="w-full max-w-md bg-white dark:bg-gray-700 shadow-lg rounded-lg p-6 text-center">
               <img
@@ -275,13 +322,11 @@ const getGameThumbnail = (gameId) => {
             </div>
           </div>
         </div>
-
         <!-- Active Battle Display -->
         <div v-if="activeBattle" class="bg-white overflow-hidden shadow-xl sm:rounded-lg mt-6">
           <div class="p-6">
             <h2 class="text-xl font-bold mb-4">Active Battle: {{ activeBattle.title }}</h2>
-            <p>Stake: {{ activeBattle.stake }} | Etapa: {{ activeStage.name }}</p>
-
+            <p>Miza: {{ activeBattle.stake }} | Etapa: {{ activeStage.name }} | Premiu: {{ activeBattle.prize }} | Buys: {{ activeBattle.buys }}</p>
 
             <!-- Brackets Section -->
             <div class="grid grid-cols-2 gap-4 mt-4" v-if="currentPair.length > 1">
@@ -367,10 +412,14 @@ const getGameThumbnail = (gameId) => {
                 type="button"
                 @click="finishRound"
                 class="mt-6 bg-green-600 text-white px-4 py-2 rounded-md"
+                :disabled="!canGoNext"
+                :class="{'input-disabled opacity-50': !canGoNext}"
             >
               Următoarii Concurenți
             </button>
             <button
+                :disabled="!canGoNext"
+                :class="{'input-disabled opacity-50': !canGoNext}"
                 v-if="activeStage.name === 'Final'"
                 type="button"
                 @click="endBattle"
@@ -378,6 +427,54 @@ const getGameThumbnail = (gameId) => {
             >
               Termina Battle
             </button>
+          </div>
+          <div class="p-6">
+            <table v-if="history.stage_brackets.length > 0" class="table-auto w-full text-sm text-gray-200 mb-2">
+              <tbody>
+              <tr
+                  v-for="(bracket, index) in history.stage_brackets"
+                  :key="bracket.id"
+                  :class="index % 2 === 0 ? 'bg-gray-900' : 'bg-gray-800'"
+              >
+                <!-- Game Names -->
+                <td class="px-4 py-2 font-bold">
+        <span :class="{ 'line-through text-gray-500': bracket.winner !== bracket.participant_a }">
+          {{ bracket.participant_a }}
+        </span>
+                  vs
+                  <span :class="{ 'line-through text-gray-500': bracket.winner !== bracket.participant_b }">
+          {{ bracket.participant_b }}
+        </span>
+                </td>
+
+                <!-- Scores -->
+                <td class="px-4 py-2">
+                  {{ parseFloat(bracket.participant_a_score).toFixed(3) }} - {{ parseFloat(bracket.participant_b_score).toFixed(3) }}
+                </td>
+              </tr>
+              </tbody>
+            </table>
+
+
+            <table v-if="history.concurrents.length > 0" class="table-auto w-full text-sm text-gray-200">
+              <tbody>
+              <tr
+                  v-for="(concurrent, index) in history.concurrents"
+                  :key="concurrent?.id"
+                  :class="index % 2 === 0 ? 'bg-gray-900' : 'bg-gray-800'"
+              >
+                <td class="border border-black px-1 py-1 shrink w-0">
+                  {{ concurrent?.is_eliminated ? '❌' : '✅' }}
+                </td>
+                <td class="border border-black px-2 py-1">
+                  {{ concurrent?.game.name || 'N/A' }}
+                </td>
+                <td class="border border-black px-2 py-1">
+                  {{ concurrent?.for_user || 'N/A' }}
+                </td>
+              </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

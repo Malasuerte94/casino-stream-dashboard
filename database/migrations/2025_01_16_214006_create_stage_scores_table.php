@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignId('bonus_concurrent_id')->index();
             $table->float('cost_buy')->default(0);
             $table->float('result_buy')->default(0);
-            $table->float('score')->default(0);
+            $table->float('score', 10, 3)->default(0);
             $table->timestamps();
         });
     }

@@ -304,6 +304,7 @@ export default {
       setInterval(async () => {
         if (!this.isUpdating) {
           this.isUpdating = true;
+          await this.getSettings();
           await this.getLatestList();
           this.isUpdating = false;
           this.initAutoScroll();
