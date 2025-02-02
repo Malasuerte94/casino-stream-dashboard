@@ -151,15 +151,15 @@
                 <tbody>
                 <tr>
                   <td class="p-1">Battle Cost</td>
-                  <td class="p-1 text-right">{{ totalCost }}</td>
+                  <td class="p-1 text-right bg-gray-900 rounded-md">{{ totalCost }}</td>
                 </tr>
                 <tr>
                   <td class="p-1">Battle Profit</td>
                   <td
-                      class="p-1 text-right"
+                      class="p-1 text-right bg-gray-900 rounded-md"
                       :class="{ 'text-green-400': totalProfit > 0, 'text-red-400': totalProfit < 0 }"
                   >
-                    {{ totalProfit }}
+                    {{totalProfit > 0 ? '+' : '-'}}{{ totalProfit }}
                   </td>
                 </tr>
                 </tbody>

@@ -52,16 +52,6 @@ const addConcurrent = (number) => {
   }));
 };
 
-const removeConcurrent = () => {
-  const currentCount = concurrents.value.length;
-  if (currentCount <= 2) {
-    alert('You must have at least 2 participants.');
-    return;
-  }
-  const nextCount = currentCount / 2;
-  concurrents.value.splice(nextCount);
-};
-
 const addScore = async () => {
   currentPair.value.forEach((concurrent) => {
     concurrent?.scores.push({
@@ -290,13 +280,6 @@ const getGameThumbnail = (gameId) => {
                     class="flex-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400 p-2.5"
                     placeholder="Cine a ales? (opțional)"
                 />
-                <button
-                    v-if="concurrents.length > 2"
-                    @click="removeConcurrent(index)"
-                    class="btn-danger"
-                >
-                  ✕
-                </button>
               </div>
             </div>
             <button :disabled="cantStart"
