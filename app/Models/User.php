@@ -172,6 +172,13 @@ class User extends Authenticatable
         return $this->hasMany(BonusBuy::class);
     }
 
+    /**
+     * @return HasMany
+     */
+    public function schedules(): HasMany
+    {
+        return $this->hasMany(Schedule::class);
+    }
 
     /**
      * Get the Discord webhook URL for the user's schedule announcer.
