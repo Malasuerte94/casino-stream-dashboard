@@ -174,13 +174,13 @@
               <div
                   :class="['participant', { loser: bracket.winner !== bracket.participant_a && bracket.winner !== 'N/A' }]"
               >
-                {{ bracket.participant_a }} - {{ bracket.participant_a_score }}
+                {{ bracket.participant_a }} - {{ parseFloat(bracket.participant_a_score).toFixed(3) }}
               </div>
               <div class="vs">VS</div>
               <div
                   :class="['participant', { loser: bracket.winner !== bracket.participant_b && bracket.winner !== 'N/A' }]"
               >
-                {{ bracket.participant_b }} - {{ bracket.participant_b_score }}
+                {{ bracket.participant_b }} - {{ parseFloat(bracket.participant_b_score).toFixed(3) }}
               </div>
             </div>
           </div>
