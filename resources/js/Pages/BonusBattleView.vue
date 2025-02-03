@@ -47,16 +47,18 @@
                 :key="concurrent?.id || index"
                 class="w-100 grow flex-col flex gap-2 px-2 max-w-[190px]"
             >
-
               <div class="flex flex-col gap-2 mt-2">
                 <div
                     :class="'concurrent flex rounded-md text-white '"
                 >
-                  <img
-                      :src="getGameThumbnail(concurrent.game.image)"
-                      alt="Game Thumbnail"
-                      class="w-[100px] rounded-lg"
-                  />
+                  <transition name="flip" mode="out-in">
+                    <img
+                        :src="getGameThumbnail(concurrent.game.image)"
+                        alt="Game Thumbnail"
+                        class="w-[100px] rounded-lg"
+                        :key="concurrent.game.image"
+                    />
+                  </transition>
                 </div>
                 <div class="from-user" v-if="concurrent?.for_user !== null" :style="{
                   'background-color': settings.tableParticipantBgColor,
@@ -84,31 +86,28 @@
                   <th class="border border-gray-700 px-1 py-1">Scor</th>
                 </tr>
                 </thead>
-                <tbody>
-                <tr
-                    v-for="(score, scoreIndex) in getConcurrentScores(concurrent?.id, bonusBattleBracket?.id)"
-                    :key="score.id || scoreIndex"
-                    :style="{
-                  'background-color': settings.tableScoresBgColor
-                }"
-                >
-                  <td class="px-2 py-1">{{ score.cost_buy }}</td>
-                  <td class="px-2 py-1">{{ score.result_buy }}</td>
-                  <td
-                      class="px-2 py-1 font-bold"
-                      :class="score.score < 1 ? 'text-red-500' : 'text-green-500'"
+                <transition-group name="fade-down" tag="tbody">
+                  <tr
+                      v-for="(score, scoreIndex) in getConcurrentScores(concurrent?.id, bonusBattleBracket?.id)"
+                      :key="score.id || scoreIndex"
+                      :style="{ 'background-color': settings.tableScoresBgColor, 'font-size': (settings.tableScoresFontSize * 1.2) + 'px'}"
                   >
-                    {{ score.score.toFixed(2) }}
-                  </td>
-                </tr>
-                </tbody>
+                    <td class="px-2 py-1">{{ score.cost_buy }}</td>
+                    <td class="px-2 py-1">{{ score.result_buy }}</td>
+                    <td
+                        class="px-2 py-1 font-bold"
+                        :class="score.score < 1 ? 'text-red-500' : 'text-green-500'"
+                    >
+                      {{ score.score.toFixed(2) }}
+                    </td>
+                  </tr>
+                </transition-group>
               </table>
 
             </div>
-
             <!-- VS Symbol -->
-            <div class="vs-symbol flex justify-center items-center text-2xl">
-              <img :src="this.vsImageUrl" alt="vs"/>
+            <div class="vs-symbol flex justify-center items-center">
+              VS
             </div>
           </div>
         </div>
@@ -169,21 +168,29 @@
         </div>
 
         <div class="second-battle">
-          <div class="bracket-container py-2 px-2" v-if="bonusBattleAllBracketsCurentStage.length > 0">
-            <div v-for="bracket in bonusBattleAllBracketsCurentStage" :key="bracket.id" class="bracket-item">
+          <template v-if="bonusBattleAllBracketsCurentStage.length > 0">
+            <transition-group name="fade-down" tag="div" class="bracket-container py-2 px-2">
               <div
-                  :class="['participant', { loser: bracket.winner !== bracket.participant_a && bracket.winner !== 'N/A' }]"
+                  v-for="bracket in bonusBattleAllBracketsCurentStage"
+                  :key="bracket.id"
+                  class="bracket-item"
               >
-                <span class="participant-name">{{ bracket.participant_a }}</span> -  <span class="result-score">{{ parseFloat(bracket.participant_a_score).toFixed(3) }} </span>
+                <div
+                    :class="['participant', { loser: bracket.winner !== bracket.participant_a && bracket.winner !== 'N/A' }]"
+                >
+                  <span class="participant-name">{{ bracket.participant_a }}</span> -
+                  <span class="result-score">{{ parseFloat(bracket.participant_a_score).toFixed(3) }} </span>
+                </div>
+                <div class="vs">VS</div>
+                <div
+                    :class="['participant', { loser: bracket.winner !== bracket.participant_b && bracket.winner !== 'N/A' }]"
+                >
+                  <span class="result-score">{{ parseFloat(bracket.participant_b_score).toFixed(3) }}</span> -
+                  <span class="participant-name">{{ bracket.participant_b }}</span>
+                </div>
               </div>
-              <div class="vs">VS</div>
-              <div
-                  :class="['participant', { loser: bracket.winner !== bracket.participant_b && bracket.winner !== 'N/A' }]"
-              >
-                <span class="result-score">{{ parseFloat(bracket.participant_b_score).toFixed(3) }}</span> - <span class="participant-name">{{ bracket.participant_b }}</span>
-              </div>
-            </div>
-          </div>
+            </transition-group>
+          </template>
 
           <div class="shadow-md py-2 px-2">
             <div class="overflow-x-auto">
@@ -242,7 +249,7 @@ export default {
       totalProfit: 0,
       totalCost: 0,
       isUpdating: false,
-      vsImageUrl: `/storage/assets/images/vs.gif`
+      vsImageUrl: `/storage/assets/images/vs_symbol.png`
     };
   },
   computed: {
@@ -401,7 +408,69 @@ body,
   align-items: center;
   align-self: baseline;
   top: 24px;
+  font-family: Arial, sans-serif;
+  margin-right: 8px;
+
+  /* Typography: Bold, Outlined, and Bigger */
+  font-size: 50px;
+  font-weight: 900;
+  text-transform: uppercase;
+  text-align: center;
+  letter-spacing: -8px;
+
+  /* Main Text Color */
+  color: white;
+
+  /* Apply Animations */
+  animation: gradientMove 3s infinite linear, floatVs 1.5s ease-in-out infinite, shadowGlow 3s infinite linear;
+
+  /* Gradient Shadow Border Effect */
+  text-shadow:
+      0px 0px 10px rgba(255, 0, 0, 0.8),
+      0px 0px 20px rgba(255, 165, 0, 0.8),
+      0px 0px 30px rgba(255, 255, 0, 0.8);
 }
+
+/* Subtle Floating Effect */
+@keyframes floatVs {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Gradient Animation */
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Glowing Gradient Shadow Movement */
+@keyframes shadowGlow {
+  0% {
+    text-shadow:
+        0px 0px 5px rgba(255, 0, 0, 0.8),
+        0px 0px 10px rgba(0, 0, 0, 0.8),
+        0px 0px 15px rgba(255, 255, 0, 0.8);
+  }
+  50% {
+    text-shadow:
+        0px 0px 2px rgba(255, 165, 0, 0.9),
+        0px 0px 5px rgba(0, 0, 0, 0.9),
+        0px 0px 10px rgba(3, 255, 157, 0.9);
+  }
+  100% {
+    text-shadow:
+        0px 0px 5px rgba(255, 0, 0, 0.8),
+        0px 0px 10px rgba(0, 0, 0, 0.8),
+        0px 0px 15px rgba(255, 255, 0, 0.8);
+  }
+}
+
+
 
 .concurrent {
   height: auto;
@@ -498,4 +567,89 @@ body,
     }
   }
 }
+
+/* Flip in when entering */
+.flip-enter-from {
+  opacity: 0;
+  transform: rotateY(90deg);
+}
+
+.flip-enter-active {
+  animation: flipIn 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+/* Flip out when leaving */
+.flip-leave-active {
+  animation: flipOut 0.6s ease-in-out forwards;
+}
+
+@keyframes flipIn {
+  0% {
+    opacity: 0;
+    transform: rotateY(90deg);
+  }
+  50% {
+    opacity: 1;
+    transform: rotateY(-10deg);
+  }
+  100% {
+    opacity: 1;
+    transform: rotateY(0deg);
+  }
+}
+
+@keyframes flipOut {
+  0% {
+    opacity: 1;
+    transform: rotateY(0deg);
+  }
+  50% {
+    opacity: 0.5;
+    transform: rotateY(-90deg);
+  }
+  100% {
+    opacity: 0;
+    transform: rotateY(-180deg);
+  }
+}
+
+
+/* Initial state before entering */
+.fade-down-enter-from {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+/* Animation when entering */
+.fade-down-enter-active {
+  animation: fadeDown 0.5s ease-out forwards;
+}
+
+/* Smooth exit */
+.fade-down-leave-active {
+  animation: fadeOut 0.3s ease-in forwards;
+}
+
+@keyframes fadeDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
 </style>

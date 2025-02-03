@@ -54,17 +54,23 @@ const addConcurrent = (number) => {
 
 const addScore = async () => {
   currentPair.value.forEach((concurrent) => {
+    const lastScore = concurrent?.scores.length > 0
+        ? concurrent.scores[concurrent.scores.length - 1].cost_buy
+        : 0;
+
     concurrent?.scores.push({
       bracket_id: activeBracket.value.id,
       bonus_concurrent_id: concurrent.id,
-      cost_buy: 0,
+      cost_buy: lastScore,
       score: 0,
       result_buy: 0,
     });
   });
+
   await syncScores();
   await fetchActiveBattle();
 };
+
 
 const removeScore = async (concurrentIndex, scoreIndex) => {
   await deleteScore(currentPair.value[concurrentIndex].scores[scoreIndex].id);
