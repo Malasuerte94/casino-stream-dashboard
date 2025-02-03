@@ -255,7 +255,7 @@ const getGameThumbnail = (gameId) => {
                 <div class="flex gap-4">
                   <button @click="addConcurrent(2)" class="btn-primary">2</button>
                   <button @click="addConcurrent(4)" class="btn-primary">4</button>
-                  <button @click="addConcurrent(6)" class="btn-primary">8</button>
+                  <button @click="addConcurrent(8)" class="btn-primary">8</button>
                   <button @click="addConcurrent(16)" class="btn-primary">16</button>
                 </div>
               </h3>
