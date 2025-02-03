@@ -61,7 +61,7 @@ class BonusBattleController extends Controller
         //history
         $stageBrackets = $activeBattle->stages()
             ->with(['brackets' => function ($query) {
-                $query->where('is_finished', true);
+                $query->where('is_finished', true)->orderBy('updated_at', 'desc');
             }])
             ->get()
             ->flatMap(function ($stage) {
@@ -84,11 +84,12 @@ class BonusBattleController extends Controller
             });
 
         $allBattleBrackets = $activeBattle->stages()
-            ->with('brackets')
+            ->with(['brackets' => function ($query) {
+                $query->orderBy('updated_at', 'desc');
+            }])
             ->get()
-            ->flatMap(function ($stage) {
-                return $stage->brackets;
-            });
+            ->flatMap(fn($stage) => $stage->brackets);
+
         $allConcurrents = $activeBattle->concurrents()->get()->map(function ($concurrent) use ($allBattleBrackets) {
             $isEliminated = $allBattleBrackets->contains(function ($bracket) use ($concurrent) {
                 return $bracket->is_finished && $bracket->winner_id !== $concurrent->id &&
@@ -129,7 +130,7 @@ class BonusBattleController extends Controller
         $activeInfo = $this->getCurentBattleDetails($activeBattle);
         $activeStage = $activeBattle->lastActiveStage ?? $activeBattle->lastEndedStage;
 
-        $stageBrackets = $activeStage?->brackets()->where('is_finished', true)->get()->map(function ($bracket) {
+        $stageBrackets = $activeStage?->brackets()->where('is_finished', true)->orderBy('updated_at', 'desc')->get()->map(function ($bracket) {
             return [
                 'id' => $bracket->id,
                 'bonus_stage_id' => $bracket->bonus_stage_id,
@@ -147,7 +148,9 @@ class BonusBattleController extends Controller
         });
 
         $allBattleBrackets = $activeBattle->stages()
-            ->with('brackets')
+            ->with(['brackets' => function ($query) {
+                $query->orderBy('updated_at', 'desc');
+            }])
             ->get()
             ->flatMap(function ($stage) {
                 return $stage->brackets;

@@ -159,7 +159,7 @@
                       class="p-1 text-right bg-gray-900 rounded-md"
                       :class="{ 'text-green-400': totalProfit > 0, 'text-red-400': totalProfit < 0 }"
                   >
-                    {{totalProfit > 0 ? '+' : '-'}}{{ totalProfit }}
+                    {{totalProfit > 0 ? '+' : ''}}{{ totalProfit }}
                   </td>
                 </tr>
                 </tbody>
@@ -174,13 +174,13 @@
               <div
                   :class="['participant', { loser: bracket.winner !== bracket.participant_a && bracket.winner !== 'N/A' }]"
               >
-                {{ bracket.participant_a }} - {{ parseFloat(bracket.participant_a_score).toFixed(3) }}
+                <span class="participant-name">{{ bracket.participant_a }}</span> -  <span class="result-score">{{ parseFloat(bracket.participant_a_score).toFixed(3) }} </span>
               </div>
               <div class="vs">VS</div>
               <div
                   :class="['participant', { loser: bracket.winner !== bracket.participant_b && bracket.winner !== 'N/A' }]"
               >
-                {{ bracket.participant_b }} - {{ parseFloat(bracket.participant_b_score).toFixed(3) }}
+                <span class="result-score">{{ parseFloat(bracket.participant_b_score).toFixed(3) }}</span> - <span class="participant-name">{{ bracket.participant_b }}</span>
               </div>
             </div>
           </div>
@@ -345,34 +345,42 @@ body,
   gap: 5px;
   border-radius: 5px;
   color: #ffffff;
-  font-family: Arial, sans-serif;
 
   .bracket-item {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 15px;
+    gap: 10px;
     padding: 5px;
-    background-color: black;
+    background-color: rgba(0, 0, 0, 0.49);
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  }
-
-  .participant {
-    font-size: 14px;
-    font-weight: bold;
-    transition: opacity 0.3s, text-decoration 0.3s;
-  }
-
-  .participant.loser {
-    text-decoration: line-through;
-    opacity: 0.5;
-  }
-
-  .vs {
-    font-size: 10px;
-    font-weight: bold;
-    color: #ff5722;
+    overflow: hidden;
+    .participant {
+      gap: 5px;
+      display: flex;
+      font-size: 13px;
+      font-weight: bold;
+      transition: opacity 0.3s, text-decoration 0.3s;
+      .participant-name {
+        overflow: hidden;
+        white-space: nowrap;
+      }
+      &.loser {
+        .participant-name {
+          text-decoration: line-through;
+          opacity: 0.5;
+        }
+        .result-score {
+          opacity: 0.5;
+        }
+      }
+    }
+    .vs {
+      font-size: 10px;
+      font-weight: bold;
+      color: #ff5722;
+    }
   }
 }
 
