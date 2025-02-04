@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\LiveStat;
 use App\Models\Stream;
 use App\Models\User;
 use Exception;
@@ -100,6 +101,8 @@ class StreamController extends Controller
     }
 
     /**
+     * Fetch YouTube data and update live stats.
+     *
      * @param Request $request
      * @return JsonResponse
      */
@@ -107,10 +110,14 @@ class StreamController extends Controller
     {
         try {
             $validated = $request->validate([
-                'url' => 'required|url'
+                'url' => 'required|url',
+                'user_id' => 'required|integer',
             ]);
 
             $url = $validated['url'];
+            $userId = $validated['user_id'];
+
+            $user = User::findOrFail($userId);
             $channelId = $this->extractChannelId($url);
 
             if (!$channelId) {
@@ -126,7 +133,7 @@ class StreamController extends Controller
                 if (!$videoId) {
                     return response()->json([
                         'success' => false,
-                        'message' => 'No live stream found for this channel \ Quota Exceed',
+                        'message' => 'No live stream found for this channel or quota exceeded',
                     ], 404);
                 }
                 Cache::put($cacheKey, $videoId, now()->addMinutes(25));
@@ -138,19 +145,58 @@ class StreamController extends Controller
             $totalViews = $videoDetails['viewCount'] ?? '0';
             $likes = $videoDetails['likeCount'] ?? '0';
 
+            $liveStat = LiveStat::firstOrNew(['live_id' => $videoId, 'user_id' => $user->id]);
+
+            if (!$liveStat->exists) {
+                $liveStat->max_views = 0;
+                $liveStat->max_likes = 0;
+            }
+
+            $recentStats = LiveStat::where('user_id', $user->id)
+                ->orderByDesc('created_at')
+                ->get();
+
+            $recordViews = false;
+            $recordLikes = false;
+
+            if ($recentStats->count() >= 10) {
+                $maxViewsFromRecent = $recentStats->max('max_views');
+                $maxLikesFromRecent = $recentStats->max('max_likes');
+
+                if ($currentViewers > $maxViewsFromRecent) {
+                    $liveStat->max_views = $currentViewers;
+                    $recordViews = true;
+                }
+                if ($likes > $maxLikesFromRecent) {
+                    $liveStat->max_likes = $likes;
+                    $recordLikes = true;
+                }
+            } else {
+                if ($currentViewers > $liveStat->max_views) {
+                    $liveStat->max_views = $currentViewers;
+                }
+                if ($likes > $liveStat->max_likes) {
+                    $liveStat->max_likes = $likes;
+                }
+            }
+
+            $liveStat->save();
+
             return response()->json([
                 'success' => true,
                 'data' => [
                     'url' => $url,
                     'views' => $currentViewers === '0' ? $totalViews : $currentViewers,
                     'likes' => $likes,
-                ]
+                    'record_views' => $recordViews,
+                    'record_likes' => $recordLikes,
+                ],
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to fetch YouTube data',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 400);
         }
     }

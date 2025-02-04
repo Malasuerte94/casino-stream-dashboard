@@ -181,6 +181,14 @@ class User extends Authenticatable
     }
 
     /**
+     * @return HasMany
+     */
+    public function liveStats(): HasMany
+    {
+        return $this->hasMany(LiveStat::class);
+    }
+
+    /**
      * Get the Discord webhook URL for the user's schedule announcer.
      *
      * @return string|null

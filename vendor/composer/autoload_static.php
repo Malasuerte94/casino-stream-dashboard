@@ -418,8 +418,8 @@ class ComposerStaticInit69c8e8820f8dba78f915ae86794425a6
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-message/src',
-            1 => __DIR__ . '/..' . '/psr/http-factory/src',
+            0 => __DIR__ . '/..' . '/psr/http-factory/src',
+            1 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -728,6 +728,7 @@ class ComposerStaticInit69c8e8820f8dba78f915ae86794425a6
         'App\\Models\\Deposit' => __DIR__ . '/../..' . '/app/Models/Deposit.php',
         'App\\Models\\Game' => __DIR__ . '/../..' . '/app/Models/Game.php',
         'App\\Models\\GuessEntry' => __DIR__ . '/../..' . '/app/Models/GuessEntry.php',
+        'App\\Models\\LiveStat' => __DIR__ . '/../..' . '/app/Models/LiveStat.php',
         'App\\Models\\Referral' => __DIR__ . '/../..' . '/app/Models/Referral.php',
         'App\\Models\\Role' => __DIR__ . '/../..' . '/app/Models/Role.php',
         'App\\Models\\Schedule' => __DIR__ . '/../..' . '/app/Models/Schedule.php',
