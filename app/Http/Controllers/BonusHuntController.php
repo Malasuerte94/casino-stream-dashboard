@@ -69,7 +69,6 @@ class BonusHuntController extends Controller
             'stream_id' => $latestStream->id
         ]);
 
-
         $gamesForBonusHunt = $latestBonusHunt->bonusHuntGames;
 
         if(!$gamesForBonusHunt->first()) {

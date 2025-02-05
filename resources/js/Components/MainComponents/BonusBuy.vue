@@ -2,7 +2,7 @@
   <div class="p-6 rounded-lg shadow-md bg-gray-100 dark:bg-gray-800">
     <!-- Bonus Buy Info -->
     <div class="space-y-6 mb-6">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <input
             :disabled="isEnded"
             :class="{'input-disabled': isEnded}"
@@ -28,10 +28,10 @@
             class="input-disabled"
             placeholder="Rezultat (LEI)"
         />
+        <button @click="wantToReset" class="btn-primary w-full md:w-auto">
+          LISTA NOUA
+        </button>
       </div>
-      <button @click="wantToReset" class="btn-primary w-full md:w-auto">
-        LISTA NOUA
-      </button>
     </div>
 
     <!-- Bonus Buy Games -->
@@ -233,6 +233,11 @@ export default {
     },
     async resetBonusBuy() {
       try {
+        await axios.post("/api/close-bonus-list", {
+          close: true,
+          list_id: this.bonusBuy.id,
+          type: 'buy'
+        })
         await axios.post("/api/bonus-buy");
         await this.getLatestList();
         this.$emit("newlist");

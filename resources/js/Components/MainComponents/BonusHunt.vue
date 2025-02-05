@@ -2,7 +2,7 @@
   <div class="p-6 rounded-lg shadow-md bg-gray-100 dark:bg-gray-800">
     <!-- Bonus Hunt Info -->
     <div class="space-y-6 mb-6">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <input
             :disabled="isEnded"
             :class="{'input-disabled': isEnded}"
@@ -27,14 +27,14 @@
             class="input-disabled"
             placeholder="Rezultat (LEI)"
         />
+        <button @click="wantToReset" class="btn-primary w-full md:w-auto">
+          LISTA NOUA
+        </button>
       </div>
-      <button @click="wantToReset" class="btn-primary w-full md:w-auto">
-        LISTA NOUA
-      </button>
     </div>
 
     <!-- Bonus Hunt Games -->
-    <template v-if="bonusHuntGames.length > 0">
+    <template v-if="bonusHuntGames.length > 0 && bonusHunt.start > 0">
       <div class="hidden md:grid grid-cols-[10px_50px_1fr_120px_120px_120px_50px] gap-4 text-sm font-semibold text-gray-600 dark:text-gray-300">
         <span>#</span>
         <span></span>
@@ -101,13 +101,15 @@
           ✕
         </button>
       </div>
+      <!-- Add Game Button -->
+      <div class="flex justify-center mt-8" v-if="!isEnded">
+        <button @click="createNewBonusHuntGameRow" class="btn-primary w-full max-w-md">
+          + Adaugă Joc
+        </button>
+      </div>
     </template>
-
-    <!-- Add Game Button -->
-    <div class="flex justify-center mt-8" v-if="!isEnded">
-      <button @click="createNewBonusHuntGameRow" class="btn-primary w-full max-w-md">
-        + Adaugă Joc
-      </button>
+    <div v-else>
+      Introdu costul listei pentru a adăuga jocuri.
     </div>
   </div>
 </template>
@@ -248,6 +250,11 @@ export default {
     },
     async resetBonusHunt() {
       try {
+        await axios.post("/api/close-bonus-list", {
+          close: true,
+          list_id: this.bonusHunt.id,
+          type: 'hunt'
+        })
         await axios.post("/api/bonus-hunt");
         await this.getLatestList();
         this.$emit("newlist");
