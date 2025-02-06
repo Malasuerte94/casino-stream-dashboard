@@ -121,6 +121,15 @@
           <input type="number" v-model="settings.tableScoresFontSize" class="border p-1 w-full">
         </div>
 
+        <div class="col-span-2 mt-4 border-t pt-2">
+          <h3 class="text-lg font-semibold">History</h3>
+        </div>
+
+        <div class="flex items-center">
+          <input type="checkbox" v-model="settings.tableHistoryEnable" class="mr-2">
+          <label class="font-semibold">Show History</label>
+        </div>
+
         <div>
           <label class="block font-semibold">History Bg Colors</label>
           <ColorPicker v-model:pureColor="settings.tableHistoryBgOddColor" format="rgb" shape="square"/>
@@ -280,7 +289,7 @@
                     src="/storage/assets/images/vs.gif" alt="vs"></div>
               </div>
             </div>
-            <div class="second-battle"><!--v-if-->
+            <div class="second-battle" v-if="settings.tableHistoryEnable">
               <div class="shadow-md py-2 px-2">
                 <div class="overflow-x-auto">
                   <table class="table-auto w-full text-gray-200" :style="{
@@ -358,6 +367,7 @@ export default {
         tableBodyFontSize: 12,
         tableHistoryBgEvenColor: "#ff0000",
         tableScoresFontSize: 12,
+        tableHistoryEnable: true,
       }
     };
   },

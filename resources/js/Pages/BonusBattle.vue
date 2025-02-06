@@ -21,6 +21,7 @@ const activeBracket = ref(null);
 const activeScores = ref([{}]);
 const totalBattles = ref(null);
 const history = ref([]);
+const activeSelect = ref(false);
 
 const winner = ref(null);
 const currentPair = ref([]);
@@ -172,6 +173,7 @@ const updateGame = async (concurrentId, gameId) => {
       game_id: gameId
     });
     await fetchActiveBattle();
+    activeSelect.value = false;
   } catch (error) {
     alert('Please try again.');
   }
@@ -320,22 +322,30 @@ const getGameThumbnail = (gameId) => {
             <!-- Brackets Section -->
             <div class="grid grid-cols-2 gap-4 mt-4" v-if="currentPair.length > 1">
               <div v-for="(concurrent, index) in currentPair" :key="index" class="border rounded-md p-4 shadow">
-                <h3 class="text-lg font-bold mb-2">{{ concurrent.game.name }} - {{ concurrent.for_user}}</h3>
                 <div class="flex gap-2 items-center mb-2 bg-blend-darken  p-2 rounded border-blue-900 border">
                 <img
                     v-if="concurrent.game.image"
                     :src="getGameThumbnail(concurrent.game.id)"
                     alt="Game Thumbnail"
-                    class="w-16 h-16 object-cover rounded-lg"
+                    class="w-auto h-[100px] rounded-lg"
                 />
-                <v-select
-                    :options="availableGames"
-                    label="name"
-                    :reduce="game => game.id"
-                    @update:modelValue="updateGame(concurrent.id, $event)"
-                    placeholder="Schimbi jocul?"
-                    class="flex-1"
-                />
+                  <div class="w-full">
+                    <h3 class="text-lg font-bold mb-2">{{ concurrent.game.name }} - {{ concurrent.for_user}}</h3>
+                    <div class="flex flex-row">
+                      <v-select
+                          :disabled="!activeSelect"
+                          :options="availableGames"
+                          label="name"
+                          :reduce="game => game.id"
+                          @update:modelValue="updateGame(concurrent.id, $event)"
+                          placeholder="Schimbi jocul?"
+                          class="flex-1"
+                      />
+                      <div>
+                        <button class="btn-secondary" @click="activeSelect = !activeSelect">SCHIMBA JOCU</button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 <div>
                   <div v-for="(score, scoreIndex) in concurrent.scores" :key="scoreIndex"
@@ -352,6 +362,8 @@ const getGameThumbnail = (gameId) => {
                     <label class="text-sm font-medium text-gray-700">
                       Rezultat Buy
                       <input
+                          :disabled="score.cost_buy <= 0"
+                          :class="{'input-disabled opacity-50': score.cost_buy <= 0}"
                           type="number"
                           v-model="concurrent.scores[scoreIndex].result_buy"
                           class="block w-40 border-gray-300 rounded-md shadow-sm"

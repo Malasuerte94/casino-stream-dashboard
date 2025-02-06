@@ -60,16 +60,17 @@
                     />
                   </transition>
                 </div>
-                <div class="from-user" v-if="concurrent?.for_user !== null" :style="{
+                <div class="from-user" :style="{
                   'background-color': settings.tableParticipantBgColor,
                   'color': settings.tableParticipantFontColor,
                   'font-size': settings.tableParticipantFontSize + 'px',
                 }">
-                  {{ concurrent?.for_user || 'N/A' }}
+                  <div v-if="concurrent?.for_user !== null">{{ concurrent?.for_user || 'N/A' }}</div>
+                  <div class="total-game-score font-bold"
+                       :class="getTotalConcurrentScore(concurrent?.id, bonusBattleBracket?.id) < 1 ? 'text-red-500' : 'text-green-500'"
+                  >{{ getTotalConcurrentScore(concurrent?.id, bonusBattleBracket?.id) }}</div>
                 </div>
               </div>
-
-
               <table
                   v-if="getConcurrentScores(concurrent?.id, bonusBattleBracket?.id).length > 0"
                   :style="{
@@ -105,7 +106,6 @@
               </table>
 
             </div>
-            <!-- VS Symbol -->
             <div class="vs-symbol flex justify-center items-center">
               VS
             </div>
@@ -113,7 +113,6 @@
         </div>
 
         <div v-else class="w-full p-4 text-white shadow-lg flex space-x-4 winner-battle">
-          <!-- Winner Card -->
           <div class="text-center w-40 flex flex-col justify-center">
             <img
                 v-if="battleWinner.game.image"
@@ -123,9 +122,7 @@
             />
           </div>
 
-          <!-- Stats and Table -->
           <div class="flex-grow">
-            <!-- Stats -->
             <div class="mb-4" :style="{
                 'font-size': (settings.headerFontSize * 1.2) + 'px',
               }">
@@ -134,7 +131,6 @@
               <p><span class="font-bold">Pentru User:</span> {{ battleWinner.for_user || 'N/A' }}</p>
             </div>
 
-            <!-- Battle Cost and Profit Table -->
             <div class="bg-gray-800 rounded-md p-2" :style="{
                 'background-color': settings.headerBgColor,
                 'color': settings.headerFontColor,
@@ -192,7 +188,7 @@
             </transition-group>
           </template>
 
-          <div class="shadow-md py-2 px-2">
+          <div class="shadow-md py-2 px-2" v-if="settings.tableHistoryEnable">
             <div class="overflow-x-auto">
               <table class="table-auto w-full text-gray-200" :style="{
                   'font-size': settings.tableBodyFontSize + 'px'
@@ -329,6 +325,14 @@ export default {
       return imageName
           ? `/storage/games/${imageName}`
           : '';
+    },
+    getTotalConcurrentScore(concurrentId, bracketId) {
+      let totalScore = 0;
+      const scores = this.getConcurrentScores(concurrentId, bracketId);
+      scores.forEach(score => {
+        totalScore += parseFloat(score.score);
+      });
+      return totalScore.toFixed(2);
     }
   },
 };
@@ -480,6 +484,7 @@ body,
   align-items: center;
   text-align: center;
   z-index: 1;
+  position: relative;
 }
 
 .from-user {
@@ -487,6 +492,10 @@ body,
   font-size: 14px;
   background-color: black;
   border-radius: 5px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 10px;
 }
 
 .stage {
