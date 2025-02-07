@@ -448,21 +448,38 @@ class BonusBattleController extends Controller
         ]);
 
         $bracket = Bracket::findOrFail($validated['active_bracket']);
+        $bonusBattle = $bracket->stage->bonusBattle;
+        $bonusBattle->loadMissing('stages.brackets.scores');
 
         foreach ($validated['bracket'] as $row) {
             foreach ($row['scores'] as $score) {
+                $lastCostBuy = $score['cost_buy'];
+                if($lastCostBuy === 0) {
+                    $allScores = $bonusBattle->stages->flatMap(function ($stage) {
+                        return $stage->brackets->flatMap(function ($bracketItem) {
+                            return $bracketItem->scores;
+                        });
+                    });
+                    $lastScore = $allScores->where('bonus_concurrent_id', $score['bonus_concurrent_id'])
+                        ->sortByDesc('id')
+                        ->first();
+                    if ($lastScore) {
+                        $lastCostBuy = $lastScore->cost_buy;
+                    }
+                }
+
                 if (!empty($score['id'])) {
                     $bracket->scores()->where('id', $score['id'])->update([
                         'bonus_concurrent_id' => $score['bonus_concurrent_id'],
                         'score' => $score['score'],
-                        'cost_buy' => $score['cost_buy'],
+                        'cost_buy' => $lastCostBuy,
                         'result_buy' => $score['result_buy'],
                     ]);
                 } else {
                     $bracket->scores()->create([
                         'bonus_concurrent_id' => $score['bonus_concurrent_id'],
                         'score' => $score['score'],
-                        'cost_buy' => $score['cost_buy'],
+                        'cost_buy' => $lastCostBuy,
                         'result_buy' => $score['result_buy'],
                     ]);
                 }
@@ -470,7 +487,7 @@ class BonusBattleController extends Controller
         }
 
         return response()->json([
-            'message' => 'Scores processed successfully!',
+            'message' => 'Scores processed successfully!'
         ]);
     }
 

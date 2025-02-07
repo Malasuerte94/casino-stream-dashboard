@@ -261,7 +261,6 @@ const getGameThumbnail = (gameId) => {
             <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg shadow-md space-y-4">
               <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 flex gap-2 items-center">Participanți
                 <div class="flex gap-4">
-                  <button @click="addConcurrent(2)" class="btn-primary">2</button>
                   <button @click="addConcurrent(4)" class="btn-primary">4</button>
                   <button @click="addConcurrent(8)" class="btn-primary">8</button>
                   <button @click="addConcurrent(16)" class="btn-primary">16</button>
