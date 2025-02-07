@@ -1,5 +1,5 @@
 <script setup>
-import {Head, Link} from "@inertiajs/vue3";
+import { Head, Link } from '@inertiajs/vue3';
 
 defineProps({
   canLogin: Boolean,
@@ -10,55 +10,60 @@ defineProps({
 </script>
 
 <template>
-  <div
-      class="relative flex items-top justify-center min-h-screen bg-gray-100 dark:bg-gray-900 sm:items-center sm:pt-0"
-  >
-    <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
-      <div class="flex center self-center text-center m-auto justify-center mb-10">
-        <h2 class="font-semibold text-xl text-center justify-center text-gray-800 leading-tight mr-2">
-          Dashboard Păcănele
-        </h2>
-        <a target="blank" href="https://www.youtube.com/@MalaTheMan">
-          by @MalaTheMan</a
+  <div class="min-h-screen bg-gray-900 text-gray-100 flex flex-col">
+    <!-- Header -->
+    <header class="bg-gray-800 py-4 shadow-md">
+      <div class="max-w-6xl mx-auto px-4 flex items-center justify-between">
+        <h1 class="text-2xl font-bold">Dashboard Păcănele</h1>
+        <a
+            target="_blank"
+            href="https://www.youtube.com/@MalaTheMan"
+            class="text-sm hover:underline"
         >
+          by @MalaTheMan
+        </a>
       </div>
-      <div class="center text-center">
-        <div
-            v-if="canLogin"
-            class="hidden px-6 py-4 sm:block font-semibold text-lg"
-        >
+    </header>
 
-          <div class="flex gap-10 text-center" v-if="$page.props.user">
+    <!-- Main Content -->
+    <main class="flex-grow flex items-center justify-center">
+      <div class="text-center">
+        <div v-if="canLogin">
+          <!-- If user is logged in -->
+          <div v-if="$page.props.user" class="flex gap-6 justify-center">
+            <!-- Display Dashboard Streamer only if user is a streamer -->
             <Link
                 v-if="$page.props.user_streamer"
                 :href="route('streamdash')"
-                class="text-lg text-black underline"
-            >Dashboard Streamer
+                class="text-lg px-4 py-2 border border-gray-600 rounded transition transform duration-200 ease-in-out hover:bg-gray-700 hover:border-gray-500 hover:scale-105"
+            >
+              Dashboard Streamer
             </Link>
             <Link
                 :href="route('dashboard')"
-                class="text-lg text-black underline text-center m-auto"
-            >Dashboard Viewer
+                class="text-lg px-4 py-2 border border-gray-600 rounded transition transform duration-200 ease-in-out hover:bg-gray-700 hover:border-gray-500 hover:scale-105"
+            >
+              Dashboard Viewer
             </Link>
           </div>
-
-          <template v-else>
+          <!-- If user is not logged in -->
+          <div v-else class="flex gap-6 justify-center">
             <Link
                 :href="route('login')"
-                class="text-lg text-black underline"
-            >Log in
-            </Link
+                class="text-lg px-4 py-2 border border-gray-600 rounded transition transform duration-200 ease-in-out hover:bg-gray-700 hover:border-gray-500 hover:scale-105"
             >
+              Log in
+            </Link>
             <Link
                 v-if="canRegister"
                 :href="route('register')"
-                class="ml-4 text-lg text-black underline"
-            >Register
-            </Link
+                class="text-lg px-4 py-2 border border-gray-600 rounded transition transform duration-200 ease-in-out hover:bg-gray-700 hover:border-gray-500 hover:scale-105"
             >
-          </template>
+              Register
+            </Link>
+          </div>
         </div>
       </div>
-    </div>
+    </main>
   </div>
 </template>

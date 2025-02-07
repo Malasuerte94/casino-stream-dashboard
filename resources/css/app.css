@@ -31,12 +31,8 @@
 
 .footer-donate {
     width: 100%;
-    display: flex;
-    justify-content: space-between;
     position: fixed;
     bottom: 0;
-    padding: 15px 20px;
-    background-color: #383838;
     color: white;
 }
 .donate-button {

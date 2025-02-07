@@ -1,5 +1,5 @@
 <template>
-  <div class="p-6 rounded-lg shadow-md bg-gray-100 dark:bg-gray-800">
+  <div class="p-6 rounded-lg shadow-lg bg-gray-800">
     <!-- Bonus Buy Info -->
     <div class="space-y-6 mb-6">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -36,7 +36,8 @@
 
     <!-- Bonus Buy Games -->
     <template v-if="bonusBuyGames.length > 0">
-      <div class="hidden md:grid grid-cols-[10px_50px_1fr_120px_120px_120px_120px_50px] gap-4 text-sm font-semibold text-gray-600 dark:text-gray-300">
+      <!-- Header Row -->
+      <div class="hidden md:grid grid-cols-[10px_50px_1fr_120px_120px_120px_120px_50px] gap-4 text-sm font-semibold text-gray-300 mb-2">
         <span>#</span>
         <span></span>
         <span>Joc</span>
@@ -47,71 +48,93 @@
         <span></span>
       </div>
 
+      <!-- Game Rows with extra background div -->
       <div
           v-for="(game, index) in bonusBuyGames"
           :key="game.id || index"
-          class="grid grid-cols-1 md:grid-cols-[10px_50px_1fr_120px_120px_120px_120px_50px] gap-4 items-center mb-4 p-2 rounded-lg shadow bg-white dark:bg-gray-700"
+          class="relative overflow-hidden rounded-lg shadow mb-4 game-row"
+          :class="{'bg-gray-700': !game.game_id}"
       >
-        <div class="text-center text-gray-800 dark:text-gray-200 font-medium">
-          {{ index + 1 }}
-        </div>
-        <template v-if="game.game_id">
-          <img
-              :src="getGameThumbnail(game.game_id)"
-              alt="Game Thumbnail"
-              class="w-20 h-20 object-cover rounded-lg mb-2"
+        <!-- Blurred Background Div -->
+        <div
+            v-if="game.game_id"
+            class="bg-blur"
+            :style="{ backgroundImage: 'url(' + getGameThumbnail(game.game_id) + ')' }"
+        ></div>
+
+        <!-- Row Content -->
+        <div
+            class="relative z-10 grid grid-cols-1 md:grid-cols-[10px_50px_1fr_120px_120px_120px_120px_50px] gap-4 items-center p-4"
+            :class="game.game_id ? 'bg-transparent' : 'bg-white dark:bg-gray-700'"
+        >
+          <div class="text-center text-gray-200 font-medium">
+            {{ index + 1 }}
+          </div>
+          <template v-if="game.game_id">
+            <img
+                :src="getGameThumbnail(game.game_id)"
+                alt="Game Thumbnail"
+                class="w-20 h-20 object-cover rounded-lg"
+            />
+          </template>
+          <template v-else>
+            <span></span>
+          </template>
+          <v-select
+              :disabled="isEnded || loading"
+              :class="{'input-disabled': isEnded || loading}"
+              :options="gameOptions"
+              label="name"
+              :reduce="game => game.id"
+              append-to-body
+              @update:modelValue="value => debounceFieldUpdate(game, 'game_id')"
+              v-model="game.game_id"
           />
-        </template>
-        <span v-else></span>
-        <v-select
-            :disabled="isEnded  || loading"
-            :class="{'input-disabled': isEnded  || loading}"
-            :options="gameOptions"
-            label="name"
-            :reduce="game => game.id"
-            @update:modelValue="value => debounceFieldUpdate(game, 'game_id')"
-            v-model="game.game_id"
-        />
-        <input
-            :disabled="isEnded  || loading"
-            :class="{'input-disabled': isEnded  || loading}"
-            type="number"
-            v-model="game.stake"
-            @input="debounceFieldUpdate(game, 'stake')"
-            min="1"
-            class="input-primary text-center"
-            placeholder="Miză"
-        />
-        <input
-            :disabled="isEnded  || loading"
-            :class="{'input-disabled': isEnded  || loading}"
-            type="number"
-            v-model="game.price"
-            @input="debounceFieldUpdate(game, 'price')"
-            min="0"
-            class="input-primary text-center"
-            placeholder="Preț (LEI)"
-        />
-        <input
-            :disabled="isEnded"
-            :class="{'input-disabled': isEnded}"
-            type="number"
-            v-model="game.result"
-            @input="debounceFieldUpdate(game, 'result')"
-            step="0.1"
-            class="input-primary text-center"
-            placeholder="Rezultat (LEI)"
-        />
-        <input
-            type="number"
-            v-model="game.multiplier"
-            disabled
-            class="input-disabled text-center"
-            placeholder="Multiplicator"
-        />
-        <button v-if="!isEnded" @click="removeBonusBuyGameRow(game.id)" class="btn-danger">
-          ✕
-        </button>
+          <input
+              :disabled="isEnded || loading"
+              :class="{'input-disabled': isEnded || loading}"
+              type="number"
+              v-model="game.stake"
+              @input="debounceFieldUpdate(game, 'stake')"
+              min="1"
+              class="input-primary text-center"
+              placeholder="Miză"
+          />
+          <input
+              :disabled="isEnded || loading"
+              :class="{'input-disabled': isEnded || loading}"
+              type="number"
+              v-model="game.price"
+              @input="debounceFieldUpdate(game, 'price')"
+              min="0"
+              class="input-primary text-center"
+              placeholder="Preț (LEI)"
+          />
+          <input
+              :disabled="isEnded"
+              :class="{'input-disabled': isEnded}"
+              type="number"
+              v-model="game.result"
+              @input="debounceFieldUpdate(game, 'result')"
+              step="0.1"
+              class="input-primary text-center"
+              placeholder="Rezultat (LEI)"
+          />
+          <input
+              type="number"
+              v-model="game.multiplier"
+              disabled
+              class="input-disabled text-center"
+              placeholder="Multiplicator"
+          />
+          <button
+              v-if="!isEnded"
+              @click="removeBonusBuyGameRow(game.id)"
+              class="btn-danger"
+          >
+            ✕
+          </button>
+        </div>
       </div>
     </template>
 
@@ -128,12 +151,13 @@
 import { useGameStore } from "@/stores/gameStore";
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
+import axios from "axios";
 
 export default {
   components: { vSelect },
   data() {
     return {
-      bonusBuy: [],
+      bonusBuy: {},
       bonusBuyGames: [],
       fieldUpdateTimeouts: {},
       debounceTimer: null,
@@ -147,7 +171,7 @@ export default {
     },
     isEnded() {
       return Boolean(this.bonusBuy.ended);
-    }
+    },
   },
   mounted() {
     this.getLatestList();
@@ -173,9 +197,9 @@ export default {
     },
     getGameThumbnail(gameId) {
       const selectedGame = this.gameOptions.find((game) => game.id === gameId);
-      return selectedGame
-          ? `/storage/games/${selectedGame.image}`
-          : "";
+      const url = selectedGame ? `/storage/games/${selectedGame.image}` : "";
+      console.log("Thumbnail URL:", url); // Debugging log
+      return url;
     },
     async getLatestList() {
       try {
@@ -207,9 +231,7 @@ export default {
     },
     async createNewBonusBuyGameRow() {
       try {
-        await axios.post("/api/bonus-buy-games", {
-          bonusBuyId: this.bonusBuy.id,
-        });
+        await axios.post("/api/bonus-buy-games", { bonusBuyId: this.bonusBuy.id });
         await this.getLatestList();
       } catch (error) {
         console.error(error);
@@ -236,8 +258,8 @@ export default {
         await axios.post("/api/close-bonus-list", {
           close: true,
           list_id: this.bonusBuy.id,
-          type: 'buy'
-        })
+          type: "buy",
+        });
         await axios.post("/api/bonus-buy");
         await this.getLatestList();
         this.$emit("newlist");
@@ -254,27 +276,40 @@ export default {
 };
 </script>
 
-<style>
-/* Tailwind CSS classes for styling */
+<style scoped>
+/* Custom Classes for Dark Mode */
 
-/* Custom Classes */
+/* Primary input styling */
 .input-primary {
-  @apply bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5;
-  @apply dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500;
+  @apply bg-gray-900 border border-gray-600 text-gray-100 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 transition-colors duration-200;
 }
 
+/* Disabled input styling */
 .input-disabled {
-  @apply bg-gray-200 border border-gray-300 text-gray-400 text-sm rounded-lg block w-full p-2.5 cursor-not-allowed;
-  @apply dark:bg-gray-800 dark:border-gray-600 dark:text-gray-500;
+  @apply bg-gray-700 border border-gray-600 text-gray-500 text-sm rounded-lg block w-full p-2.5 cursor-not-allowed;
 }
 
+/* Primary button styling */
 .btn-primary {
-  @apply bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300;
-  @apply dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-800;
+  @apply bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition;
 }
 
+/* Danger button styling */
 .btn-danger {
-  @apply bg-red-500 text-white font-semibold py-1 px-3 rounded-full hover:bg-red-600 focus:outline-none focus:ring-4 focus:ring-red-300;
-  @apply dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800;
+  @apply bg-red-500 text-white font-semibold py-1 px-3 rounded-full hover:bg-red-600 focus:outline-none focus:ring-4 focus:ring-red-300 transition;
+}
+
+/* Blurred background div */
+.bg-blur {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(8px);
+  opacity: 0.3;
+  pointer-events: none;
+  z-index: 0;
+  /* For debugging: remove or comment out after confirming it works */
+  /* border: 1px solid red; */
 }
 </style>
