@@ -35,7 +35,8 @@
 
     <!-- Bonus Hunt Games -->
     <template v-if="bonusHuntGames.length > 0 && bonusHunt.start > 0">
-      <div class="hidden md:grid grid-cols-[10px_50px_1fr_120px_120px_120px_50px] gap-4 text-sm font-semibold text-gray-600 dark:text-gray-300">
+      <!-- Header Row (visible on medium screens and up) -->
+      <div class="hidden md:grid grid-cols-[10px_50px_1fr_120px_120px_120px_50px] gap-4 text-sm font-semibold text-gray-600 dark:text-gray-300 mb-2">
         <span>#</span>
         <span></span>
         <span>Joc</span>
@@ -45,62 +46,85 @@
         <span></span>
       </div>
 
-      <div
+      <!-- Game Rows with Dedicated Blurred Background Div -->
+      <transition-group name="fade">
+        <div
           v-for="(game, index) in bonusHuntGames"
           :key="game.id || index"
-          class="grid grid-cols-1 md:grid-cols-[10px_50px_1fr_120px_120px_120px_50px] gap-4 items-center mb-4 p-2 rounded-lg shadow bg-white dark:bg-gray-700"
+          class="relative mb-4 rounded-lg shadow overflow-hidden game-row"
+          :style="game.game_id ? {'--bg-image': `url(${getGameThumbnail(game.game_id)})`} : {}"
       >
-        <div class="text-center text-gray-800 dark:text-gray-200 font-medium">
-          {{ index + 1 }}
-        </div>
-        <template v-if="game.game_id">
-          <img
-              :src="getGameThumbnail(game.game_id)"
-              alt="Game Thumbnail"
-              class="w-20 h-20 object-cover rounded-lg mb-2"
+        <!-- Blurred Background Div -->
+        <div
+            v-if="game.game_id"
+            class="absolute inset-0 pointer-events-none bg-blur"
+        ></div>
+
+        <!-- Row Content with conditional background -->
+        <div
+            class="relative z-10 grid grid-cols-1 md:grid-cols-[10px_50px_1fr_120px_120px_120px_50px] gap-4 items-center p-2"
+            :class="game.game_id ? 'bg-transparent' : 'bg-white dark:bg-gray-700'"
+        >
+          <div class="text-center text-gray-800 dark:text-gray-200 font-medium">
+            {{ index + 1 }}
+          </div>
+          <template v-if="game.game_id">
+            <img
+                :src="getGameThumbnail(game.game_id)"
+                alt="Game Thumbnail"
+                class="w-20 h-20 object-cover rounded-lg mb-2"
+            />
+          </template>
+          <span v-else></span>
+          <v-select
+              :disabled="isEnded || loading"
+              :options="gameOptions"
+              label="name"
+              :reduce="game => game.id"
+              append-to-body
+              @update:modelValue="value => debounceFieldUpdate(game, 'game_id')"
+              v-model="game.game_id"
           />
-        </template>
-        <span v-else></span>
-        <v-select
-            :disabled="isEnded || loading"
-            :class="{'input-disabled': isEnded || loading}"
-            :options="gameOptions"
-            label="name"
-            :reduce="game => game.id"
-            @update:modelValue="value => debounceFieldUpdate(game, 'game_id')"
-            v-model="game.game_id"
-        />
-        <input
-            :disabled="isEnded || loading"
-            :class="{'input-disabled': isEnded || loading}"
-            @input="debounceFieldUpdate(game, 'stake')"
-            v-model="game.stake"
-            min="1"
-            type="number"
-            class="input-primary text-center"
-            placeholder="Miză"
-        />
-        <input
-            :disabled="isEnded || loading"
-            :class="{'input-disabled': isEnded || loading}"
-            @input="debounceFieldUpdate(game, 'result')"
-            v-model="game.result"
-            type="number"
-            step="0.1"
-            class="input-primary text-center"
-            placeholder="Rezultat (LEI)"
-        />
-        <input
-            disabled
-            v-model="game.multiplier"
-            type="number"
-            class="input-disabled text-center"
-            placeholder="Multiplicator"
-        />
-        <button v-if="!isEnded" @click="removeBonusHuntGameRow(game.id)" class="btn-danger">
-          ✕
-        </button>
+          <input
+              :disabled="isEnded || loading"
+              :class="{'input-disabled': isEnded || loading}"
+              @input="debounceFieldUpdate(game, 'stake')"
+              v-model="game.stake"
+              min="1"
+              type="number"
+              class="input-primary text-center"
+              placeholder="Miză"
+          />
+          <input
+              :disabled="isEnded || loading"
+              :class="{'input-disabled': isEnded || loading}"
+              @input="debounceFieldUpdate(game, 'result')"
+              v-model="game.result"
+              type="number"
+              step="0.1"
+              class="input-primary text-center"
+              placeholder="Rezultat (LEI)"
+          />
+          <input
+              disabled
+              v-model="game.multiplier"
+              type="number"
+              class="input-disabled text-center"
+              placeholder="Multiplicator"
+          />
+          <button
+              v-if="!isEnded"
+              @click="removeBonusHuntGameRow(game.id)"
+              class="btn-danger"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </div>
       </div>
+      </transition-group>
+
       <!-- Add Game Button -->
       <div class="flex justify-center mt-8" v-if="!isEnded">
         <button @click="createNewBonusHuntGameRow" class="btn-primary w-full max-w-md">
@@ -118,12 +142,13 @@
 import { useGameStore } from "@/stores/gameStore";
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
+import axios from "axios";
 
 export default {
   components: { vSelect },
   data() {
     return {
-      bonusHunt: [],
+      bonusHunt: {},
       bonusHuntGames: [],
       fieldUpdateTimeouts: {},
       debounceTimer: null,
@@ -137,7 +162,7 @@ export default {
     },
     isEnded() {
       return Boolean(this.bonusHunt.ended);
-    }
+    },
   },
   mounted() {
     this.getLatestList();
@@ -170,11 +195,11 @@ export default {
       }
       this.fieldUpdateTimeouts[game.id][field] = setTimeout(() => {
         this.updateBonusHuntGame();
-      }, 1000); // Adjust debounce delay as needed
+      }, 1000);
     },
     getGameThumbnail(gameId) {
       const selectedGame = this.gameOptions.find(game => game.id === gameId);
-      return selectedGame ? `/storage/games/${selectedGame.image}` : ''; // Return thumbnail URL or an empty string
+      return selectedGame ? `/storage/games/${selectedGame.image}` : '';
     },
     async getLatestList() {
       try {
@@ -187,19 +212,14 @@ export default {
     },
     async updateBonusHunt() {
       let bonusHunt = this.bonusHunt;
-      this.loading = true
-      await axios
-          .patch("/api/bonus-hunt", {
-            bonusHunt,
-          })
-          .catch(function (error) {
+      this.loading = true;
+      await axios.patch("/api/bonus-hunt", { bonusHunt })
+          .catch(error => {
             console.log(error);
-          }).finally(
-              async () => {
-                await this.getLatestList()
-                this.loading = false
-              }
-          );
+          }).finally(async () => {
+            await this.getLatestList();
+            this.loading = false;
+          });
     },
     async updateBonusHuntGame() {
       if (!this.validateBonusHuntStart()) {
@@ -208,7 +228,7 @@ export default {
       try {
         this.loading = true;
         let games = this.bonusHuntGames;
-        await axios.put(`/api/bonus-hunt-games`, {games});
+        await axios.put("/api/bonus-hunt-games", { games });
       } catch (error) {
         console.error(error);
       } finally {
@@ -254,7 +274,7 @@ export default {
           close: true,
           list_id: this.bonusHunt.id,
           type: 'hunt'
-        })
+        });
         await axios.post("/api/bonus-hunt");
         await this.getLatestList();
         this.$emit("newlist");

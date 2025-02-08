@@ -12,6 +12,8 @@ const prize = ref('');
 const buys = ref('2');
 const concurrents = ref([
   { game_id: null, for_user: null },
+  { game_id: null, for_user: null },
+  { game_id: null, for_user: null },
   { game_id: null, for_user: null }
 ]);
 const activeBattle = ref(null);
@@ -34,7 +36,7 @@ onMounted(async () => {
 });
 
 const cantStart = computed(() => {
-  if (concurrents.value.length < 2) return true;
+  if (concurrents.value.length < 4) return true;
   return concurrents.value.some(concurrent => !concurrent.game_id);
 });
 
@@ -229,240 +231,221 @@ const getGameThumbnail = (gameId) => {
 };
 </script>
 <template>
-  <AppLayout title="Bonus Battle" v-if="!loading">
-    <div class="py-2">
+  <AppLayout title="Bonus Battle" v-if="!loadiwng">
+    <div class="py-4">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <!-- Hide form if there's an active battle -->
-        <div v-if="!activeBattle && !winner" class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+        <div v-if="!activeBattle && !winner" class="bg-gray-800 overflow-hidden shadow-lg rounded-md transition-all duration-300">
           <div class="p-6 space-y-4">
             <!-- Input Form -->
             <div class="flex flex-row gap-2">
               <div>
-                <label for="title" class="block text-sm font-medium text-gray-700">Titlu Bonus Battle</label>
-                <input type="text" v-model="title" id="title"
-                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"/>
+                <label for="title" class="block text-sm font-medium text-gray-300">Titlu Bonus Battle</label>
+                <input type="text" v-model="title" id="title" class="mt-1 block w-full input-primary" />
               </div>
               <div>
-                <label for="stake" class="block text-sm font-medium text-gray-700">Miză (eg: 5-8, 5, 10-20, etc.)</label>
-                <input type="text" v-model="stake" id="stake"
-                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"/>
+                <label for="stake" class="block text-sm font-medium text-gray-300">Miză (eg: 5-8, 5, 10-20, etc.)</label>
+                <input type="text" v-model="stake" id="stake" class="mt-1 block w-full input-primary" />
               </div>
               <div>
-                <label for="stake" class="block text-sm font-medium text-gray-700">Premiu</label>
-                <input type="text" v-model="prize" id="prize"
-                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"/>
+                <label for="prize" class="block text-sm font-medium text-gray-300">Premiu</label>
+                <input type="text" v-model="prize" id="prize" class="mt-1 block w-full input-primary" />
               </div>
               <div>
-                <label for="stake" class="block text-sm font-medium text-gray-700">Câte buys per joc (poți face ulterior câte vrei)</label>
-                <input type="text" v-model="buys" id="buys"
-                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"/>
+                <label for="buys" class="block text-sm font-medium text-gray-300">Câte buys per joc (poți face ulterior câte vrei)</label>
+                <input type="text" v-model="buys" id="buys" class="mt-1 block w-full input-primary" />
               </div>
             </div>
-            <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg shadow-md space-y-4">
-              <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 flex gap-2 items-center">Participanți
+            <div class="bg-gray-800 p-6 rounded-md shadow-md space-y-4 transition-all duration-300">
+              <h3 class="text-lg font-semibold text-gray-300 flex gap-2 items-center">
+                Participanți
                 <div class="flex gap-4">
                   <button @click="addConcurrent(4)" class="btn-primary">4</button>
                   <button @click="addConcurrent(8)" class="btn-primary">8</button>
                   <button @click="addConcurrent(16)" class="btn-primary">16</button>
                 </div>
               </h3>
-              <div v-for="(concurrent, index) in concurrents" :key="index" class="flex items-center gap-4 bg-white dark:bg-gray-700 p-4 rounded-lg shadow">
-                <img
-                    v-if="concurrent.game_id"
-                    :src="getGameThumbnail(concurrent.game_id)"
-                    alt="Game Thumbnail"
-                    class="w-16 h-16 object-cover rounded-lg"
-                />
-                <v-select
-                    :options="availableGames"
-                    label="name"
-                    :reduce="game => game.id"
-                    v-model="concurrent.game_id"
-                    placeholder="Alege Joc"
-                    class="flex-1 input-select"
-                />
-                <input
-                    type="text"
-                    v-model="concurrent.for_user"
-                    class="flex-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400 p-2.5"
-                    placeholder="Cine a ales? (opțional)"
-                />
+              <transition-group name="fade">
+                <div v-for="(concurrent, index) in concurrents" :key="index"
+                   class="relative overflow-hidden flex items-center gap-4 bg-gray-900 p-4 rounded-md shadow transition-all duration-300"
+                   :style="concurrent.game_id ? {'--bg-image': 'url(' + getGameThumbnail(concurrent.game_id) + ')'} : {}">
+                <!-- Blurred Background Layer -->
+                <div v-if="concurrent.game_id"
+                     class="absolute inset-0 pointer-events-none bg-blur transition-all duration-300"></div>
+                <!-- Row Content -->
+                <div class="relative z-10 flex items-center gap-4 w-full">
+                  <img v-if="concurrent.game_id"
+                       :src="getGameThumbnail(concurrent.game_id)"
+                       alt="Game Thumbnail"
+                       class="w-16 h-16 object-cover rounded-md"/>
+                  <v-select
+                      :options="availableGames"
+                      label="name"
+                      :reduce="game => game.id"
+                      v-model="concurrent.game_id"
+                      placeholder="Alege Joc"
+                      class="flex-1 transition-all duration-300"
+                      append-to-body
+                  />
+                  <input type="text" v-model="concurrent.for_user"
+                         class="flex-1 input-primary"
+                         placeholder="Cine a ales? (opțional)"/>
+                </div>
               </div>
+              </transition-group>
             </div>
             <button :disabled="cantStart"
-                    :class="{'input-disabled opacity-50': cantStart}"
-                    type="button" @click="startBattle" class="mt-4 bg-green-600 text-white px-4 py-2 rounded-md">Start</button>
+                    :class="{'opacity-50 cursor-not-allowed': cantStart}"
+                    type="button" @click="startBattle"
+                    class="mt-4 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md transition-all duration-300">
+              Start
+            </button>
           </div>
         </div>
-        <div v-if="winner && !activeBattle" class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-          <div class="p-6 flex justify-center items-center bg-gray-100 dark:bg-gray-800">
-            <div class="w-full max-w-md bg-white dark:bg-gray-700 shadow-lg rounded-lg p-6 text-center">
-              <img
-                  v-if="winner.game.image"
-                  :src="getGameThumbnail(winner.game.id)"
-                  alt="Game Thumbnail"
-                  class="w-32 auto mx-auto object-cover rounded-lg mb-4"
-              />
-              <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+
+        <div v-if="winner && !activeBattle" class="bg-gray-900 overflow-hidden shadow-lg rounded-md transition-all duration-300">
+          <div class="p-6 flex justify-center items-center bg-gray-800">
+            <div class="w-full max-w-md bg-gray-900 shadow-lg rounded-md p-6 text-center transition-all duration-300">
+              <img v-if="winner.game.image"
+                   :src="getGameThumbnail(winner.game.id)"
+                   alt="Game Thumbnail"
+                   class="w-32 mx-auto object-cover rounded-md mb-4"/>
+              <h2 class="text-2xl font-bold text-gray-100 mb-2">
                 Câștigător! - {{ winner.game.name }}
               </h2>
-              <p class="text-lg font-medium text-gray-600 dark:text-gray-300">
+              <p class="text-lg font-medium text-gray-300">
                 User: {{ winner.for_user }}
               </p>
             </div>
           </div>
         </div>
+
         <!-- Active Battle Display -->
-        <div v-if="activeBattle" class="bg-white overflow-hidden shadow-xl sm:rounded-lg mt-6">
+        <div v-if="activeBattle" class="bg-gray-900 overflow-hidden shadow-lg rounded-md mt-6 transition-all duration-300">
           <div class="p-6">
-            <h2 class="text-xl font-bold mb-4">Active Battle: {{ activeBattle.title }}</h2>
-            <p>Miza: {{ activeBattle.stake }} | Etapa: {{ activeStage.name }} | Premiu: {{ activeBattle.prize }} | Buys: {{ activeBattle.buys }}</p>
+            <h2 class="text-xl font-bold mb-4 text-gray-100">Active Battle: {{ activeBattle.title }}</h2>
+            <p class="text-gray-300">
+              Miza: {{ activeBattle.stake }} | Etapa: {{ activeStage.name }} | Premiu: {{ activeBattle.prize }} | Buys: {{ activeBattle.buys }}
+            </p>
 
             <!-- Brackets Section -->
-            <div class="grid grid-cols-2 gap-4 mt-4" v-if="currentPair.length > 1">
-              <div v-for="(concurrent, index) in currentPair" :key="index" class="border rounded-md p-4 shadow">
-                <div class="flex gap-2 items-center mb-2 bg-blend-darken  p-2 rounded border-blue-900 border">
-                <img
-                    v-if="concurrent.game.image"
-                    :src="getGameThumbnail(concurrent.game.id)"
-                    alt="Game Thumbnail"
-                    class="w-auto h-[100px] rounded-lg"
-                />
-                  <div class="w-full">
-                    <h3 class="text-lg font-bold mb-2">{{ concurrent.game.name }} - {{ concurrent.for_user}}</h3>
-                    <div class="flex flex-row">
-                      <v-select
-                          :disabled="!activeSelect"
-                          :options="availableGames"
-                          label="name"
-                          :reduce="game => game.id"
-                          @update:modelValue="updateGame(concurrent.id, $event)"
-                          placeholder="Schimbi jocul?"
-                          class="flex-1"
-                      />
-                      <div>
-                        <button class="btn-secondary" @click="activeSelect = !activeSelect">SCHIMBA JOCU</button>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4" v-if="currentPair.length > 1">
+              <div v-for="(concurrent, index) in currentPair" :key="index"
+                   class="relative border rounded-md p-4 shadow transition-all duration-300 game-active-row"
+                   :class="concurrent.game.image ? 'bg-transparent' : 'bg-gray-900'"
+                   :style="concurrent.game.image ? {'--bg-image': 'url(' + getGameThumbnail(concurrent.game.id) + ')'} : {}">
+                <!-- Blurred Background Layer -->
+                <div v-if="concurrent.game.image"
+                     class="absolute inset-0 pointer-events-none bg-blur transition-all duration-300"></div>
+                <!-- Row Content with overlay -->
+                <div class="relative z-10 p-4" :class="concurrent.game.image ? 'bg-black bg-opacity-60' : 'bg-gray-900'">
+                  <div class="flex gap-2 items-center mb-2 p-2 rounded-md border border-gray-600 transition-all duration-300">
+                    <img v-if="concurrent.game.image"
+                         :src="getGameThumbnail(concurrent.game.id)"
+                         alt="Game Thumbnail"
+                         class="w-auto h-[100px] rounded-md"/>
+                    <div class="w-full">
+                      <h3 class="text-lg font-bold mb-2 text-gray-100">
+                        {{ concurrent.game.name }} - {{ concurrent.for_user }}
+                      </h3>
+                      <div class="flex flex-row gap-2">
+                        <v-select :disabled="!activeSelect"
+                                  :options="availableGames"
+                                  label="name"
+                                  :reduce="game => game.id"
+                                  @update:modelValue="updateGame(concurrent.id, $event)"
+                                  placeholder="Schimbi jocul?"
+                                  class="flex-1 transition-all duration-300"
+                                  append-to-body
+                        />
+                        <button class="btn-secondary transition-all duration-300" @click="activeSelect = !activeSelect">
+                          SCHIMBA JOCU
+                        </button>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div>
-                  <div v-for="(score, scoreIndex) in concurrent.scores" :key="scoreIndex"
-                       class="flex items-center space-x-2 mt-1">
-                    <label class="text-sm font-medium text-gray-700">
-                      Cost Buy
-                      <input
-                          type="number"
-                          v-model="concurrent.scores[scoreIndex].cost_buy"
-                          class="block w-40 border-gray-300 rounded-md shadow-sm"
-                          placeholder="Amount"
-                      />
-                    </label>
-                    <label class="text-sm font-medium text-gray-700">
-                      Rezultat Buy
-                      <input
-                          :disabled="score.cost_buy <= 0"
-                          :class="{'input-disabled opacity-50': score.cost_buy <= 0}"
-                          type="number"
-                          v-model="concurrent.scores[scoreIndex].result_buy"
-                          class="block w-40 border-gray-300 rounded-md shadow-sm"
-                          placeholder="Result"
-                          @input="recalculateScore(index, scoreIndex)"
-                      />
-                    </label>
-                    <label class="text-sm font-medium text-gray-700">
-                      Scor
-                      <input
-                          readonly
-                          disabled
-                          type="number"
-                          v-model="concurrent.scores[scoreIndex].score"
-                          class="block w-20 border-gray-300 rounded-md shadow-sm disabled input-disabled"
-                          placeholder="Result"
-                      />
-                    </label>
-                    <button
-                        v-if="scoreIndex >= 1"
-                        type="button"
-                        @click="removeScore(index, scoreIndex)"
-                        class="bg-red-600 text-white px-4 py-2 rounded-md text-sm"
-                    >
-                      X
+                  <!-- Scores Section -->
+                  <div>
+                    <div v-for="(score, scoreIndex) in concurrent.scores" :key="scoreIndex"
+                         class="flex items-center space-x-2 mt-1 transition-all duration-300">
+                      <label class="text-sm font-medium text-gray-300">
+                        Cost Buy
+                        <input type="number" v-model="concurrent.scores[scoreIndex].cost_buy"
+                               class="block w-40 border border-gray-600 rounded-md shadow-sm p-2 transition-all duration-300 input-primary"
+                               placeholder="Amount"/>
+                      </label>
+                      <label class="text-sm font-medium text-gray-300">
+                        Rezultat Buy
+                        <input :disabled="score.cost_buy <= 0"
+                               :class="{'input-disabled opacity-50': score.cost_buy <= 0, 'input-primary': score.cost_buy > 0}"
+                               type="number" v-model="concurrent.scores[scoreIndex].result_buy"
+                               class="block w-40 border border-gray-600 rounded-md shadow-sm p-2 transition-all duration-300"
+                               placeholder="Result" @input="recalculateScore(index, scoreIndex)"/>
+                      </label>
+                      <label class="text-sm font-medium text-gray-300">
+                        Scor
+                        <input readonly disabled type="number" v-model="concurrent.scores[scoreIndex].score"
+                               class="block w-20 border border-gray-600 rounded-md shadow-sm p-2 input-disabled transition-all duration-300"
+                               placeholder="Result"/>
+                      </label>
+                      <button v-if="scoreIndex >= 1" type="button" @click="removeScore(index, scoreIndex)"
+                              class="btn-danger transition-all duration-300 align-middle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                          <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                        </svg>
+                      </button>
+                    </div>
+                    <button type="button" @click="addScore()"
+                            class="btn-primary mt-2">
+                      Adaugă Buy
                     </button>
                   </div>
-                  <button
-                      type="button"
-                      @click="addScore()"
-                      class="mt-2 bg-blue-600 text-white px-4 py-2 rounded-md text-sm"
-                  >
-                    Adaugă Buy
-                  </button>
+                  <p class="mt-4 text-lg font-bold text-gray-100">
+                    Scor Total: {{ calculateTotalScore(concurrent.scores) }}
+                  </p>
                 </div>
-                <p class="mt-4 text-lg font-bold">
-                  Scor Total: {{ calculateTotalScore(concurrent.scores) }}
-                </p>
               </div>
             </div>
-            <div v-if="winner">
-              <p class="mt-4 text-lg font-bold">Câștigător: {{ winner.game.name }} | User: {{ winner.for_user }}</p>
+            <div v-if="winner" class="mt-4">
+              <p class="text-lg font-bold text-gray-100">Câștigător: {{ winner.game.name }} | User: {{ winner.for_user }}</p>
             </div>
-
-            <button
-                v-if="activeStage.name !== 'Final'"
-                type="button"
-                @click="finishRound"
-                class="mt-6 bg-green-600 text-white px-4 py-2 rounded-md"
-                :disabled="!canGoNext"
-                :class="{'input-disabled opacity-50': !canGoNext}"
-            >
-              Următoarii Concurenți
-            </button>
-            <button
-                :disabled="!canGoNext"
-                :class="{'input-disabled opacity-50': !canGoNext}"
-                v-if="activeStage.name === 'Final'"
-                type="button"
-                @click="endBattle"
-                class="mt-6 bg-green-600 text-white px-4 py-2 rounded-md"
-            >
-              Termina Battle
-            </button>
+            <div class="mt-6 flex flex-col gap-4">
+              <button v-if="activeStage.name !== 'Final'" type="button" @click="finishRound"
+                      class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md transition-all duration-300"
+                      :disabled="!canGoNext" :class="{'input-disabled opacity-50': !canGoNext}">
+                Următoarii Concurenți
+              </button>
+              <button v-if="activeStage.name === 'Final'" type="button" @click="endBattle"
+                      class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md transition-all duration-300"
+                      :disabled="!canGoNext" :class="{'input-disabled opacity-50': !canGoNext}">
+                Termina Battle
+              </button>
+            </div>
           </div>
           <div class="p-6">
-            <table v-if="history.stage_brackets.length > 0" class="table-auto w-full text-sm text-gray-200 mb-2">
+            <table v-if="history.stage_brackets.length > 0" class="table-auto w-full text-sm text-gray-200 mb-2 transition-all duration-300">
               <tbody>
-              <tr
-                  v-for="(bracket, index) in history.stage_brackets"
-                  :key="bracket.id"
-                  :class="index % 2 === 0 ? 'bg-gray-900' : 'bg-gray-800'"
-              >
-                <!-- Game Names -->
+              <tr v-for="(bracket, index) in history.stage_brackets" :key="bracket.id"
+                  :class="index % 2 === 0 ? 'bg-gray-900' : 'bg-gray-800'">
                 <td class="px-4 py-2 font-bold">
-        <span :class="{ 'line-through text-gray-500': bracket.winner !== bracket.participant_a }">
-          {{ bracket.participant_a }}
-        </span>
+                    <span :class="{ 'line-through text-gray-500': bracket.winner !== bracket.participant_a }">
+                      {{ bracket.participant_a }}
+                    </span>
                   vs
                   <span :class="{ 'line-through text-gray-500': bracket.winner !== bracket.participant_b }">
-          {{ bracket.participant_b }}
-        </span>
+                      {{ bracket.participant_b }}
+                    </span>
                 </td>
-
-                <!-- Scores -->
                 <td class="px-4 py-2">
                   {{ parseFloat(bracket.participant_a_score).toFixed(3) }} - {{ parseFloat(bracket.participant_b_score).toFixed(3) }}
                 </td>
               </tr>
               </tbody>
             </table>
-
-
-            <table v-if="history.concurrents.length > 0" class="table-auto w-full text-sm text-gray-200">
+            <table v-if="history.concurrents.length > 0" class="table-auto w-full text-sm text-gray-200 transition-all duration-300">
               <tbody>
-              <tr
-                  v-for="(concurrent, index) in history.concurrents"
-                  :key="concurrent?.id"
-                  :class="index % 2 === 0 ? 'bg-gray-900' : 'bg-gray-800'"
-              >
+              <tr v-for="(concurrent, index) in history.concurrents" :key="concurrent?.id"
+                  :class="index % 2 === 0 ? 'bg-gray-900' : 'bg-gray-800'">
                 <td class="border border-black px-1 py-1 shrink w-0">
                   {{ concurrent?.is_eliminated ? '❌' : '✅' }}
                 </td>
@@ -483,13 +466,24 @@ const getGameThumbnail = (gameId) => {
 </template>
 
 <style>
-.btn-primary {
-  @apply bg-blue-600 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300;
-  @apply dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-800;
+/* Blurred Background for Rows */
+.game-active-row,
+.game-row {
+  position: relative;
+  overflow: hidden;
 }
-
-.btn-danger {
-  @apply bg-red-600 text-white px-4 py-2 rounded-md text-sm hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300;
-  @apply dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-800;
+.game-active-row .row-content,
+.game-row .row-content {
+  position: relative;
+  z-index: 10;
+}
+.game-active-row.bg-transparent .row-content,
+.game-row.bg-transparent .row-content {
+  @apply bg-black bg-opacity-60;
+}
+.game-active-row:not(.bg-transparent) .row-content,
+.game-row:not(.bg-transparent) .row-content {
+  @apply bg-gray-900;
 }
 </style>
+

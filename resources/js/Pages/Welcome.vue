@@ -1,64 +1,154 @@
 <script setup>
-import {Head, Link} from "@inertiajs/vue3";
+import { Head, Link, useForm } from '@inertiajs/vue3';
+import AuthenticationCard from '@/Components/AuthenticationCard.vue';
+import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo.vue';
+import Checkbox from '@/Components/Checkbox.vue';
+import InputError from '@/Components/InputError.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import TextInput from '@/Components/TextInput.vue';
 
 defineProps({
   canLogin: Boolean,
   canRegister: Boolean,
   laravelVersion: String,
   phpVersion: String,
+  canResetPassword: Boolean,
+  status: String,
 });
+
+const form = useForm({
+  email: '',
+  password: '',
+  remember: false,
+});
+
+const submit = () => {
+  form.transform(data => ({
+    ...data,
+    remember: form.remember ? 'on' : '',
+  })).post(route('login'), {
+    onFinish: () => form.reset('password'),
+  });
+};
 </script>
 
 <template>
-  <div
-      class="relative flex items-top justify-center min-h-screen bg-gray-100 dark:bg-gray-900 sm:items-center sm:pt-0"
-  >
-    <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
-      <div class="flex center self-center text-center m-auto justify-center mb-10">
-        <h2 class="font-semibold text-xl text-center justify-center text-gray-800 leading-tight mr-2">
-          Dashboard Păcănele
-        </h2>
-        <a target="blank" href="https://www.youtube.com/@MalaTheMan">
-          by @MalaTheMan</a
+  <div class="min-h-screen bg-gray-900 text-gray-100 flex flex-col">
+    <!-- Header -->
+    <header class="bg-gray-800 py-4 shadow-md">
+      <div class="max-w-6xl mx-auto px-4 flex items-center justify-between">
+        <h1 class="text-2xl font-bold">Dashboard Păcănele</h1>
+        <a
+            target="_blank"
+            href="https://www.youtube.com/@MalaTheMan"
+            class="text-sm hover:underline"
         >
+          by @MalaTheMan
+        </a>
       </div>
-      <div class="center text-center">
-        <div
-            v-if="canLogin"
-            class="hidden px-6 py-4 sm:block font-semibold text-lg"
-        >
+    </header>
 
-          <div class="flex gap-10 text-center" v-if="$page.props.user">
-            <Link
-                v-if="$page.props.user_streamer"
-                :href="route('streamdash')"
-                class="text-lg text-black underline"
-            >Dashboard Streamer
-            </Link>
-            <Link
-                :href="route('dashboard')"
-                class="text-lg text-black underline text-center m-auto"
-            >Dashboard Viewer
-            </Link>
-          </div>
+    <!-- Main Content -->
+    <main class="flex-grow flex items-center justify-center">
+      <div class="text-center">
+        <!-- If user is logged in -->
+        <div v-if="$page.props.user.id" class="flex gap-6 justify-center">
+          <!-- Display Dashboard Streamer only if user is a streamer -->
+          <Link
+              v-if="$page.props.user_streamer"
+              :href="route('streamdash')"
+              class="text-lg px-4 py-2 border border-gray-600 rounded transition transform duration-200 ease-in-out hover:bg-gray-700 hover:border-gray-500 hover:scale-105"
+          >
+            Dashboard Streamer
+          </Link>
+          <Link
+              :href="route('dashboard')"
+              class="text-lg px-4 py-2 border border-gray-600 rounded transition transform duration-200 ease-in-out hover:bg-gray-700 hover:border-gray-500 hover:scale-105"
+          >
+            Dashboard Viewer
+          </Link>
+        </div>
 
-          <template v-else>
-            <Link
-                :href="route('login')"
-                class="text-lg text-black underline"
-            >Log in
-            </Link
-            >
-            <Link
-                v-if="canRegister"
-                :href="route('register')"
-                class="ml-4 text-lg text-black underline"
-            >Register
-            </Link
-            >
-          </template>
+        <!-- If user is not logged in -->
+        <div v-else class="flex gap-6 justify-center">
+          <AuthenticationCard>
+            <!-- Optional Status Message -->
+            <div v-if="status" class="mb-4 text-center text-green-600 font-medium text-sm">
+              {{ status }}
+            </div>
+
+            <!-- Login Form -->
+            <form @submit.prevent="submit" class="space-y-6">
+              <!-- Email Field -->
+              <div class="space-y-2">
+                <InputLabel for="email" value="Email" class="text-white" />
+                <TextInput
+                    id="email"
+                    v-model="form.email"
+                    type="email"
+                    required
+                    autofocus
+                    class="mt-1 block w-full rounded-md border border-gray-600 bg-gray-700 text-gray-100 focus:ring-indigo-500 focus:border-indigo-500"
+                />
+                <InputError class="mt-1" :message="form.errors.email" />
+              </div>
+
+              <!-- Password Field -->
+              <div class="space-y-2">
+                <InputLabel for="password" value="Password" class="text-white" />
+                <TextInput
+                    id="password"
+                    v-model="form.password"
+                    type="password"
+                    required
+                    autocomplete="current-password"
+                    class="mt-1 block w-full rounded-md border border-gray-600 bg-gray-700 text-gray-100 focus:ring-indigo-500 focus:border-indigo-500"
+                />
+                <InputError class="mt-1" :message="form.errors.password" />
+              </div>
+
+              <!-- Remember Me & Forgot Password -->
+              <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                  <Checkbox v-model:checked="form.remember" name="remember" class="mr-2" />
+                  <span class="text-sm text-gray-300">Remember me</span>
+                </div>
+                <Link
+                    v-if="canResetPassword"
+                    :href="route('password.request')"
+                    class="text-sm text-gray-600 hover:text-gray-900 underline"
+                >
+                  Ai uitat parola?
+                </Link>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <PrimaryButton
+                    class="btn-primary w-full sm:w-auto"
+                    :class="{ 'opacity-25': form.processing }"
+                    :disabled="form.processing"
+                >
+                  Log in
+                </PrimaryButton>
+                <a href="/register" class="btn-secondary w-full sm:w-auto text-center">
+                  Înregistrare
+                </a>
+              </div>
+
+              <!-- Additional Registration Options -->
+              <div class="mt-8 text-center text-gray-400">
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mt-4">
+                  <a href="/auth/google/redirect" class="btn-secondary w-full sm:w-auto text-center google-register">
+                    Autentificare cu Google
+                  </a>
+                </div>
+              </div>
+            </form>
+          </AuthenticationCard>
         </div>
       </div>
-    </div>
+    </main>
   </div>
 </template>

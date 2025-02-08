@@ -1,26 +1,24 @@
 <template>
-  <div
-      class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50"
-  >
-    <div class="modal bg-white w-full max-w-lg p-6 rounded-lg shadow-lg">
-      <h2 class="text-xl font-semibold text-gray-800 mb-4">Create Schedule</h2>
+  <div class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50 transition-all duration-300">
+    <div class="modal bg-gray-900 w-full max-w-lg p-6 rounded-md shadow-lg transition-all duration-300">
+      <h2 class="text-xl font-semibold text-gray-100 mb-4">Create Schedule</h2>
       <form @submit.prevent="submitSchedule" class="space-y-4">
         <!-- Date Range Inputs -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label class="block text-sm font-medium text-gray-700" for="startDate">Start Date</label>
+            <label for="startDate" class="block text-sm font-medium text-gray-300">Start Date</label>
             <flat-pickr
                 v-model="startDate"
                 :config="flatpickrConfig"
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                class="mt-1 block w-full border border-gray-600 rounded-md shadow-sm bg-gray-900 text-gray-100 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300"
             />
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700" for="endDate">End Date</label>
+            <label for="endDate" class="block text-sm font-medium text-gray-300">End Date</label>
             <flat-pickr
                 v-model="endDate"
                 :config="flatpickrConfig"
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                class="mt-1 block w-full border border-gray-600 rounded-md shadow-sm bg-gray-900 text-gray-100 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300"
             />
           </div>
         </div>
@@ -31,47 +29,47 @@
               type="checkbox"
               id="announceToDiscord"
               v-model="announceToDiscord"
-              class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+              class="h-4 w-4 text-indigo-600 border-gray-600 rounded focus:ring-indigo-500 transition-all duration-300"
           />
-          <label for="announceToDiscord" class="ml-2 block text-sm text-gray-700">
+          <label for="announceToDiscord" class="ml-2 block text-sm text-gray-300">
             Announce to Discord
           </label>
         </div>
 
-        <!-- Generate Days -->
+        <!-- Generate Days Button -->
         <button
             type="button"
             @click="generateDays"
-            class="px-4 py-2 bg-indigo-600 text-white rounded-md shadow hover:bg-indigo-500 focus:outline-none focus:ring focus:ring-indigo-300"
+            class="btn-primary"
         >
           Generate Days
         </button>
 
         <!-- Days Inputs -->
-        <div class="grid grid-cols-[0.5fr_2fr] gap-4 border-t pt-4" v-for="(day, index) in days" :key="index">
-          <span class="text-gray-700 text-sm font-medium flex items-center justify-center truncate">
+        <div class="grid grid-cols-[0.5fr_2fr] gap-4 border-t border-gray-700 pt-4" v-for="(day, index) in days" :key="index">
+          <span class="text-gray-300 text-sm font-medium flex items-center justify-center truncate">
             {{ formatDayName(day.date) }}
           </span>
           <input
               type="text"
               v-model="day.info"
               placeholder="Info"
-              class="border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block"
+              class="input-primary"
           />
         </div>
 
-        <!-- Submit Button -->
+        <!-- Submit & Cancel Buttons -->
         <div class="flex gap-2">
           <button
               type="submit"
-              class="w-full px-4 py-2 bg-indigo-600 text-white rounded-md shadow hover:bg-indigo-500 focus:outline-none focus:ring focus:ring-indigo-300"
+              class="w-full btn-primary"
           >
             Save Schedule
           </button>
           <button
               type="button"
               @click="$emit('close')"
-              class="px-4 py-2 text-gray-700 bg-gray-100 rounded-md shadow hover:bg-gray-200"
+              class="btn-secondary"
           >
             Cancel
           </button>
@@ -98,10 +96,10 @@ export default {
       days: [],
       announceToDiscord: true, // Default to true
       flatpickrConfig: {
-        locale: Romanian, // Use Romanian localization
-        weekNumbers: true, // Show week numbers
-        firstDayOfWeek: 1, // Start the week on Monday
-        dateFormat: 'Y-m-d', // Format date as YYYY-MM-DD
+        locale: Romanian,
+        weekNumbers: true,
+        firstDayOfWeek: 1,
+        dateFormat: 'Y-m-d',
       },
     };
   },
@@ -110,9 +108,8 @@ export default {
       const start = new Date(this.startDate);
       const end = new Date(this.endDate);
       this.days = [];
-
       for (let d = start; d <= end; d.setDate(d.getDate() + 1)) {
-        this.days.push({ date: new Date(d).toISOString().split('T')[0], info: '' });
+        this.days.push({date: new Date(d).toISOString().split('T')[0], info: ''});
       }
     },
     formatDayName(date) {
@@ -120,17 +117,27 @@ export default {
       return days[new Date(date).getDay()];
     },
     submitSchedule() {
-      axios
-          .post('/api/schedule', {
-            days: this.days,
-            user_id: 1,
-            announceToDiscord: this.announceToDiscord,
-          })
-          .then(() => {
-            this.$emit('close');
-          });
+      axios.post('/api/schedule', {
+        days: this.days,
+        user_id: 1,
+        announceToDiscord: this.announceToDiscord,
+      }).then(() => {
+        this.$emit('close');
+      });
     },
   },
 };
 </script>
 
+<style scoped>
+/* Custom styles for dark mode */
+/* You can add additional customizations if needed */
+
+.bg-gray-900 {
+  /* Dark background for the modal */
+}
+
+.transition-all {
+  transition: all 0.3s ease;
+}
+</style>
