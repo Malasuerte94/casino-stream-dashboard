@@ -5,7 +5,7 @@ import BonusLists from '@/Components/BonusLists.vue';
 
 <template>
   <AppLayout title="Bonuses">
-    <div class="py-2">
+    <div class="py-4">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <transition name="fade">
           <div class="bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">

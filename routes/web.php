@@ -28,39 +28,34 @@ Route::post('/add-email-to-account', [SocialController::class, 'addRequiredEmail
 
 //display in OBS
 Route::get('/bonus-list/{id}', function ($id) {
-    return Inertia::render('BonusList', ['id' => $id]);
+    return Inertia::render('OBS/BonusListObs', ['id' => $id]);
 })->name('bonus-list');
 Route::get('/stream-start/{id}', function ($id) {
-    return Inertia::render('StreamStart', ['id' => $id]);
+    return Inertia::render('OBS/StreamStartObs', ['id' => $id]);
 })->name('stream-start');
 Route::get('/banners-obs/{id}', function ($id) {
-    return Inertia::render('BannersObs', ['id' => $id]);
+    return Inertia::render('OBS/BannersObs', ['id' => $id]);
 })->name('banners-obs');
 Route::get('/bonus-winner-obs/{id}', function ($id) {
-    return Inertia::render('BonusWinner', ['id' => $id]);
+    return Inertia::render('OBS/BonusWinnerObs', ['id' => $id]);
 })->name('bonus-winner-obs');
 Route::get('/slot/{id}', function ($id) {
-    return Inertia::render('Slot', ['id' => $id]);
+    return Inertia::render('OBS/SlotObs', ['id' => $id]);
 })->name('slot');
-
 Route::get('/yt-like-view-counter/{id}', function ($id) {
-    return Inertia::render('YtLikeViewCounter', ['id' => $id]);
+    return Inertia::render('OBS/YtLikeViewCounterObs', ['id' => $id]);
 })->name('yt-like-view-counter');
-
 Route::get('/bonus-battle-view/{id}', function ($id) {
-    return Inertia::render('BonusBattleView', ['id' => $id]);
+    return Inertia::render('OBS/BonusBattleViewObs', ['id' => $id]);
 })->name('bonus-battle-view');
-
 Route::get('/picker-wheel/{id}', function ($id) {
-    return Inertia::render('PickerWheel', ['id' => $id]);
+    return Inertia::render('OBS/PickerWheelObs', ['id' => $id]);
 })->name('picker-wheel');
-
 Route::get('/referrals/{id}', function ($id) {
-    return Inertia::render('Referrals', ['id' => $id]);
+    return Inertia::render('OBS/ReferralsObs', ['id' => $id]);
 })->name('referrals');
-
 Route::get('/schedule-view/{id}', function ($id) {
-    return Inertia::render('ScheduleView', ['id' => $id]);
+    return Inertia::render('OBS/ScheduleViewObs', ['id' => $id]);
 })->name('schedule-view');
 
 Route::get('/test', function () {

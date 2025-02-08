@@ -232,10 +232,10 @@ const getGameThumbnail = (gameId) => {
 </script>
 <template>
   <AppLayout title="Bonus Battle" v-if="!loadiwng">
-    <div class="py-2">
+    <div class="py-4">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <!-- Hide form if there's an active battle -->
-        <div v-if="!activeBattle && !winner" class="bg-gray-900 overflow-hidden shadow-lg rounded-md transition-all duration-300">
+        <div v-if="!activeBattle && !winner" class="bg-gray-800 overflow-hidden shadow-lg rounded-md transition-all duration-300">
           <div class="p-6 space-y-4">
             <!-- Input Form -->
             <div class="flex flex-row gap-2">
