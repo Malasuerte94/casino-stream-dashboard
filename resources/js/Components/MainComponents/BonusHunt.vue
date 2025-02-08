@@ -47,7 +47,8 @@
       </div>
 
       <!-- Game Rows with Dedicated Blurred Background Div -->
-      <div
+      <transition-group name="fade">
+        <div
           v-for="(game, index) in bonusHuntGames"
           :key="game.id || index"
           class="relative mb-4 rounded-lg shadow overflow-hidden game-row"
@@ -77,7 +78,6 @@
           <span v-else></span>
           <v-select
               :disabled="isEnded || loading"
-              :class="{'input-disabled': isEnded || loading}"
               :options="gameOptions"
               label="name"
               :reduce="game => game.id"
@@ -117,11 +117,13 @@
               @click="removeBonusHuntGameRow(game.id)"
               class="btn-danger"
           >
-            ✕
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+            </svg>
           </button>
         </div>
       </div>
-
+      </transition-group>
 
       <!-- Add Game Button -->
       <div class="flex justify-center mt-8" v-if="!isEnded">
@@ -303,42 +305,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-/* Custom Classes for Dark Mode */
-
-/* Primary input styling */
-.input-primary {
-  @apply bg-gray-900 border border-gray-600 text-gray-100 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 transition-colors duration-200;
-}
-
-/* Disabled input styling */
-.input-disabled {
-  @apply bg-gray-700 border border-gray-600 text-gray-500 text-sm rounded-lg block w-full p-2.5 cursor-not-allowed;
-}
-
-/* Primary button styling */
-.btn-primary {
-  @apply bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition;
-}
-
-/* Danger button styling */
-.btn-danger {
-  @apply bg-red-500 text-white font-semibold py-1 px-3 rounded-full hover:bg-red-600 focus:outline-none focus:ring-4 focus:ring-red-300 transition;
-}
-
-/* Extra div for blurred background */
-.game-row .bg-blur {
-  background-image: var(--bg-image);
-  background-size: cover;
-  background-position: center;
-  filter: blur(8px);
-  opacity: 0.3;
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  pointer-events: none;
-}
-</style>

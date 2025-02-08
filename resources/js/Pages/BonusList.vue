@@ -360,6 +360,7 @@ body,
   font-size: 1.3rem;
   width: 400px;
   height: 100vh;
+  background-color: transparent !important;
 }
 
 .table-list {

@@ -1,17 +1,19 @@
 <template>
   <div>
     <!-- Top Link & Controls -->
-    <div class="px-6 py-2 flex w-full flex-row items-center justify-between bg-gray-800 rounded-lg shadow">
-      <div class="flex items-center">
-        <span class="mr-4 text-gray-300">LINK pentru View-eri (ghicește suma)</span>
-        <div class="text-sm font-bold py-2 px-4 bg-gray-700 rounded text-white border border-gray-600">
+    <div class="px-6 py-3 flex items-center justify-between bg-gray-800 rounded-md shadow-md transition-all duration-300">
+      <div class="flex items-center space-x-4">
+        <span class="text-sm text-gray-300">LINK pentru View-eri (ghicește suma)</span>
+        <div class="text-sm font-bold py-1 px-3 bg-gray-700 rounded-md border border-gray-600 transition">
           {{ guessUrl }}
         </div>
       </div>
-      <div class="flex gap-2">
-        <!-- Toggle Button for Open/Close List -->
-        <label class="inline-flex cursor-pointer p-2 w-full items-center justify-center bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition">
-          <span class="uppercase mr-2">Înscrieri {{ open_list ? 'Pornite' : 'Oprite' }}</span>
+      <div class="flex items-center space-x-4">
+        <!-- Toggle Switch -->
+        <label class="inline-flex items-center cursor-pointer">
+          <span class="text-sm font-medium text-gray-300 mr-2">
+            Înscrieri {{ open_list ? 'Pornite' : 'Oprite' }}
+          </span>
           <input
               type="checkbox"
               true-value="true"
@@ -20,17 +22,17 @@
               @change="setStatusGuessList"
               class="sr-only peer"
           />
-          <div class="relative w-11 h-6 bg-gray-700 border border-gray-600 rounded-full peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-800 transition">
-            <div class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5"></div>
+          <div class="w-11 h-6 bg-gray-700 border border-gray-600 rounded-full peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-800 transition">
+            <div class="w-5 h-5 bg-white rounded-full transform transition-transform duration-300 peer-checked:translate-x-5"></div>
           </div>
         </label>
-        <!-- Close List / Declare Winner Button -->
+        <!-- Action Button -->
         <button
             :disabled="isEnded"
             :class="{'opacity-50 cursor-not-allowed': isEnded}"
             @click="activateDialog"
             type="button"
-            class="w-full bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 transition"
+            class="bg-red-600 hover:bg-red-700 text-white font-medium rounded-md text-sm px-5 py-2 transition-all duration-300"
         >
           ÎNCHIDE LISTA / DECLARĂ CÂȘTIGĂTOR
         </button>
@@ -38,12 +40,12 @@
     </div>
 
     <!-- Bonus List Settings & Content -->
-    <div class="bg-gray-800 bg-opacity-25 grid grid-cols-1 mt-4 rounded-lg">
+    <div class="bg-gray-800 rounded-md shadow-md mt-4 transition-all duration-300">
       <div class="p-6">
         <div class="grid grid-cols-2 gap-4">
           <!-- Radio for Bonus Buy -->
           <div
-              class="flex items-center pl-4 p-2 rounded-lg bg-gray-700 border border-gray-600 cursor-pointer transition"
+              class="flex items-center pl-4 p-2 rounded-md bg-gray-700 border border-gray-600 cursor-pointer transition-all duration-300"
               :class="{'bg-indigo-600': settings.bonus_list === 'buy'}"
               @click="settings.bonus_list = 'buy'; updateSettings()"
           >
@@ -56,13 +58,13 @@
                 name="bonus-list-display"
                 class="w-4 h-4 mr-2"
             />
-            <label for="bordered-radio-2" class="w-full py-2 ml-2 text-gray-300">
+            <label for="bordered-radio-2" class="w-full py-1 text-gray-300">
               Afișează Buy
             </label>
           </div>
           <!-- Radio for Bonus Hunt -->
           <div
-              class="flex items-center pl-4 p-2 rounded-lg bg-gray-700 border border-gray-600 cursor-pointer transition"
+              class="flex items-center pl-4 p-2 rounded-md bg-gray-700 border border-gray-600 cursor-pointer transition-all duration-300"
               :class="{'bg-indigo-600': settings.bonus_list === 'hunt'}"
               @click="settings.bonus_list = 'hunt'; updateSettings()"
           >
@@ -75,7 +77,7 @@
                 name="bonus-list-display"
                 class="w-4 h-4 mr-2"
             />
-            <label for="bordered-radio-1" class="w-full py-2 ml-2 text-gray-300">
+            <label for="bordered-radio-1" class="w-full py-1 text-gray-300">
               Afișează Hunt
             </label>
           </div>
@@ -83,22 +85,21 @@
       </div>
       <!-- Bonus Buy List -->
       <transition name="fade">
-        <div v-if="settings.bonus_list == 'buy'" class="p-6 bg-gray-800 rounded-lg border border-gray-700 mt-4" :key="componentKey">
-          <h5 class="text-lg font-bold text-gray-200">Bonus Buy - List</h5>
+        <div v-if="settings.bonus_list == 'buy'" class="p-6 bg-gray-800 rounded-md border border-gray-700 mt-4 transition-all duration-300" :key="componentKey">
+          <h5 class="text-lg font-bold text-gray-200 mb-2">Bonus Buy - List</h5>
           <BonusBuy @newlist="getUrlGuessList()" />
         </div>
       </transition>
       <!-- Bonus Hunt List -->
       <transition name="fade">
-        <div v-if="settings.bonus_list == 'hunt'" class="p-6 bg-gray-800 rounded-lg border border-gray-700 mt-4" :key="componentKey">
-          <h5 class="text-lg font-bold text-gray-200">Bonus Hunt - List</h5>
+        <div v-if="settings.bonus_list == 'hunt'" class="p-6 bg-gray-800 rounded-md border border-gray-700 mt-4 transition-all duration-300" :key="componentKey">
+          <h5 class="text-lg font-bold text-gray-200 mb-2">Bonus Hunt - List</h5>
           <BonusHunt @newlist="getUrlGuessList()" />
         </div>
       </transition>
     </div>
   </div>
 </template>
-
 <script>
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 import BonusBuy from "@/Components/MainComponents/BonusBuy.vue";
@@ -217,16 +218,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-/* Fade Transition */
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-</style>

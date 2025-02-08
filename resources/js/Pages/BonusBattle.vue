@@ -12,6 +12,8 @@ const prize = ref('');
 const buys = ref('2');
 const concurrents = ref([
   { game_id: null, for_user: null },
+  { game_id: null, for_user: null },
+  { game_id: null, for_user: null },
   { game_id: null, for_user: null }
 ]);
 const activeBattle = ref(null);
@@ -34,7 +36,7 @@ onMounted(async () => {
 });
 
 const cantStart = computed(() => {
-  if (concurrents.value.length < 2) return true;
+  if (concurrents.value.length < 4) return true;
   return concurrents.value.some(concurrent => !concurrent.game_id);
 });
 
@@ -229,7 +231,7 @@ const getGameThumbnail = (gameId) => {
 };
 </script>
 <template>
-  <AppLayout title="Bonus Battle" v-if="!loading">
+  <AppLayout title="Bonus Battle" v-if="!loadiwng">
     <div class="py-2">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <!-- Hide form if there's an active battle -->
@@ -263,7 +265,8 @@ const getGameThumbnail = (gameId) => {
                   <button @click="addConcurrent(16)" class="btn-primary">16</button>
                 </div>
               </h3>
-              <div v-for="(concurrent, index) in concurrents" :key="index"
+              <transition-group name="fade">
+                <div v-for="(concurrent, index) in concurrents" :key="index"
                    class="relative overflow-hidden flex items-center gap-4 bg-gray-900 p-4 rounded-md shadow transition-all duration-300"
                    :style="concurrent.game_id ? {'--bg-image': 'url(' + getGameThumbnail(concurrent.game_id) + ')'} : {}">
                 <!-- Blurred Background Layer -->
@@ -289,6 +292,7 @@ const getGameThumbnail = (gameId) => {
                          placeholder="Cine a ales? (opțional)"/>
                 </div>
               </div>
+              </transition-group>
             </div>
             <button :disabled="cantStart"
                     :class="{'opacity-50 cursor-not-allowed': cantStart}"
@@ -345,7 +349,7 @@ const getGameThumbnail = (gameId) => {
                         {{ concurrent.game.name }} - {{ concurrent.for_user }}
                       </h3>
                       <div class="flex flex-row gap-2">
-                        <v-select :disabled="activeSelect"
+                        <v-select :disabled="!activeSelect"
                                   :options="availableGames"
                                   label="name"
                                   :reduce="game => game.id"
@@ -386,11 +390,13 @@ const getGameThumbnail = (gameId) => {
                       </label>
                       <button v-if="scoreIndex >= 1" type="button" @click="removeScore(index, scoreIndex)"
                               class="btn-danger transition-all duration-300 align-middle">
-                        X
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                          <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                        </svg>
                       </button>
                     </div>
                     <button type="button" @click="addScore()"
-                            class="mt-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm transition-all duration-300">
+                            class="btn-primary mt-2">
                       Adaugă Buy
                     </button>
                   </div>
@@ -460,82 +466,11 @@ const getGameThumbnail = (gameId) => {
 </template>
 
 <style>
-/* Dark Mode Overrides for Base Elements */
-.bg-white {
-  @apply bg-gray-900;
-}
-.text-gray-700 {
-  @apply text-gray-300;
-}
-.shadow-xl {
-  @apply shadow-lg;
-}
-.sm\:rounded-lg {
-  @apply rounded-md;
-}
-
-/* Buttons */
-.btn-primary {
-  @apply bg-blue-600 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-300;
-  @apply dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-800;
-}
-.btn-secondary {
-  @apply bg-gray-600 text-white px-4 py-2 rounded-md text-sm hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-500 transition-all duration-300;
-  @apply dark:bg-gray-700 dark:hover:bg-gray-800 dark:focus:ring-gray-600;
-}
-.btn-danger {
-  @apply bg-red-600 text-white px-4 py-2 rounded-md text-sm hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 transition-all duration-300;
-  @apply dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-800;
-}
-
-/* Inputs - using input-primary */
-.input-primary {
-  @apply bg-gray-900 border border-gray-600 text-gray-100 text-sm rounded-md shadow-sm block w-full p-2 transition-all duration-300;
-}
-input:disabled {
-  @apply bg-gray-700 border border-gray-600 text-gray-500 cursor-not-allowed;
-}
-
-/* Vue Select Overrides */
-::v-deep .vs__dropdown-toggle {
-  @apply bg-gray-900 text-gray-100 border border-gray-600;
-}
-::v-deep .vs__dropdown-menu {
-  @apply bg-gray-900 text-gray-100 border border-gray-600;
-  z-index: 1000;
-}
-::v-deep .vs__selected {
-  @apply text-gray-100;
-}
-::v-deep .vs__search input {
-  @apply bg-gray-900 text-gray-100 border border-gray-600;
-}
-
-/* Transitions */
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.5s;
-}
-.fade-enter-from, .fade-leave-to {
-  opacity: 0;
-}
-
 /* Blurred Background for Rows */
 .game-active-row,
 .game-row {
   position: relative;
   overflow: hidden;
-}
-.game-active-row .bg-blur,
-.game-row .bg-blur {
-  background-image: var(--bg-image);
-  background-size: cover;
-  background-position: center;
-  filter: blur(8px);
-  opacity: 0.3;
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-  z-index: 0;
 }
 .game-active-row .row-content,
 .game-row .row-content {
@@ -549,11 +484,6 @@ input:disabled {
 .game-active-row:not(.bg-transparent) .row-content,
 .game-row:not(.bg-transparent) .row-content {
   @apply bg-gray-900;
-}
-
-/* Extra class to force transparent background if image exists */
-.bg-image {
-  background: transparent !important;
 }
 </style>
 

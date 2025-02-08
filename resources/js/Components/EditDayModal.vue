@@ -8,7 +8,7 @@
           <input
               type="text"
               v-model="day.date"
-              class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+              class="block w-full mt-1 input-primary"
               disabled
           />
         </div>
@@ -17,7 +17,7 @@
           <input
               type="text"
               v-model="day.info"
-              class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+              class="block w-full mt-1 input-primary"
           />
         </div>
         <div class="flex justify-end space-x-4">

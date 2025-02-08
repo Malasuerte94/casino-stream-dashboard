@@ -14,7 +14,7 @@
                 v-model="newDeposit.amount"
                 type="text"
                 id="deposit"
-                class="bg-gray-700 border border-gray-600 text-gray-100 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 transition-colors duration-200"
+                class="input-primary"
                 placeholder="Depus în lei"
             />
           </div>
@@ -26,7 +26,7 @@
                 v-model="newDeposit.casino"
                 type="text"
                 id="casino"
-                class="bg-gray-700 border border-gray-600 text-gray-100 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 transition-colors duration-200"
+                class="input-primary"
                 placeholder="Nume Casino"
             />
           </div>

@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* --------------------------------------------
+   Custom Utility & Misc Classes
+-------------------------------------------- */
 .youtube-register {
     background-color: red;
     padding: 10px 20px;
@@ -35,6 +38,7 @@
     bottom: 0;
     color: white;
 }
+
 .donate-button {
     font-weight: bold;
     background-color: #54abff;
@@ -52,39 +56,26 @@
     100% { box-shadow: 0 0 -5px #00c489; }
 }
 
-.btn-secondary {
-    border-radius: 5px;
-    border: 1px solid #5e5eff;
-    padding: 5px 10px;
+.small-font {
     font-size: 12px;
-    font-weight: bold;
-}
-.btn-secondary:hover {
-    background-color: rgba(94, 94, 255, 0.48);
-    box-shadow: 1px 1px #5e5eff;
-}
-.btn-secondary.btn-active {
-    background-color: rgba(94, 94, 255, 0.8);
-    box-shadow: 1px 1px #5e5eff;
-    color: white !important;
 }
 
+/* --------------------------------------------
+   Button Styles
+-------------------------------------------- */
 .btn-primary {
-    border-radius: 5px;
-    border: 1px solid #5e5eff;
-    background-color: #5e5eff;
-    padding: 10px 10px;
-    font-size: 12px;
-    font-weight: bold;
-    color: white;
+    @apply bg-indigo-600 text-white px-4 py-2 rounded-md text-sm hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-300 transition-all duration-300;
+    @apply dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800;
 }
-.btn-primary:hover {
-    background-color: rgba(94, 94, 255, 0.8);
-    box-shadow: 1px 1px #5e5eff;
+
+.btn-secondary {
+    @apply bg-gray-600 text-white px-4 py-2 rounded-md text-sm hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-500 transition-all duration-300;
+    @apply dark:bg-gray-700 dark:hover:bg-gray-800 dark:focus:ring-gray-600;
 }
-.btn-primary.btn-active {
-    background-color: rgba(94, 94, 255, 0.8);
-    box-shadow: 1px 1px #5e5eff;
+
+.btn-danger {
+    @apply bg-red-600 text-white px-4 py-2 rounded-md text-sm hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 transition-all duration-300;
+    @apply dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-800;
 }
 
 .btn-big {
@@ -92,22 +83,23 @@
     text-transform: uppercase;
 }
 
-.box-primary
-{
+/* --------------------------------------------
+   Box/Card Styles
+-------------------------------------------- */
+.box-primary {
     background-color: rgba(94, 94, 255, 0.8);
     border-radius: 5px;
     padding: 15px;
     border: 1px solid #5e5eff;
 }
 
-.box-secondary
-{
+.box-secondary {
     border-radius: 5px;
     padding: 15px;
     border: 1px solid #5e5eff;
 }
 
-
+/* Dialog Styles */
 .__dialog-box {
     background-color: rgba(94, 94, 255, 0.8) !important;
     width: 400px !important;
@@ -116,32 +108,70 @@
     width: 100% !important;
 }
 
-.small-font {
-    font-size: 12px;
-}
-
-/* Custom Classes */
+/* --------------------------------------------
+   Custom Input Styles
+-------------------------------------------- */
 .input-primary {
-    @apply bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5;
-    @apply dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500;
+    @apply bg-gray-900 border border-gray-600 text-gray-100 text-sm rounded-md shadow-sm block w-full p-2 transition-all duration-300;
 }
 
 .input-disabled {
-    @apply bg-gray-200 border border-gray-300 text-gray-400 text-sm rounded-lg block w-full p-2.5 cursor-not-allowed;
-    @apply dark:bg-gray-800 dark:border-gray-600 dark:text-gray-500;
+    @apply bg-gray-700 border border-gray-600 text-gray-500 text-sm rounded-lg block w-full p-2.5 cursor-not-allowed;
 }
 
-.input-select {
-    @apply text-sm bg-white border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5;
-    @apply dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500;
+/* --------------------------------------------
+   Vue-Select Dark Mode Overrides
+-------------------------------------------- */
+.vs__dropdown-toggle {
+    background-color: #1f2937 !important;
+    color: #f9fafb !important;
+    border: 1px solid #4b5563 !important;
 }
 
-.btn-primary {
-    @apply bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300;
-    @apply dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-800;
+.vs__dropdown-menu {
+    background-color: #1f2937 !important;
+    color: #f9fafb !important;
+    border: 1px solid #4b5563 !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
 }
 
-.btn-danger {
-    @apply bg-red-500 text-white font-semibold py-1 px-3 rounded-full hover:bg-red-600 focus:outline-none focus:ring-4 focus:ring-red-300;
-    @apply dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800;
+.vs__selected {
+    color: #f9fafb !important;
+}
+
+.vs__search input {
+    background-color: #1f2937 !important;
+    color: #f9fafb !important;
+    border: 1px solid #4b5563 !important;
+}
+
+.vs--disabled .vs__dropdown-toggle, .vs--disabled .vs__clear, .vs--disabled .vs__search, .vs--disabled .vs__selected, .vs--disabled .vs__open-indicator {
+    background-color: #374151 !important;
+    color: #9ca3af !important;
+}
+
+/* --------------------------------------------
+   Blurred Background Utility
+-------------------------------------------- */
+.bg-blur {
+    background-image: var(--bg-image);
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    filter: blur(4px);
+    opacity: 0.4;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* --------------------------------------------
+   Transition Utilities
+-------------------------------------------- */
+.fade-enter-active, .fade-leave-active {
+    transition: opacity 0.5s;
+}
+.fade-enter-from, .fade-leave-to {
+    opacity: 0;
 }
