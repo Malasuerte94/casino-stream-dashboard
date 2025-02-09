@@ -39,6 +39,12 @@ export default {
 </script>
 
 <style lang="scss">
+html,
+body,
+#app {
+  background-color: transparent !important;
+}
+
 .footer-donate {
   display: none !important;
 }

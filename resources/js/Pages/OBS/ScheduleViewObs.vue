@@ -143,7 +143,15 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
+html,
+body,
+#app {
+  background-color: transparent !important;
+}
+.footer-donate {
+  display: none !important;
+}
 .schedule-weekly-container {
   display: flex;
   flex-direction: row;

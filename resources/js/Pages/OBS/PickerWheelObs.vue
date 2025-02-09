@@ -181,7 +181,10 @@ export default {
 </script>
 
 <style>
+html,
+body,
 #app {
+  background-color: transparent !important;
   overflow: hidden;
 }
 .footer-donate {

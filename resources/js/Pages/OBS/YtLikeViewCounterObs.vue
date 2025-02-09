@@ -85,6 +85,11 @@ export default {
 </script>
 
 <style lang="scss">
+html,
+body,
+#app {
+  background-color: transparent !important;
+}
 .stats-container {
   font-family: "Lilita One", sans-serif;
   display: flex;
