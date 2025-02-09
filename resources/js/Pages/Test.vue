@@ -13,6 +13,7 @@ export default {
     };
   },
   async mounted() {
+    await this.test();
   },
   methods: {
     async test() {

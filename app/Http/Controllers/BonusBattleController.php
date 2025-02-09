@@ -7,6 +7,7 @@ use App\Models\BonusBuy;
 use App\Models\BonusConcurrent;
 use App\Models\BonusHunt;
 use App\Models\Bracket;
+use App\Models\Schedule;
 use App\Models\StageScore;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -16,16 +17,18 @@ class BonusBattleController extends Controller
 {
 
     public function test() {
-        $message =  'nothing';
-//        $userId = auth()->user()->id;
-//        $user = User::find($userId);
-//        $webhookUrl = $user->webhookHuntBuyBattle;
-//
-//        $bonusBattle = BonusBattle::findOrFail(1);
-//        $message = $this->buildBonusBattleDiscordMessage($bonusBattle);
-//
-//        $discord = new DiscordController();
-//        $discord->sendMessage($message, $webhookUrl);
+        $message =  [];
+        $userId = auth()->user()->id;
+        $user = User::find($userId);
+        $discord = new DiscordController();
+
+        $bonusBattle = BonusBattle::all()->last();
+        $bonusBuy = BonusBuy::all()->last();
+        $bonusHunt = BonusHunt::all()->last();
+
+        $message[] = $discord->buildBonusBattleDiscordMessage($bonusBattle);
+        //$message[] = $discord->buildBonusBuyDiscordMessage($bonusBuy);
+        $message[] = $discord->buildBonusHuntDiscordMessage($bonusHunt);
 
         return response()->json($message);
     }

@@ -185,7 +185,7 @@ export default {
           });
     },
     activateDialog() {
-      if (this.listCost <= 0 && settings.bonus_list == 'hunt') {
+      if (this.listCost <= 0 && this.settings.bonus_list == 'hunt') {
         alert("Vă rugăm să introduceți costul listei (Costul Hunt-ului).");
         return;
       }

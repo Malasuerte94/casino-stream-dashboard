@@ -20,10 +20,8 @@ class DiscordController extends Controller
      * @param string|null $avatarUrl Optional avatar override for the bot.
      * @return void
      */
-    public function sendMessage(string $message, string $webhookUrl = null, string $username = null, string $avatarUrl =
-    null): void
+    public function sendMessage(string $message, string $webhookUrl = null, string $username = null, string $avatarUrl = null): void
     {
-
         $payload = [
             'content' => $message,
         ];
@@ -37,26 +35,38 @@ class DiscordController extends Controller
         }
 
         try {
-            // Split the message into chunks of up to 2000 characters, ensuring splits occur at newlines
             $chunks = [];
-            while (strlen($message) > 2000) {
-                $splitPos = strrpos(substr($message, 0, 2000), "\n");
+            $maxLength = 2000;
+            $isCodeBlock = false;
+            $splitMessage = $message;
+
+            while (strlen($splitMessage) > $maxLength) {
+                $splitPos = strrpos(substr($splitMessage, 0, $maxLength), "\n");
 
                 if ($splitPos === false) {
-                    // If no newline is found, split at the maximum length
-                    $splitPos = 2000;
+                    $splitPos = $maxLength; // If no newline found, split at max length
                 }
 
-                $chunks[] = substr($message, 0, $splitPos);
-                $message = substr($message, $splitPos);
+                $chunk = substr($splitMessage, 0, $splitPos);
+                $splitMessage = substr($splitMessage, $splitPos);
+
+                // Detect if we are inside a code block
+                $codeBlockOpenings = substr_count($chunk, "```");
+                if ($codeBlockOpenings % 2 !== 0) {
+                    $isCodeBlock = !$isCodeBlock;
+                    $chunk .= "\n```";  // Close the unclosed code block
+                    $splitMessage = "```\n" . $splitMessage; // Reopen for next part
+                }
+
+                $chunks[] = $chunk;
             }
 
-            // Add the remaining part of the message
-            if (!empty($message)) {
-                $chunks[] = $message;
+            // Add the remaining message part
+            if (!empty($splitMessage)) {
+                $chunks[] = $splitMessage;
             }
 
-            // Send each chunk as a separate message
+            // Send each chunk separately
             foreach ($chunks as $chunk) {
                 $payload['content'] = $chunk;
                 Http::post($webhookUrl, $payload);
@@ -65,6 +75,7 @@ class DiscordController extends Controller
             logger()->error('Failed to send message to Discord: ' . $e->getMessage());
         }
     }
+
 
     /**
      * Build a detailed schedule message in Romanian and send it to Discord.
