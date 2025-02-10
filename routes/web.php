@@ -103,16 +103,16 @@ Route::middleware([
         return Inertia::render('BonusBattle');
     })->name('bonus-battle');
     Route::get('/settings', function () {
-        return Inertia::render('Settings');
+        return Inertia::render('Profile/Settings');
     })->name('settings');
     Route::get('/banners', function () {
-        return Inertia::render('Banners');
+        return Inertia::render('Profile/Banners');
     })->name('banners');
     Route::get('/report', function () {
         return Inertia::render('Report');
     })->name('report');
     Route::get('/stream-accounts', function () {
-        return Inertia::render('StreamAccounts');
+        return Inertia::render('Profile/StreamAccounts');
     })->name('stream-accounts');
     Route::get('/wheel-settings', function () {
         return Inertia::render('WheelSettings');

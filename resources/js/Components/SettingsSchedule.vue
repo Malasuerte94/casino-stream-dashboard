@@ -1,7 +1,7 @@
 <template>
   <div class="flex gap-6 p-6">
     <!-- Left: Settings Panel -->
-    <div class="w-1/2 bg-gray-100 p-6 rounded-lg shadow-lg">
+    <div class="w-1/2 bg-gray-800 p-6 rounded-lg shadow-lg">
       <h2 class="text-xl font-bold mb-4">Settings Panel</h2>
       <!-- Compact Grid Layout -->
       <div class="grid grid-cols-2 gap-2">
@@ -27,12 +27,12 @@
 
         <div>
           <label class="block font-semibold">Title Font Size</label>
-          <input type="number" v-model="settings.cellTitleFontSize" class="border p-1 w-full">
+          <input type="number" v-model="settings.cellTitleFontSize" class="input-primary">
         </div>
 
         <div>
           <label class="block font-semibold">Subtitle Font Size</label>
-          <input type="number" v-model="settings.cellSubtitleFontSize" class="border p-1 w-full">
+          <input type="number" v-model="settings.cellSubtitleFontSize" class="input-primary">
         </div>
       </div>
 

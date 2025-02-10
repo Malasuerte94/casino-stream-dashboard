@@ -1,7 +1,7 @@
 <template>
   <div class="flex gap-6 p-6">
     <!-- Left: Settings Panel -->
-    <div class="w-1/2 bg-gray-100 p-6 rounded-lg shadow-lg">
+    <div class="w-1/2 bg-gray-800 p-6 rounded-lg shadow-lg">
       <h2 class="text-xl font-bold mb-4">Settings Panel</h2>
       <!-- Compact Grid Layout -->
       <div class="grid grid-cols-2 gap-2">
@@ -18,12 +18,12 @@
 
         <div>
           <label class="block font-semibold">Border Width</label>
-          <input type="number" v-model="settings.borderWidth" class="border p-1 w-full">
+          <input type="number" v-model="settings.borderWidth" class="input-primary">
         </div>
 
         <div class="flex items-center col-span-2 gap-2">
           <label class="font-semibold">Currency</label>
-          <input type="text" v-model="settings.currency" class="mr-2">
+          <input type="text" v-model="settings.currency" class="input-primary">
         </div>
 
         <div class="flex items-center">
@@ -48,7 +48,7 @@
 
         <div>
           <label class="block font-semibold">Font Size</label>
-          <input type="number" v-model="settings.headerFontSize" class="border p-1 w-full">
+          <input type="number" v-model="settings.headerFontSize" class="input-primary">
         </div>
 
         <!-- Subheader Settings -->
@@ -78,7 +78,7 @@
 
         <div>
           <label class="block font-semibold">Font Size</label>
-          <input type="number" v-model="settings.subheaderFontSize" class="border p-1 w-full">
+          <input type="number" v-model="settings.subheaderFontSize" class="input-primary">
         </div>
 
         <!-- Table Settings -->
@@ -98,7 +98,7 @@
 
         <div>
           <label class="block font-semibold">Participant Font Size</label>
-          <input type="number" v-model="settings.tableParticipantFontSize" class="border p-1 w-full">
+          <input type="number" v-model="settings.tableParticipantFontSize" class="input-primary">
         </div>
 
         <div>
@@ -118,7 +118,7 @@
 
         <div>
           <label class="block font-semibold">Scores Font Size</label>
-          <input type="number" v-model="settings.tableScoresFontSize" class="border p-1 w-full">
+          <input type="number" v-model="settings.tableScoresFontSize" class="input-primary">
         </div>
 
         <div class="col-span-2 mt-4 border-t pt-2">
@@ -138,7 +138,7 @@
 
         <div>
           <label class="block font-semibold">History Font Size</label>
-          <input type="number" v-model="settings.tableBodyFontSize" class="border p-1 w-full">
+          <input type="number" v-model="settings.tableBodyFontSize" class="input-primary">
         </div>
       </div>
 

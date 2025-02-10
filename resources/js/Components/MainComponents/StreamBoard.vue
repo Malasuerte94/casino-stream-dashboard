@@ -2,7 +2,7 @@
   <div class="p-6">
     <!-- New Stream Call-to-Action Card -->
     <transition name="fade">
-      <div class="bg-red-900 p-6 mb-6 rounded border border-red-700 shadow-lg">
+      <div class="bg-grey-900 p-6 mb-6 rounded border border-red-700 shadow-lg">
         <button
             @click="activateDialog"
             type="button"
@@ -11,7 +11,7 @@
           Stream Nou
         </button>
         <div class="text-sm mt-4 text-red-300">
-          Înainte de fiecare stream te rog să apeși butonul de <b>Stream Nou</b>, introdu suma de pe care o ai depozitată pe casino și poți începe, dacă vrei să faci o retragere introdu și retragerea și confirmă pentru a avea un raport cât mai corect.
+          Dacă Vrei să folosești corect și funcția de Retragere / Depunere: Înainte de fiecare stream te rog să apeși butonul de <b>Stream Nou</b>, introdu suma de pe care o ai depozitată pe casino și poți începe, dacă vrei să faci o retragere introdu și retragerea și confirmă pentru a avea un raport cât mai corect.
         </div>
       </div>
     </transition>

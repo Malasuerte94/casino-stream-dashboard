@@ -10,7 +10,7 @@ import ChangeLog from '@/Components/MainComponents/ChangeLog.vue';
     <!-- Header Navigation -->
     <template #header>
       <div class="flex flex-wrap gap-2 bg-gray-800 p-2 rounded-lg shadow-lg h-10 items-center">
-        <span class="text-white text-sm font-bold px-3">OBS</span>
+        <span class="text-white text-sm font-bold px-3">OBS Widgets</span>
         <NavLink class="text-white text-sm font-semibold px-3 py-1 border-transparent transition-all duration-200 hover:text-amber-500"
                  :href="route('bonus-list', { id: $page.props.user.id })"
                  :active="route().current('bonus-list')">
