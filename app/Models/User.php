@@ -189,6 +189,14 @@ class User extends Authenticatable
     }
 
     /**
+     * @return HasMany
+     */
+    public function battleViewers(): HasMany
+    {
+        return $this->hasMany(BattleViewer::class);
+    }
+
+    /**
      * Get the Discord webhook URL for the user's schedule announcer.
      *
      * @return string|null

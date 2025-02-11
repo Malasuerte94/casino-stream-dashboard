@@ -260,7 +260,13 @@ export default {
     await this.getSettings();
     await this.getActiveBonusBattle();
     this.loading = false;
-    await this.updateTheListFromTimeToTime();
+    window.Echo.channel(`App.Models.User.${this.id}`)
+        .listen('BonusBattleUpdated', async () => {
+          await this.updateList();
+        })
+        .listen('SettingsUpdated', async () => {
+          await this.updateList();
+        });
   },
   methods: {
     async getActiveBonusBattle() {
@@ -300,15 +306,13 @@ export default {
         this.error = `Failed to load setting: ${settingName}`;
       }
     },
-    async updateTheListFromTimeToTime() {
-      setInterval(async () => {
+    async updateList() {
         if (!this.isUpdating) {
           this.isUpdating = true;
           await this.getSettings();
           await this.getActiveBonusBattle();
           this.isUpdating = false;
         }
-      }, 8000);
     },
     getConcurrentScores(concurrentId, bracketId) {
       if (!concurrentId || !bracketId) return [];

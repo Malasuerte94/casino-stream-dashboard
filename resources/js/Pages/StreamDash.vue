@@ -22,6 +22,11 @@ import ChangeLog from '@/Components/MainComponents/ChangeLog.vue';
           Bonus Battle
         </NavLink>
         <NavLink class="text-white text-sm font-semibold px-3 py-1 border-transparent transition-all duration-200 hover:text-amber-500"
+                 :href="route('bonus-battle-picker', { id: $page.props.user.id })"
+                 :active="route().current('bonus-battle-picker')">
+          Bonus Battle Picker
+        </NavLink>
+        <NavLink class="text-white text-sm font-semibold px-3 py-1 border-transparent transition-all duration-200 hover:text-amber-500"
                  :href="route('bonus-winner-obs', { id: $page.props.user.id })"
                  :active="route().current('bonus-winner-obs')">
           Bonus Winner

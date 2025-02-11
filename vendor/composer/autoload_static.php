@@ -30,6 +30,7 @@ class ComposerStaticInit69c8e8820f8dba78f915ae86794425a6
         'f0906e6318348a765ffb6eb24e0d0938' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Foundation/helpers.php',
         '58571171fd5812e6e447dce228f52f4d' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Support/helpers.php',
         '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
+        '3109cb1a231dcd04bee1f9f620d46975' => __DIR__ . '/..' . '/paragonie/sodium_compat/autoload.php',
         '801c31d8ed748cfa537fa45402288c95' => __DIR__ . '/..' . '/psy/psysh/src/functions.php',
         '98caa11a197f6516a8e48aa4abb5ccc6' => __DIR__ . '/..' . '/inertiajs/inertia-laravel/helpers.php',
         'c72349b1fe8d0deeedd3a52e8aa814d8' => __DIR__ . '/..' . '/mockery/mockery/library/helpers.php',
@@ -110,6 +111,7 @@ class ComposerStaticInit69c8e8820f8dba78f915ae86794425a6
         ),
         'P' => 
         array (
+            'Pusher\\' => 7,
             'Psy\\' => 4,
             'Psr\\SimpleCache\\' => 16,
             'Psr\\Log\\' => 8,
@@ -404,6 +406,10 @@ class ComposerStaticInit69c8e8820f8dba78f915ae86794425a6
         array (
             0 => __DIR__ . '/..' . '/ramsey/collection/src',
         ),
+        'Pusher\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/pusher/pusher-php-server/src',
+        ),
         'Psy\\' => 
         array (
             0 => __DIR__ . '/..' . '/psy/psysh/src',
@@ -678,8 +684,10 @@ class ComposerStaticInit69c8e8820f8dba78f915ae86794425a6
         'App\\Actions\\Fortify\\UpdateUserProfileInformation' => __DIR__ . '/../..' . '/app/Actions/Fortify/UpdateUserProfileInformation.php',
         'App\\Actions\\Jetstream\\DeleteUser' => __DIR__ . '/../..' . '/app/Actions/Jetstream/DeleteUser.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
+        'App\\Events\\BattleViewerCreated' => __DIR__ . '/../..' . '/app/Events/BattleViewerCreated.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
         'App\\Http\\Controllers\\BannerController' => __DIR__ . '/../..' . '/app/Http/Controllers/BannerController.php',
+        'App\\Http\\Controllers\\BattleViewerController' => __DIR__ . '/../..' . '/app/Http/Controllers/BattleViewerController.php',
         'App\\Http\\Controllers\\BonusBattleController' => __DIR__ . '/../..' . '/app/Http/Controllers/BonusBattleController.php',
         'App\\Http\\Controllers\\BonusBuyController' => __DIR__ . '/../..' . '/app/Http/Controllers/BonusBuyController.php',
         'App\\Http\\Controllers\\BonusBuyGameController' => __DIR__ . '/../..' . '/app/Http/Controllers/BonusBuyGameController.php',
@@ -717,6 +725,7 @@ class ComposerStaticInit69c8e8820f8dba78f915ae86794425a6
         'App\\Http\\Resources\\GuessEntriesResource' => __DIR__ . '/../..' . '/app/Http/Resources/GuessEntriesResource.php',
         'App\\Http\\Resources\\UserResource' => __DIR__ . '/../..' . '/app/Http/Resources/UserResource.php',
         'App\\Models\\Banner' => __DIR__ . '/../..' . '/app/Models/Banner.php',
+        'App\\Models\\BattleViewer' => __DIR__ . '/../..' . '/app/Models/BattleViewer.php',
         'App\\Models\\BonusBattle' => __DIR__ . '/../..' . '/app/Models/BonusBattle.php',
         'App\\Models\\BonusBuy' => __DIR__ . '/../..' . '/app/Models/BonusBuy.php',
         'App\\Models\\BonusBuyGame' => __DIR__ . '/../..' . '/app/Models/BonusBuyGame.php',
@@ -742,6 +751,7 @@ class ComposerStaticInit69c8e8820f8dba78f915ae86794425a6
         'App\\Models\\UserSetting' => __DIR__ . '/../..' . '/app/Models/UserSetting.php',
         'App\\Models\\Winner' => __DIR__ . '/../..' . '/app/Models/Winner.php',
         'App\\Models\\Withdrawal' => __DIR__ . '/../..' . '/app/Models/Withdrawal.php',
+        'App\\Observers\\BattleViewerObserver' => __DIR__ . '/../..' . '/app/Observers/BattleViewerObserver.php',
         'App\\Observers\\ScheduleObserver' => __DIR__ . '/../..' . '/app/Observers/ScheduleObserver.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
         'App\\Providers\\AuthServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AuthServiceProvider.php',
@@ -5403,6 +5413,13 @@ class ComposerStaticInit69c8e8820f8dba78f915ae86794425a6
         'Psy\\VersionUpdater\\IntervalChecker' => __DIR__ . '/..' . '/psy/psysh/src/VersionUpdater/IntervalChecker.php',
         'Psy\\VersionUpdater\\NoopChecker' => __DIR__ . '/..' . '/psy/psysh/src/VersionUpdater/NoopChecker.php',
         'Psy\\VersionUpdater\\SelfUpdate' => __DIR__ . '/..' . '/psy/psysh/src/VersionUpdater/SelfUpdate.php',
+        'Pusher\\ApiErrorException' => __DIR__ . '/..' . '/pusher/pusher-php-server/src/ApiErrorException.php',
+        'Pusher\\Pusher' => __DIR__ . '/..' . '/pusher/pusher-php-server/src/Pusher.php',
+        'Pusher\\PusherCrypto' => __DIR__ . '/..' . '/pusher/pusher-php-server/src/PusherCrypto.php',
+        'Pusher\\PusherException' => __DIR__ . '/..' . '/pusher/pusher-php-server/src/PusherException.php',
+        'Pusher\\PusherInstance' => __DIR__ . '/..' . '/pusher/pusher-php-server/src/PusherInstance.php',
+        'Pusher\\PusherInterface' => __DIR__ . '/..' . '/pusher/pusher-php-server/src/PusherInterface.php',
+        'Pusher\\Webhook' => __DIR__ . '/..' . '/pusher/pusher-php-server/src/Webhook.php',
         'Ramsey\\Collection\\AbstractArray' => __DIR__ . '/..' . '/ramsey/collection/src/AbstractArray.php',
         'Ramsey\\Collection\\AbstractCollection' => __DIR__ . '/..' . '/ramsey/collection/src/AbstractCollection.php',
         'Ramsey\\Collection\\AbstractSet' => __DIR__ . '/..' . '/ramsey/collection/src/AbstractSet.php',

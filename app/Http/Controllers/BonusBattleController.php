@@ -7,7 +7,6 @@ use App\Models\BonusBuy;
 use App\Models\BonusConcurrent;
 use App\Models\BonusHunt;
 use App\Models\Bracket;
-use App\Models\Schedule;
 use App\Models\StageScore;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -472,12 +471,14 @@ class BonusBattleController extends Controller
                 }
 
                 if (!empty($score['id'])) {
-                    $bracket->scores()->where('id', $score['id'])->update([
-                        'bonus_concurrent_id' => $score['bonus_concurrent_id'],
-                        'score' => $score['score'],
-                        'cost_buy' => $lastCostBuy,
-                        'result_buy' => $score['result_buy'],
-                    ]);
+                    $scoreModel = $bracket->scores()->find($score['id']);
+                    if ($scoreModel) {
+                        $scoreModel->bonus_concurrent_id = $score['bonus_concurrent_id'];
+                        $scoreModel->score = $score['score'];
+                        $scoreModel->cost_buy = $lastCostBuy;
+                        $scoreModel->result_buy = $score['result_buy'];
+                        $scoreModel->save();
+                    }
                 } else {
                     $bracket->scores()->create([
                         'bonus_concurrent_id' => $score['bonus_concurrent_id'],
@@ -494,14 +495,18 @@ class BonusBattleController extends Controller
         ]);
     }
 
+    /**
+     * @param int $id
+     * @return JsonResponse
+     */
     public function deleteScore(int $id): JsonResponse
     {
-        $score = StageScore::findOrFail($id);
+        $score = StageScore::find($id);
+        if (!$score) {
+            return response()->json(['message' => 'Score not found'], 404);
+        }
         $score->delete();
-
-        return response()->json([
-            'message' => 'Score deleted successfully!',
-        ]);
+        return response()->json(['message' => 'Score deleted successfully!']);
     }
 
     public function endBattle(Request $request): JsonResponse

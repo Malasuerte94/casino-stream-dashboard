@@ -48,6 +48,9 @@ Route::get('/yt-like-view-counter/{id}', function ($id) {
 Route::get('/bonus-battle-view/{id}', function ($id) {
     return Inertia::render('OBS/BonusBattleViewObs', ['id' => $id]);
 })->name('bonus-battle-view');
+Route::get('/bonus-battle-picker/{id}', function ($id) {
+    return Inertia::render('OBS/BonusBattlePickerObs', ['id' => $id]);
+})->name('bonus-battle-picker');
 Route::get('/picker-wheel/{id}', function ($id) {
     return Inertia::render('OBS/PickerWheelObs', ['id' => $id]);
 })->name('picker-wheel');

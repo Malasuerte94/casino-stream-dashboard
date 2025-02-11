@@ -45,8 +45,10 @@
             <div class="flex flex-col text-center">Req (x)<span>{{ requiredAverageX }}</span></div>
             <div class="flex flex-col text-center">Avg (x)<span>{{ averageMulti }}</span></div>
             <div class="flex flex-col text-center">Top (x)<span>{{ gameHighestMulti }}</span></div>
-            <div class="flex flex-col text-center">Top (plata)<span>{{gameHighestResult}} {{settings.currency}}</span></div>
-            <div class="flex flex-col text-center">Rezultat<span>{{ bonusList.result }} {{settings.currency}}</span></div>
+            <div class="flex flex-col text-center">Top
+              (plata)<span>{{ gameHighestResult }} {{ settings.currency }}</span></div>
+            <div class="flex flex-col text-center">Rezultat<span>{{ bonusList.result }} {{ settings.currency }}</span>
+            </div>
           </div>
         </div>
 
@@ -243,6 +245,14 @@ export default {
     }
   },
   async mounted() {
+    window.Echo.channel(`App.Models.User.${this.id}`)
+        .listen('BonusBuyOrHuntUpdated', async () => {
+          await this.updateList();
+        })
+        .listen('SettingsUpdated', async () => {
+          await this.updateList();
+        });
+
     await this.getSettings();
     await this.getLatestList();
     this.loading = false;
@@ -251,8 +261,6 @@ export default {
       this.initAutoScroll(this.$refs.scrollWrapper);
       this.initAutoScroll(this.$refs.scrollWrapperHunt);
     });
-
-    await this.updateTheListFromTimeToTime();
   },
   methods: {
     shouldScroll() {
@@ -300,16 +308,14 @@ export default {
             console.log(error);
           });
     },
-    async updateTheListFromTimeToTime() {
-      setInterval(async () => {
-        if (!this.isUpdating) {
-          this.isUpdating = true;
-          await this.getSettings();
-          await this.getLatestList();
-          this.isUpdating = false;
-          this.initAutoScroll();
-        }
-      }, 8000);
+    async updateList() {
+      if (!this.isUpdating) {
+        this.isUpdating = true;
+        await this.getSettings();
+        await this.getLatestList();
+        this.isUpdating = false;
+        this.initAutoScroll();
+      }
     },
     initAutoScroll() {
       const gamesList = this.$refs.gamesList || this.$refs.gamesListHunt;

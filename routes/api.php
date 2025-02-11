@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BannerController;
+use App\Http\Controllers\BattleViewerController;
 use App\Http\Controllers\BonusBattleController;
 use App\Http\Controllers\BonusBuyController;
 use App\Http\Controllers\BonusBuyGameController;
@@ -103,6 +104,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/add-score', [BonusBattleController::class, 'addScore']);
         Route::put('/edit-concurrent', [BonusBattleController::class, 'editConcurrent']);
         Route::delete('/delete-score/{id}', [BonusBattleController::class, 'deleteScore']);
+        Route::get('/battle-viewers', [BattleViewerController::class, 'getBattleViewers']);
+        Route::patch('/battle-viewers/{id}', [BattleViewerController::class, 'updateBattleViewer']);
+        Route::post('/battle-viewers/remove-all', [BattleViewerController::class, 'clearBattleViewers']);
     });
 
 
@@ -166,3 +170,8 @@ Route::get('/schedule/weekly/{id}', [ScheduleController::class, 'getWeeklySchedu
 
 //get-all-games
 Route::apiResource('games', GameController::class);
+
+//get-all-users-list
+Route::get('/battle-viewers-public/{id}', [BattleViewerController::class, 'getBattleViewersPublic']);
+
+Route::get('/add-bb-viewer/{username}/{game}/{creatorId}',[BattleViewerController::class, 'addBattleViewer']);

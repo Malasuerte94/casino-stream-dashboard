@@ -11,6 +11,17 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 import Dialog from 'vue3-dialog';
 import { createPinia } from 'pinia';
 
+import Echo from "laravel-echo";
+import Pusher from "pusher-js";
+
+window.Pusher = Pusher;
+window.Echo = new Echo({
+    broadcaster: 'pusher',
+    key: import.meta.env.VITE_PUSHER_APP_KEY,
+    cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
+    forceTLS: true,
+});
+
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
 
 createInertiaApp({

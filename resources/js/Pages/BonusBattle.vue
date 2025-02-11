@@ -4,6 +4,7 @@ import {ref, onMounted, computed} from 'vue';
 import vSelect from 'vue-select';
 import "vue-select/dist/vue-select.css";
 import { useGameStore } from '@/stores/gameStore';
+import BonusBattleViewers from "@/Components/BonusBattle/BonusBattleViewers.vue";
 
 const loading = ref(true);
 const title = ref('');
@@ -30,6 +31,7 @@ const currentPair = ref([]);
 
 const gameStore = useGameStore();
 const availableGames = computed(() => gameStore.availableGames);
+let debounceTimer = ref(null);
 
 onMounted(async () => {
   await fetchActiveBattle();
@@ -82,13 +84,18 @@ const removeScore = async (concurrentIndex, scoreIndex) => {
 };
 
 const recalculateScore = async (concurrentIndex, scoreIndex) => {
-  const scoreEntry = currentPair.value[concurrentIndex].scores[scoreIndex];
-  if (scoreEntry.cost_buy > 0) {
-    scoreEntry.score = parseFloat((scoreEntry.result_buy / scoreEntry.cost_buy).toFixed(3));
-    await syncScores();
-  } else {
-    alert('Amount must be greater than 0.');
+  if (debounceTimer) {
+    clearTimeout(debounceTimer);
   }
+  debounceTimer = setTimeout(async () => {
+    const scoreEntry = currentPair.value[concurrentIndex].scores[scoreIndex];
+    if (scoreEntry.cost_buy > 0) {
+      scoreEntry.score = parseFloat((scoreEntry.result_buy / scoreEntry.cost_buy).toFixed(3));
+      await syncScores();
+    } else {
+      alert('Amount must be greater than 0.');
+    }
+  }, 1000);
 };
 const calculateTotalScore = (scores) => {
   return scores.reduce((total, score) => total + score.score, 0).toFixed(3);
@@ -96,25 +103,29 @@ const calculateTotalScore = (scores) => {
 
 const deleteScore = async (score_id) => {
   try {
+    loading.value = true;
     const response = await axios.delete(`/api/bonus-battles/delete-score/${score_id}`);
     console.log('Bonus score deleted successfully:', response.data);
     await syncScores();
   } catch (error) {
     console.error('Failed to delete bonus score:', error.response?.data || error.message);
+  } finally {
+    loading.value = false;
   }
 };
 
 const syncScores = async () => {
   try {
+    loading.value = true;
     const response = await axios.post('/api/bonus-battles/add-score', {
       active_bracket: activeBracket.value.id,
       bracket: currentPair.value
     });
-
     console.log('Bonus battle stored successfully:', response.data);
-
   } catch (error) {
     console.error('Failed to store bonus score:', error.response?.data || error.message);
+  } finally {
+    loading.value = false;
   }
 }
 
@@ -158,6 +169,7 @@ const endBattle = async () => {
 
 const finishRound = async () => {
   try {
+    loading.value = true;
     await axios.post(`/api/bonus-battles/finish-round`, {
       active_bracket: activeBracket.value.id
     });
@@ -165,11 +177,14 @@ const finishRound = async () => {
   } catch (error) {
     console.error('Failed to finish round:', error.response?.data || error.message);
     alert('An error occurred while finishing the round. Please try again.');
+  } finally {
+    loading.value = false;
   }
 };
 
 const updateGame = async (concurrentId, gameId) => {
   try {
+    loading.value = true;
     await axios.put(`/api/bonus-battles/edit-concurrent`, {
       id: concurrentId,
       game_id: gameId
@@ -178,11 +193,14 @@ const updateGame = async (concurrentId, gameId) => {
     activeSelect.value = false;
   } catch (error) {
     alert('Please try again.');
+  } finally {
+    loading.value = false;
   }
 };
 
 const fetchActiveBattle = async () => {
   try {
+    loading.value = true;
     const response = await axios.get('/api/bonus-battles/active');
     totalBattles.value = response.data.total_battles;
     activeBattle.value = response.data.battle;
@@ -229,6 +247,15 @@ const getGameThumbnail = (gameId) => {
       ? `/storage/games/${selectedGame.image}`
       : '';
 };
+
+const handleWinnersPicked = (winnersArray) => {
+  console.log('Winners picked:', winnersArray);
+  concurrents.value = concurrents.value.map((concurrent, index) => ({
+    ...concurrent,
+    for_user: winnersArray[index] !== undefined ? winnersArray[index] : ''
+  }));
+};
+
 </script>
 <template>
   <AppLayout title="Bonus Battle" v-if="!loadiwng">
@@ -256,7 +283,8 @@ const getGameThumbnail = (gameId) => {
                 <input type="text" v-model="buys" id="buys" class="mt-1 block w-full input-primary" />
               </div>
             </div>
-            <div class="bg-gray-800 p-6 rounded-md shadow-md space-y-4 transition-all duration-300">
+            <div class="flex flex-col md:flex-row md:space-x-4">
+              <div class="md:w-2/3 bg-gray-800 p-6 rounded-md shadow-md space-y-4 transition-all duration-300">
               <h3 class="text-lg font-semibold text-gray-300 flex gap-2 items-center">
                 Participanți
                 <div class="flex gap-4">
@@ -293,6 +321,8 @@ const getGameThumbnail = (gameId) => {
                 </div>
               </div>
               </transition-group>
+            </div>
+              <BonusBattleViewers @winnersPicked="handleWinnersPicked" :fillCount="concurrents.length" />
             </div>
             <button :disabled="cantStart"
                     :class="{'opacity-50 cursor-not-allowed': cantStart}"
@@ -372,12 +402,14 @@ const getGameThumbnail = (gameId) => {
                         Cost Buy
                         <input type="number" v-model="concurrent.scores[scoreIndex].cost_buy"
                                class="block w-40 border border-gray-600 rounded-md shadow-sm p-2 transition-all duration-300 input-primary"
-                               placeholder="Amount"/>
+                               :disabled="loading"
+                               :class="{'input-disabled': loading}"
+                               placeholder="Amount" @input="recalculateScore(index, scoreIndex)"/>
                       </label>
                       <label class="text-sm font-medium text-gray-300">
                         Rezultat Buy
-                        <input :disabled="score.cost_buy <= 0"
-                               :class="{'input-disabled opacity-50': score.cost_buy <= 0, 'input-primary': score.cost_buy > 0}"
+                        <input :disabled="score.cost_buy <= 0 || loading"
+                               :class="{'input-disabled': score.cost_buy <= 0 || loading, 'input-primary': score.cost_buy > 0}"
                                type="number" v-model="concurrent.scores[scoreIndex].result_buy"
                                class="block w-40 border border-gray-600 rounded-md shadow-sm p-2 transition-all duration-300"
                                placeholder="Result" @input="recalculateScore(index, scoreIndex)"/>
@@ -395,7 +427,8 @@ const getGameThumbnail = (gameId) => {
                         </svg>
                       </button>
                     </div>
-                    <button type="button" @click="addScore()"
+                    <button type="button" @click="addScore()" :disabled="loading"
+                            :class="{'input-disabled': loading}"
                             class="btn-primary mt-2">
                       Adaugă Buy
                     </button>
@@ -412,7 +445,7 @@ const getGameThumbnail = (gameId) => {
             <div class="mt-6 flex flex-col gap-4">
               <button v-if="activeStage.name !== 'Final'" type="button" @click="finishRound"
                       class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md transition-all duration-300"
-                      :disabled="!canGoNext" :class="{'input-disabled opacity-50': !canGoNext}">
+                      :disabled="!canGoNext || loading" :class="{'input-disabled opacity-50': !canGoNext || loading}">
                 Următoarii Concurenți
               </button>
               <button v-if="activeStage.name === 'Final'" type="button" @click="endBattle"
