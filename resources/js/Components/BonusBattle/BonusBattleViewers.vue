@@ -96,13 +96,34 @@
         <span v-else>Șterge Lista</span>
       </button>
     </div>
-    <p>
+
+    <p class="mb-2 text-gray-300 text-sm">
       Poți automatiza procesul de înscriere dacă folosești Streamlabs Cloud Bot.
-      Creează comanda
-      <span class="text-sm bg-green-600 p-1 rounded">
-        {{ apiUrlCommand }}
-      </span>
     </p>
+
+    <p class="mb-2 text-gray-300 text-sm">
+      Creează comanda Streamlabs Coud Bot:
+    </p>
+    <div class="mb-4 text-sm">
+      <button
+          class="w-full text-left p-2 bg-green-600 text-gray-900 rounded focus:outline-none hover:bg-green-500 transition"
+          @click="copyText(apiUrlCommand)"
+      >
+        <code>{{ apiUrlCommand }}</code>
+      </button>
+    </div>
+
+    <p class="mb-2 text-gray-300 text-sm">
+      Creează comanda NightBot:
+    </p>
+    <div class="mb-4 text-sm">
+      <button
+          class="w-full text-left p-2 bg-green-600 text-gray-900 rounded focus:outline-none hover:bg-green-500 transition"
+          @click="copyText(apiUrlCommandNightBot)"
+      >
+        <code>{{ apiUrlCommandNightBot }}</code>
+      </button>
+    </div>
   </div>
 </template>
 
@@ -159,6 +180,31 @@ export default {
         console.error('Failed to fetch setting:', error.message);
       } finally {
         this.loading = false;
+      }
+    },
+    copyText(text) {
+      if (navigator.clipboard) {
+        navigator.clipboard
+            .writeText(text)
+            .then(() => {
+              alert("Comanda a fost copiată în clipboard");
+            })
+            .catch((err) => {
+              console.error("Failed to copy text: ", err);
+            });
+      } else {
+        // Fallback for older browsers
+        const input = document.createElement("input");
+        input.value = text;
+        document.body.appendChild(input);
+        input.select();
+        try {
+          document.execCommand("copy");
+          console.log("Copied to clipboard");
+        } catch (err) {
+          console.error("Failed to copy text: ", err);
+        }
+        document.body.removeChild(input);
       }
     },
     // Emit the winners array (mapping to the user property)
@@ -325,6 +371,10 @@ export default {
     apiUrlCommand() {
       const host = window.location.origin;
       return `{readapi.${host}/api/add-bb-viewer/{user.name}/{1}/${this.$page.props.user.id}}`;
+    },
+    apiUrlCommandNightBot() {
+      const host = window.location.origin;
+      return `$(urlfetch ${host}/api/add-bb-viewer/$(user)/$(1)/${this.$page.props.user.id})`;
     },
   },
 };
