@@ -35,8 +35,7 @@ export default {
       selectedGame: null,
       spinDuration: 4000,
       showSelectedGame: false,
-      centerImageUrl:
-          "https://yt3.googleusercontent.com/CfIgnRwE7ROK9CugvIS1PQOjiOUfMyruXwnHwE3FmRnHu7Utw-RjZKldzKONjXFSTUl8zCfX=s160-c-k-c0x00ffffff-no-rj",
+      centerImageUrl: "https://yt3.googleusercontent.com/CfIgnRwE7ROK9CugvIS1PQOjiOUfMyruXwnHwE3FmRnHu7Utw-RjZKldzKONjXFSTUl8zCfX=s160-c-k-c0x00ffffff-no-rj",
       previousEndDegree: 0,
       animation: null,
       newEndDegree: 0,
@@ -44,6 +43,7 @@ export default {
   },
   async mounted() {
     await this.getList();
+    await this.getProfilePicture();
     this.pollForSpin();
   },
   methods: {
@@ -77,6 +77,15 @@ export default {
               console.log("Error checking spin trigger:", error);
             });
       }, 3000); // Adjust polling interval as needed
+    },
+    async getProfilePicture() {
+      await axios.get(`/api/user/profile-picture/${this.id}`)
+          .then((response) => {
+            this.centerImageUrl = response.data.profile_picture;
+          })
+          .catch((error) => {
+            console.log("Error getting user picture", error);
+          });
     },
     // Calculate the style for each slice's label so it sits along the wheel edge
     getLabelStyle(index) {
@@ -189,21 +198,22 @@ body,
     position: relative;
     transition: transform 2s cubic-bezier(0.25, 0.1, 0.25, 1);
     clip-path: inset(0 0 0 0 round 50%);
-
+    perspective: 800px;
     &.idle {
       animation: idle-spin 20s linear infinite;
     }
 
     .center-image {
+      border: 2px solid black;
       position: absolute;
       top: 50%;
       left: 50%;
       width: 100px;
       height: 100px;
-      transform: translate(-50%, -50%);
       border-radius: 50%;
-      z-index: 2;
       box-shadow: 0 0 20px 20px #000000a6;
+      z-index: 10;
+      transform: translate(-50%, -50%) translateZ(50px);
     }
 
     .slice-label {

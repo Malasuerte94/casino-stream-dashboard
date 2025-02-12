@@ -124,7 +124,6 @@ Route::middleware([
         return Inertia::render('SchedulePage');
     })->name('schedule');
 
-
     //sync games
     Route::get('/sync-games', [GameSyncController::class, 'syncGames']);
 });

@@ -3,7 +3,7 @@
     <h2 class="text-lg font-bold mb-4 text-gray-200">Retragere</h2>
     <!-- Withdrawal Form Card -->
     <transition name="fade">
-      <div class="bg-gray-800 p-6 mb-6 rounded-lg border border-gray-700 shadow-lg">
+      <div class="bg-gray-700 p-6 mb-6 rounded-lg border border-gray-700 shadow-lg">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label for="withdraw" class="block mb-2 text-sm font-medium text-gray-300">

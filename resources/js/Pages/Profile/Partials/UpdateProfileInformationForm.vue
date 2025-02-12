@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue';
-import { Link, router, useForm } from '@inertiajs/vue3';
+import { Link, router } from '@inertiajs/vue3';
+import axios from 'axios';
 import ActionMessage from '@/Components/ActionMessage.vue';
 import FormSection from '@/Components/FormSection.vue';
 import InputError from '@/Components/InputError.vue';
@@ -13,57 +14,78 @@ const props = defineProps({
   user: Object,
 });
 
-const form = useForm({
-  _method: 'PUT',
+// We keep these reactive objects for two-way binding.
+// They are no longer using Inertia’s useForm for submission.
+const profileForm = ref({
   name: props.user.name,
   email: props.user.email,
   photo: null,
 });
-
-const discordWebhookFormSchedule = useForm({
-  discordWebhook: '', // Initial value for the webhook
+const discordWebhookFormSchedule = ref({
+  discordWebhook: '', // initial value for schedule webhook
 });
-
-const discordWebhookFormHuntBuyBattle = useForm({
-  discordWebhook: '', // Initial value for the webhook
+const discordWebhookFormHuntBuyBattle = ref({
+  discordWebhook: '', // initial value for hunt-buy-battle webhook
 });
 
 const verificationLinkSent = ref(null);
 const photoPreview = ref(null);
 const photoInput = ref(null);
 
+// Update profile information and upload the profile photo using axios.
 const updateProfileInformation = () => {
-  if (photoInput.value) {
-    form.photo = photoInput.value.files[0];
+  // Create a FormData object to support file uploads.
+  const formData = new FormData();
+  formData.append('name', profileForm.value.name);
+  formData.append('email', profileForm.value.email);
+
+  if (photoInput.value && photoInput.value.files[0]) {
+    formData.append('photo', photoInput.value.files[0]);
   }
 
-  form.post(route('user-profile-information.update'), {
-    errorBag: 'updateProfileInformation',
-    preserveScroll: true,
-    onSuccess: () => clearPhotoFileInput(),
-  });
+  axios.post('/api/user/profile-picture', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+      .then(response => {
+        // Clear file input on success.
+        clearPhotoFileInput();
+        alert('Profile picture updated!');
+        console.log('Profile updated:', response.data);
+      })
+      .catch(error => {
+        console.error('Failed to update profile:', error);
+        // You might want to add additional error handling here.
+      });
 };
 
 const saveDiscordWebhookSchedule = () => {
-  discordWebhookFormSchedule.post('/api/user-settings/save-discord-webhook', {
-    onSuccess: () => {
-      alert('Discord webhook saved successfully!');
-    },
-    onError: () => {
-      alert('Failed to save the webhook. Please try again.');
-    },
-  });
+  axios.post('/api/user-settings/save-discord-webhook', {
+    discordWebhook: discordWebhookFormSchedule.value.discordWebhook
+  })
+      .then(response => {
+        alert('Discord webhook saved successfully!');
+        console.log('Webhook schedule:', response.data);
+      })
+      .catch(error => {
+        alert('Failed to save the webhook. Please try again.');
+        console.error(error);
+      });
 };
 
 const saveDiscordWebhookHuntBuyBattle = () => {
-  discordWebhookFormHuntBuyBattle.post('/api/user-settings/save-discord-webhook/hunt-buy-battle', {
-    onSuccess: () => {
-      alert('Discord webhook saved successfully!');
-    },
-    onError: () => {
-      alert('Failed to save the webhook. Please try again.');
-    },
-  });
+  axios.post('/api/user-settings/save-discord-webhook/hunt-buy-battle', {
+    discordWebhook: discordWebhookFormHuntBuyBattle.value.discordWebhook
+  })
+      .then(response => {
+        alert('Discord webhook saved successfully!');
+        console.log('Webhook hunt-buy-battle:', response.data);
+      })
+      .catch(error => {
+        alert('Failed to save the webhook. Please try again.');
+        console.error(error);
+      });
 };
 
 const sendEmailVerification = () => {
@@ -76,19 +98,17 @@ const selectNewPhoto = () => {
 
 const updatePhotoPreview = () => {
   const photo = photoInput.value.files[0];
-
   if (!photo) return;
 
   const reader = new FileReader();
-
   reader.onload = (e) => {
     photoPreview.value = e.target.result;
   };
-
   reader.readAsDataURL(photo);
 };
 
 const deletePhoto = () => {
+  // If you have an endpoint for deleting the photo, you could also change this to axios.
   router.delete(route('current-user-photo.destroy'), {
     preserveScroll: true,
     onSuccess: () => {
@@ -106,15 +126,14 @@ const clearPhotoFileInput = () => {
 </script>
 
 <template>
-  <div class="flex gap-2">
-    <!-- New Discord Webhook Form -->
-    <div class="bg-white shadow rounded-lg p-6 mb-6 w-50">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">Discord Webhook - Schedule</h3>
+  <div class="flex gap-2 w-full">
+    <!-- Discord Webhook Schedule Form -->
+    <div class="bg-gray-700 shadow rounded-lg p-6 mb-6 w-1/3">
+      <h3 class="text-lg font-semibold text-gray-100 mb-4">Discord Webhook - Schedule</h3>
       <div class="flex items-center gap-4">
         <div class="flex-1">
-          <InputLabel for="discordWebhook" value="Discord Webhook URL" />
           <TextInput
-              id="discordWebhook"
+              id="discordWebhookSchedule"
               v-model="discordWebhookFormSchedule.discordWebhook"
               type="text"
               placeholder="Enter Discord Webhook URL"
@@ -123,25 +142,23 @@ const clearPhotoFileInput = () => {
         </div>
         <PrimaryButton
             @click="saveDiscordWebhookSchedule"
-            :class="{ 'opacity-25': discordWebhookFormSchedule.processing }"
-            :disabled="discordWebhookFormSchedule.processing"
         >
           Save
         </PrimaryButton>
       </div>
-      <ActionMessage :on="discordWebhookFormSchedule.recentlySuccessful" class="mt-3">
+      <ActionMessage :on="false" class="mt-3">
         Webhook Saved.
       </ActionMessage>
-      <InputError :message="discordWebhookFormSchedule.errors.discordWebhook" class="mt-2" />
+      <InputError :message="discordWebhookFormSchedule.errors" class="mt-2"/>
     </div>
 
-    <div class="bg-white shadow rounded-lg p-6 mb-6 w-50">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">Discord Webhook - Hunt / Buy / Battle</h3>
+    <!-- Discord Webhook Hunt/Buy/Battle Form -->
+    <div class="bg-gray-700 shadow rounded-lg p-6 mb-6 w-1/3">
+      <h3 class="text-lg font-semibold text-gray-100 mb-4">Discord Webhook - Hunt / Buy / Battle</h3>
       <div class="flex items-center gap-4">
         <div class="flex-1">
-          <InputLabel for="discordWebhook" value="Discord Webhook URL" />
           <TextInput
-              id="discordWebhook"
+              id="discordWebhookHuntBuyBattle"
               v-model="discordWebhookFormHuntBuyBattle.discordWebhook"
               type="text"
               placeholder="Enter Discord Webhook URL"
@@ -150,58 +167,47 @@ const clearPhotoFileInput = () => {
         </div>
         <PrimaryButton
             @click="saveDiscordWebhookHuntBuyBattle"
-            :class="{ 'opacity-25': discordWebhookFormHuntBuyBattle.processing }"
-            :disabled="discordWebhookFormHuntBuyBattle.processing"
         >
           Save
         </PrimaryButton>
       </div>
-      <ActionMessage :on="discordWebhookFormHuntBuyBattle.recentlySuccessful" class="mt-3">
+      <ActionMessage :on="false" class="mt-3">
         Webhook Saved.
       </ActionMessage>
-      <InputError :message="discordWebhookFormHuntBuyBattle.errors.discordWebhook" class="mt-2" />
+      <InputError :message="discordWebhookFormHuntBuyBattle.errors" class="mt-2"/>
     </div>
   </div>
 
+  <!-- Profile Information Form Section -->
   <FormSection @submitted="updateProfileInformation">
     <template #title>
       Profile Information
     </template>
-
     <template #description>
       Update your account's profile information and email address.
     </template>
-
     <template #form>
       <!-- Profile Photo -->
       <div v-if="$page.props.jetstream.managesProfilePhotos" class="col-span-6 sm:col-span-4">
-        <!-- Profile Photo File Input -->
         <input
             ref="photoInput"
             type="file"
             class="hidden"
             @change="updatePhotoPreview"
-        >
-
-        <InputLabel for="photo" value="Photo" />
-
-        <!-- Current Profile Photo -->
+        />
+        <InputLabel for="photo" value="Photo"/>
         <div v-show="!photoPreview" class="mt-2">
           <img :src="user.profile_photo_url" :alt="user.name" class="rounded-full h-20 w-20 object-cover">
         </div>
-
-        <!-- New Profile Photo Preview -->
         <div v-show="photoPreview" class="mt-2">
-                    <span
-                        class="block rounded-full w-20 h-20 bg-cover bg-no-repeat bg-center"
-                        :style="'background-image: url(\'' + photoPreview + '\');'"
-                    />
+          <span
+              class="block rounded-full w-20 h-20 bg-cover bg-no-repeat bg-center"
+              :style="'background-image: url(\'' + photoPreview + '\');'"
+          />
         </div>
-
         <SecondaryButton class="mt-2 mr-2" type="button" @click.prevent="selectNewPhoto">
           Select A New Photo
         </SecondaryButton>
-
         <SecondaryButton
             v-if="user.profile_photo_path"
             type="button"
@@ -210,38 +216,33 @@ const clearPhotoFileInput = () => {
         >
           Remove Photo
         </SecondaryButton>
-
-        <InputError :message="form.errors.photo" class="mt-2" />
+        <InputError :message="profileForm.errors" class="mt-2"/>
       </div>
-
       <!-- Name -->
       <div class="col-span-6 sm:col-span-4">
-        <InputLabel for="name" value="Name" />
+        <InputLabel for="name" value="Name"/>
         <TextInput
             id="name"
-            v-model="form.name"
+            v-model="profileForm.name"
             type="text"
             class="mt-1 block w-full"
             autocomplete="name"
         />
-        <InputError :message="form.errors.name" class="mt-2" />
+        <InputError :message="profileForm.errors" class="mt-2"/>
       </div>
-
       <!-- Email -->
       <div class="col-span-6 sm:col-span-4">
-        <InputLabel for="email" value="Email" />
+        <InputLabel for="email" value="Email"/>
         <TextInput
             id="email"
-            v-model="form.email"
+            v-model="profileForm.email"
             type="email"
             class="mt-1 block w-full"
         />
-        <InputError :message="form.errors.email" class="mt-2" />
-
+        <InputError :message="profileForm.errors" class="mt-2"/>
         <div v-if="$page.props.jetstream.hasEmailVerification && user.email_verified_at === null">
           <p class="text-sm mt-2">
             Your email address is unverified.
-
             <Link
                 :href="route('verification.send')"
                 method="post"
@@ -252,20 +253,17 @@ const clearPhotoFileInput = () => {
               Click here to re-send the verification email.
             </Link>
           </p>
-
           <div v-show="verificationLinkSent" class="mt-2 font-medium text-sm text-green-600">
             A new verification link has been sent to your email address.
           </div>
         </div>
       </div>
     </template>
-
     <template #actions>
-      <ActionMessage :on="form.recentlySuccessful" class="mr-3">
+      <ActionMessage :on="false" class="mr-3">
         Saved.
       </ActionMessage>
-
-      <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+      <PrimaryButton>
         Save
       </PrimaryButton>
     </template>

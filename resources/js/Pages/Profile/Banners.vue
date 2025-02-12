@@ -7,7 +7,7 @@ import BannerSettings from '@/Components/MainComponents/BannerSettings.vue';
     <AppLayout title="Dashboard">
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-grey-500 overflow-hidden shadow-xl sm:rounded-lg">
+                <div class="bg-gray-500 overflow-hidden shadow-xl sm:rounded-lg">
                     <BannerSettings></BannerSettings>
                 </div>
             </div>

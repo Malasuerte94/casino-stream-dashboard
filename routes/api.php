@@ -12,6 +12,7 @@ use App\Http\Controllers\DepositController;
 use App\Http\Controllers\DiscordController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\GuessEntriesController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SocialController;
@@ -40,6 +41,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
+    Route::get('/user/profile-picture/{id}', [ProfileController::class, 'getProfilePicture']);
+    Route::post('/user/profile-picture', [ProfileController::class, 'updateProfilePicture']);
 
     // Stream Management
     Route::post('/stream/new', [StreamController::class, 'store']);

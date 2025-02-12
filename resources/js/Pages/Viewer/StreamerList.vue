@@ -2,7 +2,7 @@
   <ViewerDash title="Bonuses">
     <div class="py-12">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+        <div class="bg-gray-700 overflow-hidden shadow-xl sm:rounded-lg">
           <div class="p-6">
             <div class="grid grid-cols-5 gap-10 font-bold border-b-orange-600 border-b-2 mb-5 pb-2">
               <div>Nume</div>

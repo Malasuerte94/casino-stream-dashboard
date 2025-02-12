@@ -2,7 +2,7 @@
   <div class="p-6">
     <!-- New Stream Call-to-Action Card -->
     <transition name="fade">
-      <div class="bg-grey-900 p-6 mb-6 rounded border border-red-700 shadow-lg">
+      <div class="bg-gray-900 p-6 mb-6 rounded border border-red-700 shadow-lg">
         <button
             @click="activateDialog"
             type="button"
