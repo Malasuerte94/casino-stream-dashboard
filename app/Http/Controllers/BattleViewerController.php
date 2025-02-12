@@ -20,11 +20,15 @@ class BattleViewerController extends Controller
      */
     public function addBattleViewer($userName, $game, $creatorId): string
     {
-        // Get the latest bonus battle created by the specified creator
         $user = User::find($creatorId);
-
         if (!$user) {
-            return "Nu știm pe cine cauți...";
+            return "";
+        }
+
+        $isBonusBattleOpened = $user->userSettings()->where('name', 'battle_selections')->first();
+
+        if($isBonusBattleOpened->value == 0) {
+            return "Înscrieri oprite";
         }
 
         $existingViewer = BattleViewer::where('user_id', $creatorId)
@@ -32,18 +36,18 @@ class BattleViewerController extends Controller
             ->first();
 
         if ($existingViewer) {
-            return '@'.$userName.' deja inscris!';
+            return "";
         }
 
         BattleViewer::create([
             'user_id' => $user->id,
-            'user'            => $userName,
-            'game'            => $game,
-            'picked'          => false,
-            'eliminated'      => false,
+            'user' => $userName,
+            'game' => $game,
+            'picked' => false,
+            'eliminated' => false,
         ]);
 
-        return 'Inscris!';
+        return '';
     }
 
     /**

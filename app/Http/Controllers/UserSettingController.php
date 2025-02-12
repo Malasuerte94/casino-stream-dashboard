@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\UserSetting;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserSettingController extends Controller
 {
@@ -153,7 +154,8 @@ class UserSettingController extends Controller
      */
     public function getSettingPublic(Request $request): JsonResponse
     {
-        $user = User::find($request->query('user_id'));
+        $user = User::find($request->query('user_id')) ?? Auth::user();
+
         if (!$user) {
             return response()->json([
                 'error' => 'User not found',
@@ -185,7 +187,8 @@ class UserSettingController extends Controller
             'bonus_list' => 'hunt',
             'obs_bonus_list' => '{"tableBgColor":"rgba(0, 0, 0, 0.39)","borderColor":"rgb(0, 0, 0)","borderEnabled":true,"borderWidth":2,"showIcon":true,"currency":"LEI","headerBgColor":"rgb(255, 167, 39)","headerFontSize":15,"headerFontColor":"rgb(0, 0, 0)","headerCellBgColor":"rgba(255,255,255,0.85)","progressBarLow":"rgb(255, 245, 156)","progressBarHigh":"rgb(230, 74, 25)","progressBarHeight":4,"subheaderBgColor":"rgb(0, 0, 0)","subheaderFontColor":"rgb(255, 255, 255)","subheaderFontSize":14,"tableHeaderFontSize":16,"tableHeaderFontColor":"rgb(255, 255, 255)","tableHeaderBgColor":"rgb(255, 167, 39)","tableBodyFontColor":"rgb(255, 255, 255)","tableDividerColor":"rgba(0, 0, 0, 0.14)","tableBodyFontSize":12,"obs_bonus_list":{"tableBgColor":"#ededed","borderColor":"#000","borderEnabled":true,"borderWidth":4,"showIcon":true,"currency":"LEI","headerBgColor":"#ffb700","headerFontSize":16,"headerFontColor":"#000000","headerCellBgColor":"rgba(255,255,255,0.85)","progressBarLow":"#ffb700","progressBarHigh":"#ff0000","progressBarHeight":4,"subheaderBgColor":"#ddd","subheaderFontColor":"#5a0404","subheaderFontSize":14,"tableHeaderFontSize":16,"tableHeaderFontColor":"#c60a0a","tableHeaderBgColor":"#249382","tableBodyFontColor":"#a55353","tableDividerColor":"#ff0000","tableBodyFontSize":12},"tableCurrentGameColor":"rgba(251, 140, 0, 0.36)"}',
             'obs_schedule' => '{"cellBg":"rgb(7, 28, 10)","cellBgShort":"rgb(13, 18, 5)","cellBgActive":"rgb(251, 140, 0)","cellFontColor":"#ffffff","cellTitleFontSize":22,"cellSubtitleFontSize":20}',
-            'obs_bonus_battle' => '{"tableBgColor":"rgba(0, 0, 0, 0.67)","borderColor":"rgb(33, 33, 33)","borderEnabled":true,"borderWidth":4,"currency":"LEI","headerBgColor":"rgb(246, 124, 1)","headerFontSize":13,"headerFontColor":"rgb(33, 33, 33)","subheaderBgColorRound":"rgb(255, 255, 255)","subheaderFontColorRound":"rgb(246, 124, 1)","tableParticipantFontColor":"rgb(255, 255, 255)","tableParticipantBgColor":"rgb(33, 33, 33)","subheaderBgColor":"rgb(33, 33, 33)","subheaderFontColor":"rgb(255, 255, 255)","subheaderFontSize":15,"tableParticipantFontSize":14,"tableScoresBgColor":"rgb(33, 33, 33)","tableScoresLabelBgColor":"rgb(230, 74, 25)","tableScoresFontColor":"rgb(255, 255, 255)","tableHistoryBgOddColor":"rgb(75, 75, 75)","tableBodyFontSize":11,"tableHistoryBgEvenColor":"rgb(53, 53, 53)","tableScoresFontSize":12, "tableHistoryEnable":true}'
+            'obs_bonus_battle' => '{"tableBgColor":"rgba(0, 0, 0, 0.67)","borderColor":"rgb(33, 33, 33)","borderEnabled":true,"borderWidth":4,"currency":"LEI","headerBgColor":"rgb(246, 124, 1)","headerFontSize":13,"headerFontColor":"rgb(33, 33, 33)","subheaderBgColorRound":"rgb(255, 255, 255)","subheaderFontColorRound":"rgb(246, 124, 1)","tableParticipantFontColor":"rgb(255, 255, 255)","tableParticipantBgColor":"rgb(33, 33, 33)","subheaderBgColor":"rgb(33, 33, 33)","subheaderFontColor":"rgb(255, 255, 255)","subheaderFontSize":15,"tableParticipantFontSize":14,"tableScoresBgColor":"rgb(33, 33, 33)","tableScoresLabelBgColor":"rgb(230, 74, 25)","tableScoresFontColor":"rgb(255, 255, 255)","tableHistoryBgOddColor":"rgb(75, 75, 75)","tableBodyFontSize":11,"tableHistoryBgEvenColor":"rgb(53, 53, 53)","tableScoresFontSize":12, "tableHistoryEnable":true}',
+            'battle_selections' => 'false'
         ];
         foreach ($requiredSettings as $name => $defaultValue) {
             $settingExists = $user->userSettings()->where('name', $name)->exists();

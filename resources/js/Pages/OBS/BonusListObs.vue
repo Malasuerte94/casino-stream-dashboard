@@ -282,7 +282,6 @@ export default {
       }
       return totalHeight + 20 > availableHeight;
     },
-
     async getSettings() {
       await axios
           .get("/api/settings/" + this.id)

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!loading" class="p-4 text-center">
+  <div v-if="!loading && allSettings.battle_selections == 1" class="p-4 text-center">
     <!-- Winners Section -->
     <div class="mb-6 flex flex-col items-center" v-if="winners.length">
       <h2 class="text-3xl font-extrabold text-yellow-400 uppercase mb-2">Câștigători</h2>
@@ -33,9 +33,7 @@
       </div>
     </div>
   </div>
-  <div v-else class="p-4">
-    <p class="text-white text-lg">Loading...</p>
-  </div>
+  <div v-else class="p-4"></div>
 </template>
 
 <script>
@@ -45,6 +43,7 @@ export default {
     return {
       loading: true,
       allViewers: [],
+      allSettings: {},
     };
   },
   computed: {
@@ -56,11 +55,13 @@ export default {
     },
   },
   async mounted() {
-    await this.getList();
+    await this.updateList();
     this.loading = false;
     // Listen for real-time updates on the public channel for this user.
     window.Echo.channel(`App.Models.User.${this.id}`)
         .listen("BattleViewerUpdated", async () => {
+          await this.updateList();
+        }).listen("SettingsUpdated", async () => {
           await this.updateList();
         });
   },
@@ -76,8 +77,19 @@ export default {
         console.log(error);
       }
     },
+    async getSettings() {
+      await axios
+          .get("/api/settings/" + this.id)
+          .then((response) => {
+            this.allSettings = response.data.settings;
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+    },
     async updateList() {
       await this.getList();
+      await this.getSettings();
     },
   },
 };

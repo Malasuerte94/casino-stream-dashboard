@@ -177,4 +177,5 @@ Route::apiResource('games', GameController::class);
 //get-all-users-list
 Route::get('/battle-viewers-public/{id}', [BattleViewerController::class, 'getBattleViewersPublic']);
 
+//register for bonus battle picker
 Route::get('/add-bb-viewer/{username}/{game}/{creatorId}',[BattleViewerController::class, 'addBattleViewer']);
