@@ -59,6 +59,16 @@
                         :key="concurrent.game.image"
                     />
                   </transition>
+                  <!-- Gun element: only animate if this is the winning game and shooting is active -->
+                  <div
+                      :class="{
+                      gun: true,
+                      shoot: shooting && winnerIndex === index,
+                      flipped: winnerIndex === 1 && index === winnerIndex
+                    }"
+                  >
+                    <img src="/storage/assets/images/gun.png" alt="Gun"/>
+                  </div>
                 </div>
                 <div class="from-user" :style="{
                   'background-color': settings.tableParticipantBgColor,
@@ -68,7 +78,8 @@
                   <div v-if="concurrent?.for_user !== null">{{ concurrent?.for_user || 'N/A' }}</div>
                   <div class="total-game-score font-bold"
                        :class="getTotalConcurrentScore(concurrent?.id, bonusBattleBracket?.id) < 1 ? 'text-red-500' : 'text-green-500'"
-                  >{{ getTotalConcurrentScore(concurrent?.id, bonusBattleBracket?.id) }}</div>
+                  >{{ getTotalConcurrentScore(concurrent?.id, bonusBattleBracket?.id) }}
+                  </div>
                 </div>
               </div>
               <table
@@ -106,6 +117,23 @@
               </table>
 
             </div>
+
+
+            <!-- Projectile: visible only when shooting; its class determines its direction -->
+            <div
+                v-if="shooting"
+                class="projectile"
+                :class="{'left-to-right': winnerIndex === 0, 'right-to-left': winnerIndex === 1}"
+            ></div>
+
+            <!-- Explosion: appears on the losing image after the projectile animation -->
+            <div
+                v-if="showExplosion"
+                class="explosion"
+                :class="{'explosion-left': winnerIndex === 0, 'explosion-right': winnerIndex === 1}"
+            ></div>
+
+
             <div class="vs-symbol flex justify-center items-center">
               VS
             </div>
@@ -154,7 +182,7 @@
                       class="p-1 text-right bg-gray-900 rounded-md"
                       :class="{ 'text-green-400': totalProfit > 0, 'text-red-400': totalProfit < 0 }"
                   >
-                    {{totalProfit > 0 ? '+' : ''}}{{ totalProfit }}
+                    {{ totalProfit > 0 ? '+' : '' }}{{ totalProfit }}
                   </td>
                 </tr>
                 </tbody>
@@ -245,7 +273,9 @@ export default {
       totalProfit: 0,
       totalCost: 0,
       isUpdating: false,
-      vsImageUrl: `/storage/assets/images/vs_symbol.png`
+      vsImageUrl: `/storage/assets/images/vs_symbol.png`,
+      shooting: false,
+      showExplosion: false,
     };
   },
   computed: {
@@ -254,6 +284,21 @@ export default {
     },
     totalBalanceScore() {
       return ((this.totalCost + this.totalProfit) / this.totalCost).toFixed(2);
+    },
+    winnerIndex() {
+      if (this.bonusBattleConcurrents.length === 2 && this.bonusBattleBracket?.id) {
+        const score0 = parseFloat(
+            this.getTotalConcurrentScore(this.bonusBattleConcurrents[0].id, this.bonusBattleBracket.id)
+        );
+        const score1 = parseFloat(
+            this.getTotalConcurrentScore(this.bonusBattleConcurrents[1].id, this.bonusBattleBracket.id)
+        );
+        return score0 > score1 ? 0 : score1 > score0 ? 1 : null;
+      }
+      return null;
+    },
+    loserIndex() {
+      return this.winnerIndex === 0 ? 1 : this.winnerIndex === 1 ? 0 : null;
     }
   },
   async mounted() {
@@ -307,12 +352,21 @@ export default {
       }
     },
     async updateList() {
-        if (!this.isUpdating) {
-          this.isUpdating = true;
-          await this.getSettings();
-          await this.getActiveBonusBattle();
-          this.isUpdating = false;
-        }
+      if (!this.isUpdating) {
+        this.isUpdating = true;
+        await this.getSettings();
+        await this.getActiveBonusBattle();
+        this.isUpdating = false;
+        await this.$nextTick(() => {
+          if (
+              this.bonusBattleConcurrents.length === 2 &&
+              !this.shooting &&
+              this.winnerIndex !== null
+          ) {
+            this.shoot();
+          }
+        });
+      }
     },
     getConcurrentScores(concurrentId, bracketId) {
       if (!concurrentId || !bracketId) return [];
@@ -337,7 +391,17 @@ export default {
         totalScore += parseFloat(score.score);
       });
       return totalScore.toFixed(2);
-    }
+    },
+    shoot() {
+      this.shooting = true;
+      setTimeout(() => {
+        this.showExplosion = true;
+        setTimeout(() => {
+          this.shooting = false;
+          this.showExplosion = false;
+        }, 250);
+      }, 500);
+    },
   },
 };
 </script>
@@ -372,26 +436,31 @@ body,
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     overflow: hidden;
+
     .participant {
       gap: 5px;
       display: flex;
       font-size: 13px;
       font-weight: bold;
       transition: opacity 0.3s, text-decoration 0.3s;
+
       .participant-name {
         overflow: hidden;
         white-space: nowrap;
       }
+
       &.loser {
         .participant-name {
           text-decoration: line-through;
           opacity: 0.5;
         }
+
         .result-score {
           opacity: 0.5;
         }
       }
     }
+
     .vs {
       font-size: 10px;
       font-weight: bold;
@@ -434,10 +503,9 @@ body,
   animation: gradientMove 3s infinite linear, floatVs 1.5s ease-in-out infinite, shadowGlow 3s infinite linear;
 
   /* Gradient Shadow Border Effect */
-  text-shadow:
-      0px 0px 10px rgba(255, 0, 0, 0.8),
-      0px 0px 20px rgba(255, 165, 0, 0.8),
-      0px 0px 30px rgba(255, 255, 0, 0.8);
+  text-shadow: 0px 0px 10px rgba(255, 0, 0, 0.8),
+  0px 0px 20px rgba(255, 165, 0, 0.8),
+  0px 0px 30px rgba(255, 255, 0, 0.8);
 }
 
 /* Subtle Floating Effect */
@@ -452,33 +520,35 @@ body,
 
 /* Gradient Animation */
 @keyframes gradientMove {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 /* Glowing Gradient Shadow Movement */
 @keyframes shadowGlow {
   0% {
-    text-shadow:
-        0px 0px 5px rgba(255, 0, 0, 0.8),
-        0px 0px 10px rgba(0, 0, 0, 0.8),
-        0px 0px 15px rgba(255, 255, 0, 0.8);
+    text-shadow: 0px 0px 5px rgba(255, 0, 0, 0.8),
+    0px 0px 10px rgba(0, 0, 0, 0.8),
+    0px 0px 15px rgba(255, 255, 0, 0.8);
   }
   50% {
-    text-shadow:
-        0px 0px 2px rgba(255, 165, 0, 0.9),
-        0px 0px 5px rgba(0, 0, 0, 0.9),
-        0px 0px 10px rgba(3, 255, 157, 0.9);
+    text-shadow: 0px 0px 2px rgba(255, 165, 0, 0.9),
+    0px 0px 5px rgba(0, 0, 0, 0.9),
+    0px 0px 10px rgba(3, 255, 157, 0.9);
   }
   100% {
-    text-shadow:
-        0px 0px 5px rgba(255, 0, 0, 0.8),
-        0px 0px 10px rgba(0, 0, 0, 0.8),
-        0px 0px 15px rgba(255, 255, 0, 0.8);
+    text-shadow: 0px 0px 5px rgba(255, 0, 0, 0.8),
+    0px 0px 10px rgba(0, 0, 0, 0.8),
+    0px 0px 15px rgba(255, 255, 0, 0.8);
   }
 }
-
 
 
 .concurrent {
@@ -666,4 +736,138 @@ body,
   }
 }
 
+
+/* Gun styling and shooting animation */
+.gun {
+  position: absolute;
+  bottom: 10px;
+  left: -10px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  width: 120px;
+  img {
+    width: 120px;
+    height: auto;
+  }
+  &.shoot {
+    opacity: 1;
+    animation: gun-shoot 1s forwards;
+  }
+  &.flipped {
+    transform: scaleX(-1);
+    left: 65px;
+    &.shoot {
+      animation: gun-shoot-flipped 1s forwards;
+    }
+  }
+}
+
+// Animation for the non-flipped gun (shooting to the right)
+@keyframes gun-shoot {
+  0% { transform: translateX(0%) translateY(0); }
+  20% { transform: translateX(0%) translateY(-10px); }
+  // Recoil: push a bit more to the left (gun recoils opposite to bullet's direction)
+  30% { transform: translateX(calc(0% - 10px)) translateY(0px); }
+  50% { transform: translateX(0%) translateY(-5px); }
+  100% { transform: translateX(0%) translateY(0); }
+}
+
+// Animation for the flipped gun (shooting to the left)
+// Note the difference in the recoil translation: now pushing to the right.
+@keyframes gun-shoot-flipped {
+  0% { transform: scaleX(-1) translateX(0%) translateY(0); }
+  20% { transform: scaleX(-1) translateX(0%) translateY(-10px); }
+  30% { transform: scaleX(-1) translateX(calc(0% + 10px)) translateY(-10px); }
+  50% { transform: scaleX(-1) translateX(0%) translateY(-5px); }
+  100% { transform: scaleX(-1) translateX(0%) translateY(0); }
+}
+
+/* Projectile styling and animation */
+.projectile {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background: url('/storage/assets/images/bullet.png') no-repeat center center;
+  background-size: contain;
+  animation: projectile-animation 0.5s ease-out forwards;
+  z-index: 999;
+
+  &.left-to-right {
+    left: 80px; /* Starting near the left game; adjust as needed */
+    top: 35px;
+  }
+
+  &.right-to-left {
+    right: 80px; /* Starting near the right game; adjust as needed */
+    top: 35px;
+    animation-name: projectile-animation-rtl;
+  }
+}
+
+/* Animation for left-to-right projectile */
+@keyframes projectile-animation {
+  0% {
+    transform: translate(0, 0);
+    opacity: 1;
+  }
+  80% {
+    transform: translate(150px, 0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(150px, 0);
+    opacity: 0;
+  }
+}
+
+@keyframes projectile-animation-rtl {
+  0% {
+    transform: translate(0, 0);
+    opacity: 1;
+  }
+  80% {
+    transform: translate(-150px, 0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-150px, 0);
+    opacity: 0;
+  }
+}
+
+/* Explosion styling and animation */
+.explosion {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  background: url('/storage/assets/images/explosion.png') no-repeat center center;
+  background-size: contain;
+  animation: explosion-animation 0.5s ease-out forwards;
+  z-index: 999;
+
+  &.explosion-left {
+    left: 220px; /* Adjust so it appears over the right game */
+    top: 20px;
+  }
+
+  &.explosion-right {
+    right: 220px; /* Adjust so it appears over the left game */
+    top: 20px;
+  }
+}
+
+@keyframes explosion-animation {
+  0% {
+    transform: scale(0.5);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
 </style>

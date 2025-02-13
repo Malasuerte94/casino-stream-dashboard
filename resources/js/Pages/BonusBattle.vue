@@ -277,7 +277,7 @@ const handleWinnersPicked = (winnersArray) => {
 
 </script>
 <template>
-  <AppLayout title="Bonus Battle" v-if="!loading">
+  <AppLayout title="Bonus Battle">
     <div class="py-4">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <!-- Hide form if there's an active battle -->
