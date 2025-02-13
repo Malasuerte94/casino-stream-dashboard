@@ -8,6 +8,7 @@ import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 import Dialog from 'vue3-dialog';
 import { createPinia } from 'pinia';
 
@@ -31,6 +32,7 @@ createInertiaApp({
     setup({ el, App, props, plugin }) {
         const app = createApp({ render: () => h(App, props) });
         const pinia = createPinia();
+        pinia.use(piniaPluginPersistedstate);
         return app
             .use(plugin)
             .use(ZiggyVue, Ziggy)

@@ -6,18 +6,15 @@ import "vue-select/dist/vue-select.css";
 import { useGameStore } from '@/stores/gameStore';
 import BonusBattleViewers from "@/Components/BonusBattle/BonusBattleViewers.vue";
 import DialogModal from "@/Components/DialogModal.vue";
+import { useBattleStore } from '@/stores/battleStore';
 
+const battleStore = useBattleStore();
 const loading = ref(true);
 const title = ref('');
 const stake = ref('5-10');
 const prize = ref('');
 const buys = ref('2');
-const concurrents = ref([
-  { game_id: null, for_user: null },
-  { game_id: null, for_user: null },
-  { game_id: null, for_user: null },
-  { game_id: null, for_user: null }
-]);
+const concurrents = computed(() => battleStore.concurrents);
 const activeBattle = ref(null);
 const activeConcurrents = ref(null);
 const activeStage = ref(null);
@@ -61,10 +58,7 @@ const closeModal = () => {
 };
 
 const addConcurrent = (number) => {
-  concurrents.value = Array.from({ length: number }, () => ({
-    game_id: '',
-    for_user: '',
-  }));
+  battleStore.addConcurrent(number);
 };
 
 const addScore = async () => {
@@ -316,6 +310,7 @@ const handleWinnersPicked = (winnersArray) => {
                   <button @click="addConcurrent(4)" class="btn-primary">4</button>
                   <button @click="addConcurrent(8)" class="btn-primary">8</button>
                   <button @click="addConcurrent(16)" class="btn-primary">16</button>
+                  <button @click="addConcurrent(4)" class="btn-danger">RESET</button>
                 </div>
               </h3>
               <transition-group name="fade">
