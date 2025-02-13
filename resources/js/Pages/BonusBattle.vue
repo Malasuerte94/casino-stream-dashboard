@@ -379,11 +379,11 @@ const handleWinnersPicked = (winnersArray) => {
         <!-- Log Out Other Devices Confirmation Modal -->
         <DialogModal :show="showForceClose" @close="closeModal">
           <template #title>
-            Log Out Other Browser Sessions
+            Ești sigur că vrei să închizi forțat acest Bonus Battle?
           </template>
 
           <template #content>
-            Please enter your password to confirm you would like to log out of your other browser sessions across all of your devices.
+            Vom închide forțat acest Bonus Battle și nu vei mai putea reveni la el. Ești sigur că vrei să continui?
           </template>
 
           <template #footer>
