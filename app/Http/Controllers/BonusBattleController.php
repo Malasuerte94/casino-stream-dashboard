@@ -532,6 +532,24 @@ class BonusBattleController extends Controller
         ]);
     }
 
+    public function endBattleForced(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'bonus_battle_id' => 'required|exists:bonus_battles,id',
+        ]);
+
+        $bonusBattle = BonusBattle::findOrFail($validated['bonus_battle_id']);
+        foreach($bonusBattle->stages as $stage) {
+            $stage->brackets()->update(['is_finished' => true]);
+        }
+        $bonusBattle->stages()->update(['active' => false]);
+        $bonusBattle->update(['active' => false]);
+
+        return response()->json([
+            'message' => 'Battle ended successfully!',
+        ]);
+    }
+
     public function editConcurrent(Request $request): JsonResponse
     {
         $validated = $request->validate([

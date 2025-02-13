@@ -5,6 +5,7 @@ import vSelect from 'vue-select';
 import "vue-select/dist/vue-select.css";
 import { useGameStore } from '@/stores/gameStore';
 import BonusBattleViewers from "@/Components/BonusBattle/BonusBattleViewers.vue";
+import DialogModal from "@/Components/DialogModal.vue";
 
 const loading = ref(true);
 const title = ref('');
@@ -28,6 +29,7 @@ const activeSelect = ref(false);
 
 const winner = ref(null);
 const currentPair = ref([]);
+let showForceClose = ref(false);
 
 const gameStore = useGameStore();
 const availableGames = computed(() => gameStore.availableGames);
@@ -49,6 +51,14 @@ const canGoNext = computed(() => {
   }
   return false
 });
+
+const confirmLogout = () => {
+  showForceClose.value = true;
+};
+
+const closeModal = () => {
+  showForceClose.value = false;
+};
 
 const addConcurrent = (number) => {
   concurrents.value = Array.from({ length: number }, () => ({
@@ -160,10 +170,25 @@ const endBattle = async () => {
       bonus_battle_id: activeBattle.value.id,
     });
     winner.value = response.data.winner;
-
     await fetchActiveBattle();
   } catch (error) {
     console.log('endBattle error:', error.response?.data || error.message);
+  }
+};
+
+const forceCloseBonusBattle = async () => {
+  try {
+    loading.value = true;
+    await axios.post('/api/bonus-battles/end-battle-forced', {
+      bonus_battle_id: activeBattle.value.id,
+    });
+    closeModal();
+  } catch (error) {
+    console.error('Failed to force close bonus battle:', error.response?.data || error.message);
+    alert('A aparut o eroare la închiderea forțată a turneului. Te rugăm să în contactezi pe Mala!');
+  } finally {
+    await fetchActiveBattle();
+    loading.value = false;
   }
 };
 
@@ -258,7 +283,7 @@ const handleWinnersPicked = (winnersArray) => {
 
 </script>
 <template>
-  <AppLayout title="Bonus Battle" v-if="!loadiwng">
+  <AppLayout title="Bonus Battle" v-if="!loading">
     <div class="py-4">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <!-- Hide form if there's an active battle -->
@@ -350,10 +375,40 @@ const handleWinnersPicked = (winnersArray) => {
           </div>
         </div>
 
+
+        <!-- Log Out Other Devices Confirmation Modal -->
+        <DialogModal :show="showForceClose" @close="closeModal">
+          <template #title>
+            Log Out Other Browser Sessions
+          </template>
+
+          <template #content>
+            Please enter your password to confirm you would like to log out of your other browser sessions across all of your devices.
+          </template>
+
+          <template #footer>
+            <button @click="closeModal" class="btn-danger">
+              ANULEAZĂ
+            </button>
+
+            <button
+                class="ml-3 btn-primary"
+                @click="forceCloseBonusBattle"
+            >
+              ÎNCHIDE FORȚAT ACEST BONUS BATTLE
+            </button>
+          </template>
+        </DialogModal>
+
         <!-- Active Battle Display -->
         <div v-if="activeBattle" class="bg-gray-900 overflow-hidden shadow-lg rounded-md mt-6 transition-all duration-300">
           <div class="p-6">
-            <h2 class="text-xl font-bold mb-4 text-gray-100">Active Battle: {{ activeBattle.title }}</h2>
+            <div class="flex justify-between items-center">
+              <h2 class="text-xl font-bold mb-4 text-gray-100">Active Battle: {{ activeBattle.title }}</h2>
+              <button class="btn-danger" @click="confirmLogout">
+                INCHIDE TURNEU FORȚAT
+              </button>
+            </div>
             <p class="text-gray-300">
               Miza: {{ activeBattle.stake }} | Etapa: {{ activeStage.name }} | Premiu: {{ activeBattle.prize }} | Buys: {{ activeBattle.buys }}
             </p>
