@@ -25,6 +25,13 @@ class BattleViewerController extends Controller
             return "";
         }
 
+        $cleanGame = preg_replace('/\bnull\b/i', '', $game);
+        $cleanGame = trim(preg_replace('/\s+/', ' ', $cleanGame));
+
+        if (empty($cleanGame)) {
+            $cleanGame = "N/A";
+        }
+
         $isBonusBattleOpened = $user->userSettings()->where('name', 'battle_selections')->first();
 
         if($isBonusBattleOpened->value == 0) {
@@ -40,10 +47,10 @@ class BattleViewerController extends Controller
         }
 
         BattleViewer::create([
-            'user_id' => $user->id,
-            'user' => $userName,
-            'game' => $game,
-            'picked' => false,
+            'user_id'    => $user->id,
+            'user'       => $userName,
+            'game'       => $cleanGame,
+            'picked'     => false,
             'eliminated' => false,
         ]);
 
@@ -104,8 +111,10 @@ class BattleViewerController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        // Delete only the records for the authenticated user.
-        BattleViewer::where('user_id', $user->id)->delete();
+        $viewers = BattleViewer::where('user_id', $user->id)->get();
+        foreach ($viewers as $viewer) {
+            $viewer->delete();
+        }
 
         return response()->json([
             'message' => 'Your battle viewers have been removed successfully.'
