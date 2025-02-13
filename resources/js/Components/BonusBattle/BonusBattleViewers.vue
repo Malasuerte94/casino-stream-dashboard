@@ -102,7 +102,7 @@
     </p>
 
     <p class="mb-2 text-gray-300 text-sm">
-      Creează comanda Streamlabs Coud Bot:
+      Creează comanda Streamlabs Coud Bot !particip:
     </p>
     <div class="mb-4 text-sm">
       <button
@@ -114,7 +114,7 @@
     </div>
 
     <p class="mb-2 text-gray-300 text-sm">
-      Creează comanda NightBot:
+      Creează comanda NightBot !particip:
     </p>
     <div class="mb-4 text-sm">
       <button
@@ -374,7 +374,7 @@ export default {
     },
     apiUrlCommandNightBot() {
       const host = window.location.origin;
-      return `$(urlfetch ${host}/api/add-bb-viewer/$(user)/$(1)/${this.$page.props.user.id})`;
+      return `$(urlfetch ${host}/api/add-bb-viewer/$(user)/$(1) $(2) $(3)/${this.$page.props.user.id})`;
     },
   },
 };
