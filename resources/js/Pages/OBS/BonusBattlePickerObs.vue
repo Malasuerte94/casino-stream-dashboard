@@ -17,6 +17,9 @@
 
     <!-- Participants Section as Labels -->
     <div class="flex flex-col items-center">
+      <h2 class="rounded bg-yellow-400 text-white text-xl font-extrabold px-4 py-2 mb-2">
+        !particip jocul
+      </h2>
       <BonusBattlePickerUsersGlobe v-if="allViewers.length" :allViewers="allViewers" />
     </div>
   </div>

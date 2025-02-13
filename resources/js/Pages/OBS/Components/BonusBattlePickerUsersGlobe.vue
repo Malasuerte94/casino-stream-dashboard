@@ -32,11 +32,8 @@ export default {
     this.animate();
     window.addEventListener("resize", this.onWindowResize);
 
-    // Simulate 200 users for testing:
-    // const simulatedUsers = this.simulateUsers();
-    // simulatedUsers.forEach((viewer, index) => {
-    //   this.addViewer(viewer, index, simulatedUsers.length);
-    // });
+    // Use the allViewers prop to spawn viewers.
+    // Each viewer will get a random spawn location.
   },
   beforeUnmount() {
     if (this.animationFrameId) cancelAnimationFrame(this.animationFrameId);
@@ -45,11 +42,11 @@ export default {
   watch: {
     allViewers: {
       handler(newViewers) {
-        newViewers.forEach((viewer, index) => {
+        newViewers.forEach((viewer) => {
           if (!this.viewerMeshes[viewer.id]) {
-            this.addViewer(viewer, index, newViewers.length);
+            this.addViewer(viewer);
           } else {
-            this.updateViewer(viewer, index, newViewers.length);
+            this.updateViewer(viewer);
           }
         });
       },
@@ -65,7 +62,7 @@ export default {
       this.camera.aspect = width / height;
       this.camera.updateProjectionMatrix();
       this.camera.position.z = 70;
-      this.renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
+      this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
       this.renderer.setSize(width, height);
       container.appendChild(this.renderer.domElement);
       this.scene.add(this.viewerGroup);
@@ -74,7 +71,7 @@ export default {
       this.scene.add(ambientLight);
       this.renderer.setClearColor(0x000000, 0);
       this.createParticles();
-      //this.addTitleAndCurve();
+      // this.addTitleAndCurve(); // Title code remains unchanged if needed.
     },
     onWindowResize() {
       const container = this.$refs.sceneContainer;
@@ -84,9 +81,10 @@ export default {
       this.camera.updateProjectionMatrix();
       this.renderer.setSize(width, height);
     },
-    getViewerPosition(index, total, radius = 20) {
-      const phi = Math.acos(1 - (2 * (index + 1) / (total + 1)));
-      const theta = Math.PI * (1 + Math.sqrt(5)) * (index + 1);
+    // Return a random position on a sphere with the given radius.
+    getViewerPosition(radius = 20) {
+      const phi = Math.acos(2 * Math.random() - 1);
+      const theta = 2 * Math.PI * Math.random();
       return new THREE.Vector3(
           radius * Math.sin(phi) * Math.cos(theta),
           radius * Math.sin(phi) * Math.sin(theta),
@@ -107,7 +105,7 @@ export default {
       ctx.closePath();
       ctx.fill();
     },
-    addViewer(viewer, index, total) {
+    addViewer(viewer) {
       const canvas = document.createElement('canvas');
       const context = canvas.getContext('2d');
       const fontSize = 12;
@@ -130,7 +128,7 @@ export default {
       context.fillText(viewer.user, paddingX, canvas.height / 2);
 
       const texture = new THREE.CanvasTexture(canvas);
-      const material = new THREE.SpriteMaterial({map: texture, transparent: true});
+      const material = new THREE.SpriteMaterial({ map: texture, transparent: true });
       const sprite = new THREE.Sprite(material);
 
       sprite.userData.canvas = canvas;
@@ -143,7 +141,8 @@ export default {
       const finalScale = new THREE.Vector3(canvas.width * scaleFactor, canvas.height * scaleFactor, 1);
       sprite.scale.set(0, 0, 1);
 
-      sprite.position.copy(this.getViewerPosition(index, total));
+      // Use the random position generator.
+      sprite.position.copy(this.getViewerPosition(24));
       this.viewerGroup.add(sprite);
       this.viewerMeshes[viewer.id] = sprite;
 
@@ -159,7 +158,7 @@ export default {
       };
       animatePopup();
     },
-    updateViewer(viewer, index, total) {
+    updateViewer(viewer) {
       const sprite = this.viewerMeshes[viewer.id];
       if (!sprite) return;
       const canvas = sprite.userData.canvas;
@@ -214,7 +213,6 @@ export default {
       const points = new THREE.Points(geometry, material);
       this.particlesGroup.add(points);
     },
-    // Loads a font and creates centered 3D curved text for "PARTICIPANTI" that orbits the globe.
     addTitleAndCurve() {
       const loader = new FontLoader();
       loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', (font) => {
@@ -227,24 +225,17 @@ export default {
           bevelEnabled: false
         });
         textGeometry.center();
-        // Bend the geometry along an arc.
         this.bendTextGeometry(textGeometry, 30);
-
-        const textMaterial = new THREE.MeshBasicMaterial({color: 0x000f22});
+        const textMaterial = new THREE.MeshBasicMaterial({ color: 0x000f22 });
         const textMesh = new THREE.Mesh(textGeometry, textMaterial);
-        // Store a reference to the text mesh for later flipping.
         this.titleMesh = textMesh;
-
-        // Create a group for the title.
         const titleGroup = new THREE.Group();
         titleGroup.add(textMesh);
-        // Initially position the group on the orbit (in the xz plane).
         titleGroup.position.set(this.titleOrbitRadius, 0, 0);
         this.titleGroup = titleGroup;
         this.scene.add(titleGroup);
       });
     },
-    // Bends the text geometry so that it curves along an arc.
     bendTextGeometry(geometry, bendRadius) {
       const posAttr = geometry.attributes.position;
       const vertex = new THREE.Vector3();
@@ -264,22 +255,18 @@ export default {
       this.animationFrameId = requestAnimationFrame(this.animate);
       this.viewerGroup.rotation.y += 0.002;
       this.particlesGroup.rotation.y += 0.002;
-
       if (this.titleGroup) {
         this.titleOrbitAngle += 0.002;
         const x = this.titleOrbitRadius * Math.cos(this.titleOrbitAngle);
         const z = this.titleOrbitRadius * Math.sin(this.titleOrbitAngle);
         this.titleGroup.position.set(x, 0, z);
-        // Make the title group look at the globe's center.
         this.titleGroup.lookAt(new THREE.Vector3(0, 0, 0));
-        // Flip the text mesh if the title is in front of the globe (z > 0) so it's not mirrored.
         if (this.titleGroup.position.z > 0) {
           this.titleMesh.scale.x = -Math.abs(this.titleMesh.scale.x);
         } else {
           this.titleMesh.scale.x = Math.abs(this.titleMesh.scale.x);
         }
       }
-
       this.renderer.render(this.scene, this.camera);
     },
     simulateUsers() {
