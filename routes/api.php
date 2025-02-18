@@ -8,6 +8,7 @@ use App\Http\Controllers\BonusBuyGameController;
 use App\Http\Controllers\BonusHuntController;
 use App\Http\Controllers\BonusHuntGameController;
 use App\Http\Controllers\BonusListController;
+use App\Http\Controllers\CasinoController;
 use App\Http\Controllers\DepositController;
 use App\Http\Controllers\DiscordController;
 use App\Http\Controllers\GameController;
@@ -180,3 +181,6 @@ Route::get('/battle-viewers-public/{id}', [BattleViewerController::class, 'getBa
 
 //register for bonus battle picker
 Route::get('/add-bb-viewer/{username}/{game}/{creatorId}',[BattleViewerController::class, 'addBattleViewer']);
+
+Route::get('/get-casinos', [CasinoController::class, 'getCasinos']);
+Route::post('/add-casino', [CasinoController::class, 'addCasino']);
