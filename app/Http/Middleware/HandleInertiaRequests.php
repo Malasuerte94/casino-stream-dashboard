@@ -41,8 +41,11 @@ class HandleInertiaRequests extends Middleware
             'user_streamer' => fn () => $request->user()
                 ? $request->user()->isStreamer()
                 : null,
-            'user.profile_photo_url' => fn () => $request->user() ? env('app_url').'/storage/'.$request->user()
-                    ->profile_photo_path : null,
+            'user.profile_photo_url' => fn () => $request->user()
+                ? (str_contains($request->user()->profile_photo_path, 'googleusercontent')
+                    ? $request->user()->profile_photo_path
+                    : env('APP_URL') . '/storage/' . $request->user()->profile_photo_path)
+                : null,
         ]);
     }
 }

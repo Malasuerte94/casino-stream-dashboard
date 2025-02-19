@@ -26,6 +26,7 @@ return array(
     'App\\Http\\Controllers\\BonusHuntController' => $baseDir . '/app/Http/Controllers/BonusHuntController.php',
     'App\\Http\\Controllers\\BonusHuntGameController' => $baseDir . '/app/Http/Controllers/BonusHuntGameController.php',
     'App\\Http\\Controllers\\BonusListController' => $baseDir . '/app/Http/Controllers/BonusListController.php',
+    'App\\Http\\Controllers\\CasinoController' => $baseDir . '/app/Http/Controllers/CasinoController.php',
     'App\\Http\\Controllers\\Controller' => $baseDir . '/app/Http/Controllers/Controller.php',
     'App\\Http\\Controllers\\DepositController' => $baseDir . '/app/Http/Controllers/DepositController.php',
     'App\\Http\\Controllers\\DiscordController' => $baseDir . '/app/Http/Controllers/DiscordController.php',

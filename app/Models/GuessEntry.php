@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class GuessEntry extends Model
 {
@@ -35,10 +36,11 @@ class GuessEntry extends Model
     }
 
     /**
-     * @return HasMany
+     * Relationship to the Winner model (if this entry won something).
+     * @return HasOne
      */
-    public function guessEntries(): HasMany
-    {
-        return $this->hasMany(GuessEntry::class);
+    public function winner(): HasOne {
+        return $this->hasOne(Winner::class);
     }
+
 }

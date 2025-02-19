@@ -19,7 +19,8 @@ class UserResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'avatar' => $this->profile_photo_path,
+            'avatar' => (str_contains($this->profile_photo_path, 'googleusercontent') ? $this->profile_photo_path :
+                env('APP_URL') . '/storage/' . $this->profile_photo_path),
             'team' => $this->team?->name
         ];
     }

@@ -21,6 +21,7 @@ use App\Http\Controllers\SpinController;
 use App\Http\Controllers\StreamAccountController;
 use App\Http\Controllers\StreamController;
 use App\Http\Controllers\UserSettingController;
+use App\Http\Controllers\ViewerController;
 use App\Http\Controllers\WithdrawalController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -92,7 +93,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/close-bonus-list', [BonusListController::class, 'closeBonusList']);
 
     //viewer actions
-    Route::post('/add-entry', [GuessEntriesController::class, 'postEntries']);
 
     Route::get('/stream-accounts', [StreamAccountController::class, 'index']);
     Route::post('/stream-accounts/new', [StreamAccountController::class, 'store']);
@@ -127,6 +127,13 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     Route::get('/test', [BonusBattleController::class, 'test']);
+
+    Route::prefix('viewer')->group(function () {
+        Route::get('get-streamer/{id}', [ViewerController::class, 'getSteamer']);
+        Route::get('get-bh-history/{id}', [ViewerController::class, 'getBonusHuntHistory']);
+        Route::post('add-prediction', [GuessEntriesController::class, 'postPrediction']);
+        Route::get('get-prediction/{id}', [GuessEntriesController::class, 'getPrediction']);
+    });
 });
 
 // Public Routes (No Authentication Required)

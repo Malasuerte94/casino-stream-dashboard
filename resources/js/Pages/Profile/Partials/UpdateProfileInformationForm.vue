@@ -128,7 +128,7 @@ const clearPhotoFileInput = () => {
 <template>
   <div class="flex gap-2 w-full">
     <!-- Discord Webhook Schedule Form -->
-    <div class="bg-gray-700 shadow rounded-lg p-6 mb-6 w-1/3">
+    <div class="bg-gray-700 shadow rounded-lg p-6 mb-6 w-1/3" v-if="$page.props.user_streamer">
       <h3 class="text-lg font-semibold text-gray-100 mb-4">Discord Webhook - Schedule</h3>
       <div class="flex items-center gap-4">
         <div class="flex-1">
@@ -153,7 +153,7 @@ const clearPhotoFileInput = () => {
     </div>
 
     <!-- Discord Webhook Hunt/Buy/Battle Form -->
-    <div class="bg-gray-700 shadow rounded-lg p-6 mb-6 w-1/3">
+    <div class="bg-gray-700 shadow rounded-lg p-6 mb-6 w-1/3" v-if="$page.props.user_streamer">
       <h3 class="text-lg font-semibold text-gray-100 mb-4">Discord Webhook - Hunt / Buy / Battle</h3>
       <div class="flex items-center gap-4">
         <div class="flex-1">

@@ -697,6 +697,7 @@ class ComposerStaticInit69c8e8820f8dba78f915ae86794425a6
         'App\\Http\\Controllers\\BonusHuntController' => __DIR__ . '/../..' . '/app/Http/Controllers/BonusHuntController.php',
         'App\\Http\\Controllers\\BonusHuntGameController' => __DIR__ . '/../..' . '/app/Http/Controllers/BonusHuntGameController.php',
         'App\\Http\\Controllers\\BonusListController' => __DIR__ . '/../..' . '/app/Http/Controllers/BonusListController.php',
+        'App\\Http\\Controllers\\CasinoController' => __DIR__ . '/../..' . '/app/Http/Controllers/CasinoController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
         'App\\Http\\Controllers\\DepositController' => __DIR__ . '/../..' . '/app/Http/Controllers/DepositController.php',
         'App\\Http\\Controllers\\DiscordController' => __DIR__ . '/../..' . '/app/Http/Controllers/DiscordController.php',

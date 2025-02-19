@@ -205,7 +205,7 @@ export default {
   computed: {
     guessUrl() {
       const host = window.location.origin;
-      return `${host}/guess-list/${this.latestList}/${this.settings.bonus_list}`;
+      return `${host}/streamer/${this.$page.props.user.id}`;
     },
     isEnded() {
       return Boolean(this.listEnded);

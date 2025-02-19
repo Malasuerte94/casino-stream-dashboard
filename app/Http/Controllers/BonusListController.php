@@ -4,12 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\BonusBuy;
 use App\Models\BonusHunt;
-use App\Models\Stream;
 use App\Models\User;
 use App\Models\Winner;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Throwable;
 
 class BonusListController extends Controller
@@ -116,10 +115,12 @@ class BonusListController extends Controller
                 $latestBonus->is_open = false;
                 $latestBonus->save();
 
+                $this->generateWinners($latestBonus);
+
                 $discord = new DiscordController();
                 $discord->sendHuntBuyMessage($latestBonus);
             } else {
-                return response()->json(['status' => 'deja inchis'], 200);
+                return response()->json(['status' => 'Deja Închis'], 200);
             }
 
             return response()->json(['status' => 'success'], 200);
@@ -128,130 +129,113 @@ class BonusListController extends Controller
         }
     }
 
-    public function getBonusWinner(int $streamerId) {
-        $streamer = User::find($streamerId);
-        $stream = $streamer->streams()->latest()->first();
-        $settings = $streamer->userSettings->where('name', 'bonus_list')->first();
-        if ($settings->value === 'buy') {
-            $bonus = $stream->bonusBuys()->latest()->first();
-        } else {
-            $bonus = $stream->bonusHunts()->latest()->first();
+    /**
+     * @throws Exception
+     */
+    public function generateWinners($latestBonus): void
+    {
+        if (!$latestBonus->ended) {
+            throw new Exception("Bonusul nu a fost încă închis!");
         }
 
-        if($bonus->ended) {
+        // Check if winners were already generated
+        $existingWinner = Winner::where('bonus_hunt_id', $latestBonus->id)
+            ->orWhere('bonus_buy_id', $latestBonus->id)
+            ->exists();
 
-            if ($settings->value === 'buy') {
-                $existentWinners = Winner::where('bonus_buy_id', $bonus->id)->first();
-            } else {
-                $existentWinners = Winner::where('bonus_hunt_id', $bonus->id)->first();
-            }
-
-            if($existentWinners) {
-                return response()->json(['status' => 'pending'], 204);
-            }
-
-
-            $result = $bonus->result;
-
-            if($settings->value === 'buy') {
-                $biggestMultiplierGame = $bonus->bonusBuyGames()->orderBy('multiplier')->first();
-                $lowestMultiplierGame = $bonus->bonusBuyGames()->orderByDesc('multiplier')->first();
-            } else {
-                $biggestMultiplierGame = $bonus->bonusHuntGames()->orderBy('multiplier')->first();
-                $lowestMultiplierGame = $bonus->bonusHuntGames()->orderByDesc('multiplier')->first();
-            }
-
-            $biggestMultiplier = $biggestMultiplierGame->multiplier;
-            $lowestMultiplier = $lowestMultiplierGame->multiplier;
-            $gameWinnerId = $biggestMultiplierGame->id;
-            $gameWinnerName = $biggestMultiplierGame->name;
-
-            $bonusEntries = $bonus->guessEntries()->get();
-
-            $resultWinner = $bonusEntries->sortBy(function ($entry) {
-                return abs($entry->estimated - $entry->result);
-            })->first();
-            $resultWinnerEstimated = $resultWinner->estimated;
-            $resultWinnerUser = $resultWinner->user;
-
-
-            $biggestMultiplierWinner = $bonusEntries->sortBy(function ($entry) use ($biggestMultiplier) {
-                return abs($entry->biggest_multi - $biggestMultiplier);
-            })->first();
-            $biggestMultiplierWinnerMultiplier = $biggestMultiplierWinner->biggest_multi;
-            $biggestMultiplierWinnerUser = $biggestMultiplierWinner->user;
-
-            $lowestMultiplierWinner = $bonusEntries->sortBy(function ($entry) use ($lowestMultiplier) {
-                return abs($entry->lowest_multi - $lowestMultiplier);
-            })->first();
-            $lowestMultiplierWinnerMultiplier = $lowestMultiplierWinner->lowest_multi;
-            $lowestMultiplierWinnerUser = $lowestMultiplierWinner->user;
-
-            $gameWinnerWinner = $bonusEntries->where('game_winner', $gameWinnerId)->first();
-
-            if ($gameWinnerWinner === null) {
-                $gameWinnerWinnerUser = $resultWinnerUser;
-            } else {
-                $gameWinnerWinnerUser = $gameWinnerWinner->user;
-            }
-
-            Winner::create([
-                'user_id' => $resultWinnerUser->id,
-                'bonus_hunt_id' => $settings->value === 'buy' ? null : $bonus->id,
-                'bonus_buy_id' => $settings->value === 'buy' ? $bonus->id : null,
-                'win_result' => true
-            ]);
-
-            Winner::create([
-                'user_id' => $biggestMultiplierWinnerUser->id,
-                'bonus_hunt_id' => $settings->value === 'buy' ? null : $bonus->id,
-                'bonus_buy_id' => $settings->value === 'buy' ? $bonus->id : null,
-                'win_big_m' => true
-            ]);
-
-            Winner::create([
-                'user_id' => $lowestMultiplierWinnerUser->id,
-                'bonus_hunt_id' => $settings->value === 'buy' ? null : $bonus->id,
-                'bonus_buy_id' => $settings->value === 'buy' ? $bonus->id : null,
-                'win_small_m' => true
-            ]);
-
-            Winner::create([
-                'user_id' => $gameWinnerWinnerUser->id,
-                'bonus_hunt_id' => $settings->value === 'buy' ? null : $bonus->id,
-                'bonus_buy_id' => $settings->value === 'buy' ? $bonus->id : null,
-                'win_game' => true
-            ]);
-
-            return response()->json([
-                'list_results' => [
-                    'result' => $result,
-                    'biggestMultiplier' => $biggestMultiplier,
-                    'lowestMultiplier' => $lowestMultiplier,
-                    'gameWinner' => $gameWinnerName,
-                ],
-                'winners' => [
-                    'resultWinner' => [
-                        'user' => $resultWinnerUser,
-                        'pick' => $resultWinnerEstimated,
-                    ],
-                    'biggestMultiplierWinner' => [
-                        'user' => $biggestMultiplierWinnerUser,
-                        'pick' => $biggestMultiplierWinnerMultiplier,
-                    ],
-                    'lowestMultiplierWinner' => [
-                        'user' => $lowestMultiplierWinnerUser,
-                        'pick' => $lowestMultiplierWinnerMultiplier
-                    ],
-                    'gameWinnerWinner' => [
-                        'user' => $gameWinnerWinnerUser,
-                        'pick' => $gameWinnerName,
-                    ],
-                ]
-            ]);
-        } else {
-            return response()->json(['status' => 'pending'], 204);
+        if ($existingWinner) {
+            return;
         }
+
+        // Determine if it's a bonus hunt or buy
+        $isBuy = $latestBonus instanceof BonusBuy;
+        $bonusType = $isBuy ? 'buy' : 'hunt';
+
+        // Fetch games and determine multipliers
+        $games = $isBuy ? $latestBonus->bonusBuyGames() : $latestBonus->bonusHuntGames();
+        $biggestMultiplierGame = $games->orderByDesc('multiplier')->first();
+        $lowestMultiplierGame = $games->orderBy('multiplier')->first();
+
+        $biggestMultiplier = $biggestMultiplierGame->multiplier ?? 0;
+        $lowestMultiplier = $lowestMultiplierGame->multiplier ?? 0;
+        $gameWinnerId = $biggestMultiplierGame->id ?? null;
+        $gameWinnerName = $biggestMultiplierGame->name ?? null;
+
+        // Get all predictions
+        $bonusEntries = $latestBonus->guessEntries()->get();
+        if ($bonusEntries->isEmpty()) {
+            return;
+        }
+        // Find the closest predicted result
+        $resultWinner = $bonusEntries->sortBy(fn ($entry) => abs($entry->estimated - $latestBonus->result))->first();
+
+        // Find the closest predicted highest multiplier
+        $biggestMultiplierWinner = $bonusEntries->sortBy(fn ($entry) => abs($entry->biggest_multi - $biggestMultiplier))->first();
+
+        // Find the closest predicted lowest multiplier
+        $lowestMultiplierWinner = $bonusEntries->sortBy(fn ($entry) => abs($entry->lowest_multi - $lowestMultiplier))->first();
+
+        // Find the user who picked the correct winning game
+        $gameWinnerWinner = $bonusEntries->where('game_winner', $gameWinnerId)->first();
+
+        // Store winners in the database (only one row per hunt/buy)
+        Winner::create([
+            'bonus_hunt_id' => $isBuy ? null : $latestBonus->id,
+            'bonus_buy_id' => $isBuy ? $latestBonus->id : null,
+            'win_closest_result' => $resultWinner?->id,
+            'win_closest_biggest_multi' => $biggestMultiplierWinner?->id,
+            'win_closest_lowest_multi' => $lowestMultiplierWinner?->id,
+            'win_exact_biggest_multi_game' => $gameWinnerWinner?->id,
+            'win_exact_lowest_multi_game' => $lowestMultiplierWinner?->id,
+        ]);
+
     }
+
+    public function getBonusWinner(int $streamerId): JsonResponse
+    {
+        $streamer = User::find($streamerId);
+
+        if (!$streamer) {
+            return response()->json(['error' => 'Streamer not found'], 404);
+        }
+
+        $settings = $streamer->userSettings->where('name', 'bonus_list')->first();
+
+        // Get latest ended bonus
+        $bonus = ($settings->value === 'buy')
+            ? $streamer->bonusBuys()->where('ended', true)->latest()->first()
+            : $streamer->bonusHunts()->where('ended', true)->latest()->first();
+
+        if (!$bonus) {
+            return response()->json(['error' => 'No ended bonus found'], 404);
+        }
+
+        // Fetch the winners entry
+        $winner = Winner::where('bonus_hunt_id', $bonus->id)
+            ->orWhere('bonus_buy_id', $bonus->id)
+            ->first();
+
+        if (!$winner) {
+            return response()->json(['message' => 'No winners found'], 204);
+        }
+
+        return response()->json([
+            'bonus_id' => $bonus->id,
+            'bonus_type' => $settings->value,
+            'results' => [
+                'result' => $bonus->result,
+                'biggestMultiplier' => $bonus->bonusHuntGames()->max('multiplier'),
+                'lowestMultiplier' => $bonus->bonusHuntGames()->min('multiplier'),
+            ],
+            'winners' => [
+                'resultWinner' => $winner->win_closest_result ? $winner->closestResult->user : null,
+                'biggestMultiplierWinner' => $winner->win_closest_biggest_multi ? $winner->closestBiggestMulti->user : null,
+                'lowestMultiplierWinner' => $winner->win_closest_lowest_multi ? $winner->closestLowestMulti->user : null,
+                'exactBiggestMultiplierGame' => $winner->win_exact_biggest_multi_game ? $winner->exactBiggestMultiGame->user : null,
+                'exactLowestMultiplierGame' => $winner->win_exact_lowest_multi_game ? $winner->exactLowestMultiGame->user : null,
+            ]
+        ], 200);
+    }
+
 
 }

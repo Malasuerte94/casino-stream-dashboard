@@ -13,13 +13,7 @@ class Winner extends Model
     protected $guarded = ['id'];
 
     /**
-     * @return BelongsTo
-     */
-    public function user(): BelongsTo {
-        return $this->belongsTo(User::class);
-    }
-
-    /**
+     * Relationship to Bonus Hunt.
      * @return BelongsTo
      */
     public function bonusHunt(): BelongsTo {
@@ -27,10 +21,50 @@ class Winner extends Model
     }
 
     /**
+     * Relationship to Bonus Buy.
      * @return BelongsTo
      */
     public function bonusBuy(): BelongsTo {
         return $this->belongsTo(BonusBuy::class);
     }
 
+    /**
+     * Relationship to the closest result winner (guess entry).
+     * @return BelongsTo
+     */
+    public function closestResult(): BelongsTo {
+        return $this->belongsTo(GuessEntry::class, 'win_closest_result');
+    }
+
+    /**
+     * Relationship to the closest biggest multiplier winner (guess entry).
+     * @return BelongsTo
+     */
+    public function closestBiggestMulti(): BelongsTo {
+        return $this->belongsTo(GuessEntry::class, 'win_closest_biggest_multi');
+    }
+
+    /**
+     * Relationship to the closest lowest multiplier winner (guess entry).
+     * @return BelongsTo
+     */
+    public function closestLowestMulti(): BelongsTo {
+        return $this->belongsTo(GuessEntry::class, 'win_closest_lowest_multi');
+    }
+
+    /**
+     * Relationship to the exact biggest multiplier game winner (guess entry).
+     * @return BelongsTo
+     */
+    public function exactBiggestMultiGame(): BelongsTo {
+        return $this->belongsTo(GuessEntry::class, 'win_exact_biggest_multi_game');
+    }
+
+    /**
+     * Relationship to the exact lowest multiplier game winner (guess entry).
+     * @return BelongsTo
+     */
+    public function exactLowestMultiGame(): BelongsTo {
+        return $this->belongsTo(GuessEntry::class, 'win_exact_lowest_multi_game');
+    }
 }

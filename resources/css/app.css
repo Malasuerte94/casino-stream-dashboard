@@ -83,6 +83,16 @@
     text-transform: uppercase;
 }
 
+.btn-primary-transparent {
+    @apply text-indigo-200 border border-indigo-400 px-4 py-2 rounded-md text-sm
+    bg-white/10 backdrop-blur-lg hover:backdrop-blur-xl
+    hover:bg-indigo-500/20 hover:text-white hover:border-indigo-400
+    focus:outline-none focus:ring-4 focus:ring-indigo-800
+    transition-all duration-300 shadow-lg shadow-black/30;
+}
+
+
+
 /* --------------------------------------------
    Box/Card Styles
 -------------------------------------------- */
