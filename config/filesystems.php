@@ -46,8 +46,8 @@ return [
 
         'cpanelpublic' => [
             'driver' => 'local',
-            'root' => '../public/storage',
-            'url' => env('APP_URL').'/storage',
+            'root' => '../public/storage/uploads',
+            'url' => env('APP_URL').'/storage/uploads',
             'visibility' => 'public',
             'throw' => false,
         ],

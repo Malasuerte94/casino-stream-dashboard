@@ -66,12 +66,12 @@ return [
     /*
      * This is the class that is responsible for naming generated files.
      */
-    'file_namer' => Spatie\MediaLibrary\Support\FileNamer\DefaultFileNamer::class,
+    'file_namer' => App\MediaLibrary\CustomFileNamer::class,
 
     /*
      * The class that contains the strategy for determining a media file's path.
      */
-    'path_generator' => Spatie\MediaLibrary\Support\PathGenerator\DefaultPathGenerator::class,
+    'path_generator' => App\MediaLibrary\CustomPathGenerator::class,
 
     /*
      * Here you can specify which path generator should be used for the given class.
@@ -86,7 +86,7 @@ return [
      * When urls to files get generated, this class will be called. Use the default
      * if your files are stored locally above the site root or on s3.
      */
-    'url_generator' => Spatie\MediaLibrary\Support\UrlGenerator\DefaultUrlGenerator::class,
+    'url_generator' => App\MediaLibrary\CustomUrlGenerator::class,
 
     /*
      * Moves media on updating to keep path consistent. Enable it only with a custom

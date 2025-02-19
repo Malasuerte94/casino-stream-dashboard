@@ -7,6 +7,7 @@ use App\Models\BannerAd;
 use App\Models\BonusBuy;
 use App\Models\Stream;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -86,30 +87,40 @@ class BannerController extends Controller
      */
     public function storeBannerAd(Request $request): JsonResponse
     {
-        $user = $request->user();
+        try {
+            $user = $request->user();
+            if (!$user) {
+                return response()->json(['error' => 'User not authenticated'], 401);
+            }
 
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'url' => 'required|url',
-        ]);
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'url' => 'required|url',
+                'image' => 'required|image|max:2048',
+            ]);
 
-        // Upload image
-        $imagePath = $request->file('image')->store('banner_ads', 'public');
+            $banner = $user->bannerAds()->create([
+                'name' => $request->name,
+                'url' => $request->url,
+                'image' => '',
+                'clicks' => 0,
+            ]);
 
-        // Create banner ad
-        $bannerAd = BannerAd::create([
-            'user_id' => $user->id,
-            'name' => $request->name,
-            'image' => "/storage/" . $imagePath,
-            'url' => $request->url,
-            'clicks' => 0,
-        ]);
+            $image = $banner->addMediaFromRequest('image')
+                ->toMediaCollection('banner_ads', 'cpanelpublic');
 
-        return response()->json([
-            'message' => 'Banner ad added successfully!',
-            'bannerAd' => $bannerAd,
-        ]);
+            $banner->update(['image' => $image->getUrl()]);
+
+            return response()->json([
+                'message' => 'Banner ad added successfully!',
+                'banner' => $banner,
+                'image_url' => $image->getUrl(), // ✅ Correct path: `/storage/xx/{filename}.jpg`
+            ]);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Failed to upload banner ad: ' . $e->getMessage()], 500);
+        }
+
+
     }
 
     /**
