@@ -67,7 +67,7 @@ class BannerController extends Controller
             'image' => $name
         ]);
 
-        $imageUploaded = $banner->addMediaFromRequest('image')->toMediaCollection('images', 'cpanelpublic');
+        $imageUploaded = $banner->addMediaFromRequest('image')->toMediaCollection('banners', 'cpanelpublic');
 
         if ($image) {
             $banner->image = $imageUploaded->original_url;
@@ -160,11 +160,6 @@ class BannerController extends Controller
             return response()->json([
                 'message' => 'Banner ad not found or unauthorized',
             ], 403);
-        }
-
-        // Delete associated image
-        if ($bannerAd->image) {
-            unlink(public_path($bannerAd->image));
         }
 
         $bannerAd->delete();
