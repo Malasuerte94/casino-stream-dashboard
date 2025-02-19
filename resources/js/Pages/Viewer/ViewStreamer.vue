@@ -1,6 +1,6 @@
 <template>
   <ViewerDash title="Main User">
-    <div class="py-12">
+    <div class="py-6 pb-20">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 px-4">
         <div class="overflow-hidden mb-4">
           <div class="p-6 flex flex-row justify-center items-center gap-4">

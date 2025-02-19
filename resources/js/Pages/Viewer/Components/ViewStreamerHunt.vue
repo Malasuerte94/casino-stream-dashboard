@@ -51,7 +51,7 @@
     </a>
 
     <a href="https://stake.com/?tab=register&modal=auth&c=mala" target="_blank"
-       class="relative rounded-lg overflow-hidden w-full md:w-1/4 flex group bg-[url(/storage/assets/images/dog-bg.jpg)] bg-center bg-no-repeat bg-cover">
+       class="relative rounded-lg overflow-hidden w-full md:w-1/4 h-[130px] flex group bg-[url(/storage/assets/images/dog-bg.jpg)] bg-center bg-no-repeat bg-cover">
 
       <div class="absolute inset-0 bg-black/40 backdrop-blur-sm opacity-100 transition-all duration-300 p-4 flex items-center justify-center">
 

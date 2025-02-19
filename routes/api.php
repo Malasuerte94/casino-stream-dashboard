@@ -88,6 +88,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/banner', [BannerController::class, 'store']);
     Route::delete('/banner/{id}', [BannerController::class, 'destroy']);
 
+    Route::post('/banner-ads', [BannerController::class, 'storeBannerAd']);
+    Route::delete('/banner-ads/{id}', [BannerController::class, 'destroyBannerAd']);
+    Route::get('/banner-ads', [BannerController::class, 'indexBannerAds']);
+
+
     // Bonus List Management
     Route::post('/set-latest-list', [UserSettingController::class, 'setGuessList']);
     Route::post('/close-bonus-list', [BonusListController::class, 'closeBonusList']);

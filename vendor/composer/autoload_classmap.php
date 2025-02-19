@@ -59,6 +59,7 @@ return array(
     'App\\Http\\Resources\\GuessEntriesResource' => $baseDir . '/app/Http/Resources/GuessEntriesResource.php',
     'App\\Http\\Resources\\UserResource' => $baseDir . '/app/Http/Resources/UserResource.php',
     'App\\Models\\Banner' => $baseDir . '/app/Models/Banner.php',
+    'App\\Models\\BannerAd' => $baseDir . '/app/Models/BannerAd.php',
     'App\\Models\\BattleViewer' => $baseDir . '/app/Models/BattleViewer.php',
     'App\\Models\\BonusBattle' => $baseDir . '/app/Models/BonusBattle.php',
     'App\\Models\\BonusBuy' => $baseDir . '/app/Models/BonusBuy.php',

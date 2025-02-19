@@ -730,6 +730,7 @@ class ComposerStaticInit69c8e8820f8dba78f915ae86794425a6
         'App\\Http\\Resources\\GuessEntriesResource' => __DIR__ . '/../..' . '/app/Http/Resources/GuessEntriesResource.php',
         'App\\Http\\Resources\\UserResource' => __DIR__ . '/../..' . '/app/Http/Resources/UserResource.php',
         'App\\Models\\Banner' => __DIR__ . '/../..' . '/app/Models/Banner.php',
+        'App\\Models\\BannerAd' => __DIR__ . '/../..' . '/app/Models/BannerAd.php',
         'App\\Models\\BattleViewer' => __DIR__ . '/../..' . '/app/Models/BattleViewer.php',
         'App\\Models\\BonusBattle' => __DIR__ . '/../..' . '/app/Models/BonusBattle.php',
         'App\\Models\\BonusBuy' => __DIR__ . '/../..' . '/app/Models/BonusBuy.php',
