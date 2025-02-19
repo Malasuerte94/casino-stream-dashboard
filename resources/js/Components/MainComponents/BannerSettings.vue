@@ -29,7 +29,7 @@
           <td class="p-2">{{ banner.id }}</td>
           <td class="p-2">{{ banner.name }}</td>
           <td class="p-2">
-            <img :src="banner.image" class="banner-image" alt="Banner Image" />
+            <img :src="banner.image" class="banner-image h-[130px] w-auto" alt="Banner Image" />
           </td>
           <td class="p-2">
             <button @click="removeBanner(banner.id)" class="text-white bg-red-700 hover:bg-red-800 font-medium rounded-lg text-sm p-2.5">
@@ -73,7 +73,7 @@
           <td class="p-2">{{ bannerAd.id }}</td>
           <td class="p-2">{{ bannerAd.name }}</td>
           <td class="p-2">
-            <img :src="bannerAd.image" class="banner-image" alt="Banner Ad Image" />
+            <img :src="bannerAd.image" class="banner-image h-[130px] w-auto" alt="Banner Image" />
           </td>
           <td class="p-2">
             <a :href="bannerAd.url" target="_blank" class="text-blue-500 hover:underline">{{ bannerAd.url }}</a>

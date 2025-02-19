@@ -181,5 +181,40 @@ class BannerController extends Controller
         ]);
     }
 
+    /**
+     * Show from link
+     *
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function showAds(int $id): JsonResponse
+    {
+        $userId = $id;
+        $user = User::findOrFail($userId);
+
+        $banners = $user->bannerAds()->get();
+
+        return response()->json([
+            'bannersAds' => $banners,
+        ]);
+    }
+
+
+    /**
+     * Register a click on a banner.
+     *
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function registerClick(int $id): JsonResponse
+    {
+        $banner = BannerAd::find($id);
+        if (!$banner) {
+            return response()->json(['error' => 'Banner not found'], 404);
+        }
+        $banner->increment('clicks');
+        return response()->json(['message' => 'Click registered', 'clicks' => $banner->clicks]);
+    }
+
 
 }

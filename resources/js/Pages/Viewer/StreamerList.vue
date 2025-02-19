@@ -2,18 +2,18 @@
   <ViewerDash title="Bonuses">
     <div class="py-12">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-gray-700 overflow-hidden shadow-xl sm:rounded-lg">
-          <div class="p-6">
-            <div class="grid grid-cols-5 gap-10 font-bold border-b-orange-600 border-b-2 mb-5 pb-2">
-              <div>Nume</div>
-              <div>Echipa</div>
+        <div class="flex flex-row gap-6">
+          <a class="bg-gray-700 overflow-hidden shadow-xl flex flex-col sm:rounded-lg p-6 w-full md:w-1/4 hover:scale-110 transition-all" v-for="(streamer, index) in streamerData"
+             :key="index" :href="'/streamer/'+streamer.id" >
+            <div class="flex flex-col text-center align-middle items-center font-black text-2xl">
+              <div class="mb-2">{{streamer.name}}</div>
+              <img class="profile-pic" :src="streamer.avatar" alt=""/>
+              <div class="align-middle items-center text-sm mt-2">{{streamer.team ?? 'Fără Echipă'}}</div>
             </div>
-            <div class="grid grid-cols-5 gap-10 align-middle items-center" v-for="(streamer, index) in streamerData"
-                 :key="index">
-              <div class="flex align-middle items-center font-black text-2xl"><img class="profile-pic mr-2" :src="streamer.avatar" alt=""/>{{streamer.name}}</div>
-              <div class="align-middle items-center text-2xl">{{streamer.team ?? '-'}}</div>
+            <div class="text-center">
+              Mai multe detalii curând.
             </div>
-          </div>
+          </a>
         </div>
       </div>
     </div>
@@ -29,7 +29,7 @@ export default {
     };
   },
   props: {
-    streamers: Array
+    streamers: Object
   },
   async mounted() {
 

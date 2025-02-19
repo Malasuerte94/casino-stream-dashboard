@@ -170,6 +170,8 @@ Route::post('/get-youtube-data', [StreamController::class, 'getYoutubeData']);
 Route::get('/bonus-list/{id}', [BonusListController::class, 'index']);
 Route::get('/stream/{id}', [StreamController::class, 'show']);
 Route::get('/banners/{id}', [BannerController::class, 'show']);
+Route::get('/banners-ads/{id}', [BannerController::class, 'showAds']);
+Route::post('/banner-ads/{id}/click', [BannerController::class, 'registerClick']);
 Route::get('/get-latest-list', [BonusListController::class, 'getUrl']);
 
 

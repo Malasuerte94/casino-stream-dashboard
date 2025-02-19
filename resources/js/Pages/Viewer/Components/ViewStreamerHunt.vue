@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col md:flex-row justify-center items-stretch gap-4 mb-4">
+  <div class="flex flex-col md:flex-row justify-center items-stretch gap-4 mb-4" v-if="!loading">
     <!-- First Box (1/5 width on desktop) -->
     <div v-if="bonusHuntHistory.length > 0"
          class="gap-2 rounded-lg backdrop-blur-xl p-4 bg-white/10 shadow-lg shadow-black/40 border border-white/20 w-full md:w-1/4 flex flex-col justify-between">
@@ -31,24 +31,26 @@
         <div><SvgCalendar class="w-4 h-4 text-gray-500 stroke-current" /></div>
         <div>{{ convertDate(bonusHuntHistory[0].created_at ) }}</div>
       </div>
-
     </div>
 
-    <a href="#" class="relative rounded-lg overflow-hidden w-full md:w-1/4 flex group">
-      <img src="https://41.media.tumblr.com/efd15be8d41b12a7b0ef17fba27c3e20/tumblr_mqqy59HMaf1qzattso1_1280.jpg"
-           alt="Main User"
-           class="w-full h-[130px] object-cover transition-all duration-300 group-hover:scale-105">
-      <div
-          class="absolute inset-0 bg-black/20 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
-    </a>
-    <!-- Image Containers with Hover Blur -->
-    <a href="#" class="relative rounded-lg overflow-hidden w-full md:w-1/4 flex group">
-      <img src="https://41.media.tumblr.com/efd15be8d41b12a7b0ef17fba27c3e20/tumblr_mqqy59HMaf1qzattso1_1280.jpg"
-           alt="Main User"
-           class="w-full h-[130px] object-cover transition-all duration-300 group-hover:scale-105">
-      <div
-          class="absolute inset-0 bg-black/20 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
-    </a>
+
+    <template v-if="this.bannerSpot.length >= 2">
+      <a :href="this.bannerSpot[0].url" target="_blank" class="relative rounded-lg overflow-hidden w-full md:w-1/4 flex group" @click="registerClick(this.bannerSpot[0].id)">
+        <img :src="this.bannerSpot[0].image"
+             :alt="this.bannerSpot[0].name"
+             class="w-full h-[130px] object-cover transition-all duration-300 group-hover:scale-105">
+        <div
+            class="absolute inset-0 bg-black/20 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
+      </a>
+      <!-- Image Containers with Hover Blur -->
+      <a :href="this.bannerSpot[1].url" target="_blank" class="relative rounded-lg overflow-hidden w-full md:w-1/4 flex group" @click="registerClick(this.bannerSpot[1].id)">
+        <img :src="this.bannerSpot[1].image"
+             :alt="this.bannerSpot[1].name"
+             class="w-full h-[130px] object-cover transition-all duration-300 group-hover:scale-105">
+        <div
+            class="absolute inset-0 bg-black/20 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
+      </a>
+    </template>
 
     <a href="https://stake.com/?tab=register&modal=auth&c=mala" target="_blank"
        class="relative rounded-lg overflow-hidden w-full md:w-1/4 h-[130px] flex group bg-[url(/storage/assets/images/dog-bg.jpg)] bg-center bg-no-repeat bg-cover">
@@ -108,11 +110,13 @@ export default {
   },
   data() {
     return {
+      loading: true,
       streamer: {},
       bonusHuntHistory: [],
       refreshInterval: null,
       currency: 'RON',
       activeIndex: 0,
+      bannerSpot: []
     };
   },
   props: {
@@ -135,6 +139,7 @@ export default {
     async getData() {
       await this.getBonusHuntHistory();
       await this.getSettings();
+      await this.getBannerAds();
     },
     async getBonusHuntHistory() {
       try {
@@ -147,7 +152,6 @@ export default {
     async getSettings() {
       let settingName = "obs_bonus_list";
       try {
-        this.loading = true;
         const response = await axios.get(`/api/get-setting-public`, {
           params: {setting_name: settingName, user_id: this.steamerId},
         });
@@ -156,9 +160,26 @@ export default {
         }
       } catch (error) {
         console.error(`Error loading setting "${settingName}":`, error);
-        this.error = `Failed to load setting: ${settingName}`;
+      }
+    },
+    async getBannerAds() {
+      try {
+        this.loading = true;
+        const response = await axios.get(`/api/banners-ads/`+this.steamerId);
+        if (response.data.bannersAds) {
+          this.bannerSpot = response.data.bannersAds;
+        }
+      } catch (error) {
+        console.error(`Error loading setting "${settingName}":`, error);
       } finally {
         this.loading = false;
+      }
+    },
+    async registerClick(bannerId) {
+      try {
+        await axios.post(`/api/banner-ads/${bannerId}/click`);
+      } catch (error) {
+        console.error("Error registering click:", error);
       }
     },
     convertDate(isoString) {

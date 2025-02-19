@@ -106,6 +106,14 @@ class User extends Authenticatable implements HasMedia
     /**
      * @return HasMany
      */
+    public function bannerAds(): HasMany
+    {
+        return $this->hasMany(BannerAd::class);
+    }
+
+    /**
+     * @return HasMany
+     */
     public function socials(): HasMany
     {
         return $this->hasMany(Social::class);
