@@ -134,6 +134,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/test', [BonusBattleController::class, 'test']);
 
     Route::prefix('viewer')->group(function () {
+        Route::get('get-yt-code', [ViewerController::class, 'getVerifyCode']);
         Route::get('get-streamer/{id}', [ViewerController::class, 'getSteamer']);
         Route::get('get-bh-history/{id}', [ViewerController::class, 'getBonusHuntHistory']);
         Route::post('add-prediction', [GuessEntriesController::class, 'postPrediction']);
@@ -174,8 +175,6 @@ Route::get('/banners-ads/{id}', [BannerController::class, 'showAds']);
 Route::post('/banner-ads/{id}/click', [BannerController::class, 'registerClick']);
 Route::get('/get-latest-list', [BonusListController::class, 'getUrl']);
 
-
-Route::get('/referral/{id}/{parent}/{child}', [ReferralController::class, 'registerReferral']);
 Route::get('/ref-list/{id}', [ReferralController::class, 'getReferrals']);
 
 // Viewer Action Routes
@@ -193,8 +192,12 @@ Route::apiResource('games', GameController::class);
 //get-all-users-list
 Route::get('/battle-viewers-public/{id}', [BattleViewerController::class, 'getBattleViewersPublic']);
 
-//register for bonus battle picker
-Route::get('/add-bb-viewer/{username}/{game}/{creatorId}',[BattleViewerController::class, 'addBattleViewer']);
-
 Route::get('/get-casinos', [CasinoController::class, 'getCasinos']);
 Route::post('/add-casino', [CasinoController::class, 'addCasino']);
+
+//viewer actions - YT-BOT
+Route::get('/verify-yt-code/{user}/{code}', [ViewerController::class, 'verifyCode']);
+//register for bonus battle picker
+Route::get('/add-bb-viewer/{username}/{game}/{creatorId}',[BattleViewerController::class, 'addBattleViewer']);
+//add refferal
+Route::get('/referral/{id}/{parent}/{child}', [ReferralController::class, 'registerReferral']);

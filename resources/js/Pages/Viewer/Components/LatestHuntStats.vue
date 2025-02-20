@@ -3,7 +3,7 @@
     <div class="flex flex-col gap-4">
       <!-- Header -->
       <div class="flex flex-row gap-2 items-center text-white">
-        <SvgTarget class="h-5 w-5 text-yellow-400" />
+        <SvgTarget class="h-5 w-5 text-white" />
         <span class="font-semibold">Hunt Stats</span>
       </div>
 

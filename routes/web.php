@@ -20,13 +20,11 @@ use Inertia\Inertia;
 
 Route::get('/auth/{provider}/redirect', [SocialController::class, 'redirect'])
     ->where('provider', 'google|youtube');
-
 Route::get('/auth/{provider}/callback', [SocialController::class, 'callback'])
     ->where('provider', 'google|youtube');
-
 Route::post('/add-email-to-account', [SocialController::class, 'addRequiredEmail'])->name('add-required-email-to-account');
 
-//display in OBS
+//display in OBS - PUBLIC
 Route::get('/bonus-list/{id}', function ($id) {
     return Inertia::render('OBS/BonusListObs', ['id' => $id]);
 })->name('bonus-list');
@@ -64,7 +62,7 @@ Route::get('/schedule-view/{id}', function ($id) {
 Route::get('/test', function () {
     return Inertia::render('Test');
 })->name('test');
-
+//display in OBS - PUBLIC
 
 
 Route::get('/', function () {
@@ -81,10 +79,16 @@ Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
+    'check.ytname'
 ])->group(function () {
+    Route::get('/account/verify', [SocialController::class, 'verifyYtAccount'])
+        ->middleware('redirect.verified')
+        ->name('account.verify');
+    Route::get('/streamers', [ViewerController::class, 'streamerList'])->name('streamer-list');
     Route::get('/dashboard', function () {
         return Inertia::render('Viewer/MainUser');
     })->name('dashboard');
+
     Route::get('/guess-list/{id}/{type}', [ViewerController::class, 'guessList'])->name('guess-list');
     Route::get('/streamer/{id}', [ViewerController::class, 'viewStreamer'])->name('view-streamer');
     Route::get('/streamers', [ViewerController::class, 'streamerList'])->name('streamer-list');

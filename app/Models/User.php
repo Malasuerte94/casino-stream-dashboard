@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
@@ -22,6 +23,15 @@ class User extends Authenticatable implements HasMedia
     use TwoFactorAuthenticatable;
     use InteractsWithMedia;
 
+    protected static function booted(): void
+    {
+        static::creating(function ($user) {
+            if (empty($user->yt_code)) {
+                $user->yt_code = Str::random(10);
+            }
+        });
+    }
+
     /**
      * The attributes that are mass assignable.
      *
@@ -32,6 +42,9 @@ class User extends Authenticatable implements HasMedia
         'email',
         'password',
         'profile_photo_path',
+        'stake_username',
+        'yt_code',
+        'yt_name'
     ];
 
     /**

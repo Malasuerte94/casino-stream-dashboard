@@ -35,14 +35,14 @@ defineProps({
                     <SectionBorder />
                 </div>
 
-                <div v-if="$page.props.jetstream.canManageTwoFactorAuthentication">
-                    <TwoFactorAuthenticationForm
-                        :requires-confirmation="confirmsTwoFactorAuthentication"
-                        class="mt-10 sm:mt-0"
-                    />
+<!--                <div v-if="$page.props.jetstream.canManageTwoFactorAuthentication">-->
+<!--                    <TwoFactorAuthenticationForm-->
+<!--                        :requires-confirmation="confirmsTwoFactorAuthentication"-->
+<!--                        class="mt-10 sm:mt-0"-->
+<!--                    />-->
 
-                    <SectionBorder />
-                </div>
+<!--                    <SectionBorder />-->
+<!--                </div>-->
 
                 <LogoutOtherBrowserSessionsForm :sessions="sessions" class="mt-10 sm:mt-0" />
 

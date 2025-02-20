@@ -49,14 +49,13 @@ const updateProfileInformation = () => {
     }
   })
       .then(response => {
-        // Clear file input on success.
         clearPhotoFileInput();
         alert('Profile picture updated!');
         console.log('Profile updated:', response.data);
       })
       .catch(error => {
         console.error('Failed to update profile:', error);
-        // You might want to add additional error handling here.
+        alert(error.message);
       });
 };
 
@@ -222,10 +221,11 @@ const clearPhotoFileInput = () => {
       <div class="col-span-6 sm:col-span-4">
         <InputLabel for="name" value="Name"/>
         <TextInput
+            disabled
             id="name"
             v-model="profileForm.name"
             type="text"
-            class="mt-1 block w-full"
+            class="mt-1 block w-full opacity-25"
             autocomplete="name"
         />
         <InputError :message="profileForm.errors" class="mt-2"/>
@@ -234,10 +234,11 @@ const clearPhotoFileInput = () => {
       <div class="col-span-6 sm:col-span-4">
         <InputLabel for="email" value="Email"/>
         <TextInput
+            disabled
             id="email"
             v-model="profileForm.email"
             type="email"
-            class="mt-1 block w-full"
+            class="mt-1 block w-full opacity-25"
         />
         <InputError :message="profileForm.errors" class="mt-2"/>
         <div v-if="$page.props.jetstream.hasEmailVerification && user.email_verified_at === null">

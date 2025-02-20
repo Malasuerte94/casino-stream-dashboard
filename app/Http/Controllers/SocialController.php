@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserResource;
 use App\Models\Social;
 use App\Models\User;
 use Exception;
@@ -166,6 +167,15 @@ class SocialController extends Controller
 
         return response()->json($social);
         
+    }
+
+
+    /**
+     * @return \Inertia\Response
+     */
+    public function verifyYtAccount(): \Inertia\Response
+    {
+        return Inertia::render('Auth/VerifyYtAccount');
     }
 
 }

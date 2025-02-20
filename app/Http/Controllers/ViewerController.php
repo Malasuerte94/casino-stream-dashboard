@@ -6,7 +6,10 @@ use App\Http\Resources\UserResource;
 use App\Models\BonusBuy;
 use App\Models\BonusHunt;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -31,7 +34,6 @@ class ViewerController extends Controller
      */
     public function guessList(int $bonusListId, string $type): Response
     {
-
         if ($type === 'buy') {
             $latestBonus = BonusBuy::find($bonusListId);
             $gamesForBonus = $latestBonus->bonusBuyGames;
@@ -40,8 +42,13 @@ class ViewerController extends Controller
             $gamesForBonus = $latestBonus->bonusHuntGames;
         }
 
-        return Inertia::render('Viewer/GuessList', ['list' => $latestBonus, 'games' => $gamesForBonus, 'type' =>
-            $type, 'is_open' => (bool)$latestBonus->is_open]);
+        return Inertia::render('Viewer/GuessList', [
+            'list' => $latestBonus,
+            'games' => $gamesForBonus,
+            'type' =>
+                $type,
+            'is_open' => (bool)$latestBonus->is_open
+        ]);
     }
 
 
@@ -95,5 +102,39 @@ class ViewerController extends Controller
         ]);
     }
 
+    public function getVerifyCode(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        if (empty($user->yt_code)) {
+            $user->yt_code = Str::random(10);
+        }
+        $user->save();
+
+        return response()->json([
+            'code' => $user->yt_code,
+        ]);
+    }
+
+    /**
+     * Verify the code and sanitize the user input.
+     *
+     * @param string $userInput The user's YouTube name input.
+     * @param string $code The verification code provided.
+     * @return string
+     */
+    public function verifyCode(string $userInput, string $code): string
+    {
+        try {
+            $user = User::where('yt_code', $code)->first();
+            if ($user) {
+                $sanitizedInput = trim(strip_tags($userInput));
+                $user->yt_name = $sanitizedInput;
+                $user->save();
+            }
+            return '';
+        } catch (Exception $e) {
+            return '';
+        }
+    }
 
 }

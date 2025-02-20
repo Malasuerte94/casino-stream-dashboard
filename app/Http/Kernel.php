@@ -66,5 +66,7 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'streamer' => \App\Http\Middleware\StreamerMiddleware::class,
+        'check.ytname' => \App\Http\Middleware\EnsureYtNameCompleted::class,
+        'redirect.verified' => \App\Http\Middleware\RedirectIfYtVerified::class,
     ];
 }

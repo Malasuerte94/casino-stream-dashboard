@@ -43,7 +43,7 @@
       <div v-else class="text-gray-400 text-center">No games available</div>
     </div>
     <!-- Hunt Stats -->
-    <div class="md:w-1/2 w-full flex flex-col gap-4 text-white rounded-lg shadow-lg">
+    <div class="md:w-1/2 w-full flex flex-col gap-4 text-white rounded-lg">
       <LatestHuntGuess :latestHunt="latestHunt" listType="hunt" :currency="currency" />
       <div class="flex flex-col md:flex-row w-full gap-4">
         <div class="w-full md:w-1/2">

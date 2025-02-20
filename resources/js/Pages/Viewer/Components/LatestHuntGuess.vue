@@ -10,14 +10,14 @@
         </div>
         <!-- Winner Details -->
         <div class="flex flex-col">
-          <div class="text-gray-300 text-sm">{{ winnerTitles[key] }}</div>
-          <div class="font-semibold text-white">{{ winner?.name || "N/A" }}</div>
+          <div class="text-gray-300 text-xs uppercase">{{ winnerTitles[key] }}</div>
+          <div class="font-semibold text-white">{{ winner ? (winner.yt_name || winner.name || "N/A") : "N/A" }}</div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="relative">
+  <div class="relative" v-if="!$page.props.user_streamer">
     <!-- Main Form -->
     <div
         class="backdrop-blur-xl bg-white/10 shadow-lg shadow-black/40 border border-white/20 p-4 rounded-lg gap-4 flex flex-col text-white relative"
@@ -180,8 +180,8 @@ export default {
         resultWinner: "Cel mai Apropiat Rezultat",
         biggestMultiplierWinner: "Cel mai Mare Multiplicator",
         lowestMultiplierWinner: "Cel mai Mic Multiplicator",
-        exactBiggestMultiplierGame: "Exact Cel mai Mare Multiplicator",
-        exactLowestMultiplierGame: "Exact Cel mai Mic Multiplicator",
+        exactBiggestMultiplierGame: "Cel mai bun joc",
+        exactLowestMultiplierGame: "Cel mai prost joc",
       }
     };
   },

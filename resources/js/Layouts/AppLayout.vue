@@ -28,7 +28,7 @@ const logout = () => {
     <Head :title="props.title" />
     <Banner />
 
-    <div class="min-h-screen bg-gray-900">
+    <div class="min-h-screen bg-gradient-to-br from-indigo-800 via-gray-800 to-indigo-900">
       <!-- Main Navigation -->
       <nav class="bg-gray-800 border-b border-gray-700">
         <!-- Primary Navigation Menu -->
@@ -103,6 +103,15 @@ const logout = () => {
                     class="text-gray-300 hover:text-white transition-colors duration-200"
                 >
                   Referrals
+                </NavLink>
+              </div>
+              <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                <NavLink
+                    :href="route('view-streamer', { id: $page.props.user.id })"
+                    :active="route().current('view-streamer')"
+                    class="text-gray-300 hover:text-white transition-colors duration-200"
+                >
+                  Streamer Public Page
                 </NavLink>
               </div>
             </div>
