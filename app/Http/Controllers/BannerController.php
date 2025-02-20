@@ -114,7 +114,7 @@ class BannerController extends Controller
             return response()->json([
                 'message' => 'Banner ad added successfully!',
                 'banner' => $banner,
-                'image_url' => $image->getUrl(), // ✅ Correct path: `/storage/xx/{filename}.jpg`
+                'image_url' => $image->getUrl(),
             ]);
         } catch (Exception $e) {
             return response()->json(['error' => 'Failed to upload banner ad: ' . $e->getMessage()], 500);

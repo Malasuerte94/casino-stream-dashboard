@@ -1,7 +1,6 @@
 import './bootstrap';
 import '../css/app.css';
 
-// Force dark mode globally
 document.documentElement.classList.add('dark');
 
 import { createApp, h } from 'vue';

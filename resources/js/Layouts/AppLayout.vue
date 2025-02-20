@@ -27,8 +27,7 @@ const logout = () => {
   <div>
     <Head :title="props.title" />
     <Banner />
-
-    <div class="min-h-screen bg-gradient-to-br from-indigo-800 via-gray-800 to-indigo-900">
+    <div class="min-h-screen">
       <!-- Main Navigation -->
       <nav class="bg-gray-800 border-b border-gray-700">
         <!-- Primary Navigation Menu -->
@@ -233,6 +232,7 @@ const logout = () => {
                     >
                       Profile
                     </DropdownLink>
+                    <div class="border-t border-gray-700"></div>
                     <DropdownLink
                         v-if="$page.props.jetstream.hasApiFeatures"
                         :href="route('api-tokens.index')"

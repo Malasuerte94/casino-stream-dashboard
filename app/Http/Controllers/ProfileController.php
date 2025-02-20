@@ -20,16 +20,9 @@ class ProfileController extends Controller
             ->toMediaCollection('profile_pictures', 'cpanelpublic');
 
         if ($media) {
-            $fullUrl = $media->getUrl();
-            $relativeUrl = parse_url($fullUrl, PHP_URL_PATH);
-
-            $relativeUrl = preg_replace('/^\/storage\//', '', $relativeUrl);
-
-            $user->profile_photo_path = $relativeUrl;
-            $user->save();
-
+            $user->update(['profile_photo_path' => $media->getUrl()]);
             return response()->json([
-                'uploaded' => $relativeUrl,
+                'uploaded' => $user->profile_photo_path,
             ]);
         } else {
             return response()->json([

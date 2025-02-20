@@ -44,7 +44,7 @@ class HandleInertiaRequests extends Middleware
             'user.profile_photo_url' => fn () => $request->user()
                 ? (str_contains($request->user()->profile_photo_path, 'googleusercontent')
                     ? $request->user()->profile_photo_path
-                    : env('APP_URL') . '/storage/' . $request->user()->profile_photo_path)
+                    : env('APP_URL') . $request->user()->profile_photo_path)
                 : null,
         ]);
     }

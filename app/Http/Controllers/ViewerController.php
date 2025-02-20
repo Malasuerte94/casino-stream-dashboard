@@ -24,7 +24,7 @@ class ViewerController extends Controller
             $query->where('identifier', 'streamer');
         })->get();
         $streamers = UserResource::collection($streamers);
-        return Inertia::render('Viewer/StreamerList', ['streamers' => $streamers]);
+        return Inertia::render('Viewer/Streamers/StreamerList', ['streamers' => $streamers]);
     }
 
     /**
@@ -63,7 +63,7 @@ class ViewerController extends Controller
             abort(404);
         }
 
-        return Inertia::render('Viewer/ViewStreamer', ['steamerId' => $streamer->id]);
+        return Inertia::render('Viewer/Streamer/ViewStreamer', ['steamerId' => $streamer->id]);
     }
 
 

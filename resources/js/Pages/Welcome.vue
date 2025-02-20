@@ -1,7 +1,6 @@
 <script setup>
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Link, useForm } from '@inertiajs/vue3';
 import AuthenticationCard from '@/Components/AuthenticationCard.vue';
-import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo.vue';
 import Checkbox from '@/Components/Checkbox.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
@@ -34,7 +33,7 @@ const submit = () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-900 text-gray-100 flex flex-col">
+  <div class="min-h-screen flex flex-col">
     <!-- Header -->
     <header class="bg-gray-800 py-4 shadow-md">
       <div class="max-w-6xl mx-auto px-4 flex items-center justify-between">

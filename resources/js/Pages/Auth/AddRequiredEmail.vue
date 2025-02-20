@@ -1,6 +1,5 @@
 <template>
   <Head title="Please add your email address" />
-
   <AuthenticationCard>
     <template #logo>
       <AuthenticationCardLogo />

@@ -51,7 +51,6 @@ const updateProfileInformation = () => {
       .then(response => {
         clearPhotoFileInput();
         alert('Profile picture updated!');
-        console.log('Profile updated:', response.data);
       })
       .catch(error => {
         console.error('Failed to update profile:', error);
@@ -65,7 +64,6 @@ const saveDiscordWebhookSchedule = () => {
   })
       .then(response => {
         alert('Discord webhook saved successfully!');
-        console.log('Webhook schedule:', response.data);
       })
       .catch(error => {
         alert('Failed to save the webhook. Please try again.');
@@ -79,7 +77,6 @@ const saveDiscordWebhookHuntBuyBattle = () => {
   })
       .then(response => {
         alert('Discord webhook saved successfully!');
-        console.log('Webhook hunt-buy-battle:', response.data);
       })
       .catch(error => {
         alert('Failed to save the webhook. Please try again.');
