@@ -10,22 +10,25 @@
       </div>
       <div class="flex items-center space-x-4">
         <!-- Toggle Switch -->
-        <label class="inline-flex items-center cursor-pointer">
-          <span class="text-sm font-medium text-gray-300 mr-2">
-            Înscrieri {{ open_list ? 'Pornite' : 'Oprite' }}
-          </span>
+        <span class="ml-3 text-sm font-medium text-gray-300">
+          {{ open_list ? 'Predicții Pornite' : 'Predicții Oprite' }}
+        </span>
+        <label for="toggle" class="relative inline-flex items-center cursor-pointer">
           <input
               type="checkbox"
-              true-value="true"
-              false-value="false"
+              id="toggle"
               v-model="open_list"
               @change="setStatusGuessList"
               class="sr-only peer"
           />
-          <div class="w-11 h-6 bg-gray-700 border border-gray-600 rounded-full peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-800 transition">
-            <div class="w-5 h-5 bg-white rounded-full transform transition-transform duration-300 peer-checked:translate-x-5"></div>
-          </div>
+          <div
+              class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full
+          dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white
+          after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border
+          after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
+          ></div>
         </label>
+
         <!-- Action Button -->
         <button
             :disabled="isEnded"
@@ -105,7 +108,6 @@ import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 import BonusBuy from "@/Components/MainComponents/BonusBuy.vue";
 import BonusHunt from "@/Components/MainComponents/BonusHunt.vue";
 import StreamBoard from "@/Components/MainComponents/StreamBoard.vue";
-import { initFlowbite } from "flowbite";
 import axios from "axios";
 
 export default {
@@ -121,7 +123,6 @@ export default {
     };
   },
   async mounted() {
-    initFlowbite();
     await this.getSettings();
     await this.getUrlGuessList();
   },

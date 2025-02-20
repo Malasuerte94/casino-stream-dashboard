@@ -209,12 +209,12 @@ class UserSettingController extends Controller
     public function setGuessList(Request $request): void
     {
         $request->validate([
-            'is_open' => 'required',
+            'is_open' => 'required|boolean',
             'list_id' => 'required',
             'type' => 'required|string'
         ]);
 
-        $isOpen = $request->input('is_open') === 'true';
+        $isOpen = $request->input('is_open') === true;
         $listId = $request->input('list_id');
         $type = $request->input('type');
 
