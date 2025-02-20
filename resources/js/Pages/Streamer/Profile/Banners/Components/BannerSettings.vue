@@ -8,7 +8,7 @@
       <button
           @click="uploadBanner"
           type="button"
-          class="text-white bg-red-700 hover:bg-red-800 font-medium rounded-lg text-sm px-5 py-2.5"
+          class="btn-primary"
       >
         Adauga
       </button>
@@ -50,7 +50,7 @@
       <button
           @click="uploadBannerAd"
           type="button"
-          class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5"
+          class="btn-primary"
       >
         Adauga Ad
       </button>

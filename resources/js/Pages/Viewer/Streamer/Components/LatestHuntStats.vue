@@ -71,8 +71,33 @@ export default {
       return this.latestHunt?.bonus_hunt_games.reduce((sum, game) => sum + Number(game.result) || 0, 0);
     },
     breakEvenX() {
-      const totalBets = this.latestHunt?.bonus_hunt_games.reduce((sum, game) => sum + (Number(game.stake) || 0), 0);
-      return totalBets > 0 ? (this.startBalance / totalBets).toFixed(2) : 0;
+      const listCost = this.startBalance;
+      const totalPayout = this.latestHunt?.bonus_hunt_games.reduce(
+          (sum, game) => sum + (game.result ? parseFloat(game.result) : 0),
+          0
+      ) || 0;
+
+      const remainingCost = Math.max(listCost - totalPayout, 0);
+      const remainingGames = this.latestHunt?.bonus_hunt_games.filter(
+          (game) => !game.result || game.result === "0"
+      ).length || 0;
+
+      if (remainingGames === 0) return 0;
+
+      const costPerGame = remainingCost / remainingGames;
+      let totalRequiredX = 0;
+
+      this.latestHunt?.bonus_hunt_games.forEach((game) => {
+        const gameStake = parseFloat(game.stake);
+
+        if (game.result && game.result !== "0") {
+          return;
+        }
+        const requiredX = costPerGame / gameStake;
+        totalRequiredX += requiredX;
+      });
+
+      return Math.round(totalRequiredX / remainingGames);
     },
     currentX() {
       const totalBets = this.latestHunt?.bonus_hunt_games.reduce((sum, game) => sum + (Number(game.stake) || 0), 0);

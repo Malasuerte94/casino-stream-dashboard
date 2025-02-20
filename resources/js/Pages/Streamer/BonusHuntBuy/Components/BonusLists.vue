@@ -8,27 +8,26 @@
           {{ guessUrl }}
         </div>
       </div>
-      <div class="flex items-center space-x-4">
+      <div class="flex items-center space-x-4" v-if="!isEnded">
         <!-- Toggle Switch -->
-        <span class="ml-3 text-sm font-medium text-gray-300">
+        <span class="ml-3 text-sm font-medium text-gray-300 flex items-center gap-2">
           {{ open_list ? 'Predicții Pornite' : 'Predicții Oprite' }}
+          <label for="toggle" class="relative inline-flex items-center cursor-pointer">
+            <input
+                type="checkbox"
+                id="toggle"
+                v-model="open_list"
+                @change="setStatusGuessList"
+                class="sr-only peer"
+            />
+            <div
+                class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full
+            dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white
+            after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border
+            after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
+            ></div>
+          </label>
         </span>
-        <label for="toggle" class="relative inline-flex items-center cursor-pointer">
-          <input
-              type="checkbox"
-              id="toggle"
-              v-model="open_list"
-              @change="setStatusGuessList"
-              class="sr-only peer"
-          />
-          <div
-              class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full
-          dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white
-          after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border
-          after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
-          ></div>
-        </label>
-
         <!-- Action Button -->
         <button
             :disabled="isEnded"
@@ -88,16 +87,16 @@
       </div>
       <!-- Bonus Buy List -->
       <transition name="fade">
-        <div v-if="settings.bonus_list == 'buy'" class="p-6 bg-gray-800 rounded-md border border-gray-700 mt-4 transition-all duration-300" :key="componentKey">
+        <div v-if="settings.bonus_list == 'buy'" class="p-6 bg-gray-800 rounded-md border border-gray-700 transition-all duration-300" :key="componentKey">
           <h5 class="text-lg font-bold text-gray-200 mb-2">Bonus Buy - List</h5>
           <BonusBuy @newlist="getUrlGuessList()" />
         </div>
       </transition>
       <!-- Bonus Hunt List -->
       <transition name="fade">
-        <div v-if="settings.bonus_list == 'hunt'" class="p-6 bg-gray-800 rounded-md border border-gray-700 mt-4 transition-all duration-300" :key="componentKey">
+        <div v-if="settings.bonus_list == 'hunt'" class="p-6 bg-gray-800 rounded-md border border-gray-700 transition-all duration-300" :key="componentKey">
           <h5 class="text-lg font-bold text-gray-200 mb-2">Bonus Hunt - List</h5>
-          <BonusHunt @newlist="getUrlGuessList()" />
+          <BonusHunt @newlist="getUrlGuessList()" @update="getUrlGuessList()" />
         </div>
       </transition>
     </div>
@@ -181,6 +180,7 @@ export default {
           })
           .finally(() => {
             this.componentKey++;
+            this.getUrlGuessList();
           });
     },
     activateDialog() {

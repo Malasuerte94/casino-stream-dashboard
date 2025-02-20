@@ -29,7 +29,7 @@ const logout = () => {
     <Banner />
     <div class="min-h-screen">
       <!-- Main Navigation -->
-      <nav class="bg-gray-800 border-b border-gray-700">
+      <nav class="backdrop-blur-xl bg-white/10 shadow-lg shadow-black/10">
         <!-- Primary Navigation Menu -->
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="flex justify-between h-16">
@@ -97,18 +97,9 @@ const logout = () => {
               </div>
               <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                 <NavLink
-                    :href="route('referrals', { id: $page.props.user.id })"
-                    :active="route().current('referrals')"
-                    class="text-gray-300 hover:text-white transition-colors duration-200"
-                >
-                  Referrals
-                </NavLink>
-              </div>
-              <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                <NavLink
                     :href="route('view-streamer', { id: $page.props.user.id })"
                     :active="route().current('view-streamer')"
-                    class="text-gray-300 hover:text-white transition-colors duration-200"
+                    class="text-orange-600 font-bold hover:text-white transition-colors duration-200"
                 >
                   Streamer Public Page
                 </NavLink>
@@ -415,7 +406,7 @@ const logout = () => {
       </nav>
 
       <!-- Page Heading -->
-      <header v-if="$slots.header" class="bg-gray-800 shadow">
+      <header v-if="$slots.header">
         <div class="max-w-7xl mx-auto py-2 px-4 sm:px-6 lg:px-8">
           <slot name="header" />
         </div>

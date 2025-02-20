@@ -1,13 +1,8 @@
 <template>
   <AppLayout title="Dashboard">
-    <template #header>
-      <h2 class="font-semibold text-xl text-gray-100 leading-tight">
-        Schedule
-      </h2>
-    </template>
-    <div class="py-2 transition-all duration-300">
+    <div class="py-4 transition-all duration-300">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-gray-900 overflow-hidden shadow-lg rounded-md transition-all duration-300">
+        <div class="bg-gray-800 overflow-hidden shadow-lg rounded-md transition-all duration-300">
           <div class="scheduler p-6">
             <div class="flex justify-between items-center mb-6">
               <h1 class="text-2xl font-bold text-gray-100">Schedule Manager</h1>
@@ -25,7 +20,7 @@
                 <div
                   v-for="schedule in schedules"
                   :key="schedule.id"
-                  class="schedule-card bg-gray-800 p-4 rounded-md shadow-md border border-gray-700 relative transition-all duration-300"
+                  class="schedule-card bg-gray-900 p-4 rounded-md shadow-md border border-gray-700 relative transition-all duration-300"
               >
                 <h2 class="text-lg font-semibold text-gray-100">
                   Schedule #{{ schedule.id }}

@@ -88,10 +88,7 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Viewer/MainUser');
     })->name('dashboard');
-
-    Route::get('/guess-list/{id}/{type}', [ViewerController::class, 'guessList'])->name('guess-list');
-    Route::get('/streamer/{id}', [ViewerController::class, 'viewStreamer'])->name('view-streamer');
-    Route::get('/streamers', [ViewerController::class, 'streamerList'])->name('streamer-list');
+    Route::get('/streamer/{id}/{section?}', [ViewerController::class, 'viewStreamer'])->name('view-streamer');
 });
 
 

@@ -1,6 +1,6 @@
 <template>
   <ViewerDash title="Bonuses">
-    <div class="py-12">
+    <div class="py-4">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="flex flex-row gap-6">
           <a class="backdrop-blur-xl bg-white/10 shadow-black/40 border border-white/20 overflow-hidden shadow-xl flex flex-col sm:rounded-lg p-6 w-full md:w-1/4 hover:scale-110 transition-all" v-for="(streamer, index) in streamerData"

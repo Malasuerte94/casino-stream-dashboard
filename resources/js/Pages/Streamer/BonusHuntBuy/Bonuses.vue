@@ -44,31 +44,29 @@ const copyText = (text) => {
     <div class="py-4">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <transition name="fade">
-          <div class="bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
-            <div class="p-6 text-gray-300 flex flex-row gap-4">
-                <div class="mb-4 text-sm">
-                  Comanda pentru useri Streamlabs: !verific
-                  <button
-                      class="w-full text-left p-2 bg-green-600 text-gray-900 rounded focus:outline-none hover:bg-green-500 transition"
-                      @click="copyText(verifyComandStreamlabs())"
-                  >
-                    <code>{{ verifyComandStreamlabs() }}</code>
-                  </button>
-                </div>
-
-                <div class="mb-4 text-sm">
-                  Comanda pentru useri Nightbot: !verific
-                  <button
-                      class="w-full text-left p-2 bg-green-600 text-gray-900 rounded focus:outline-none hover:bg-green-500 transition"
-                      @click="copyText(verifyComandNightBot())"
-                  >
-                    <code>{{ verifyComandNightBot() }}</code>
-                  </button>
-                </div>
-            </div>
-            <BonusLists />
-          </div>
+          <BonusLists />
         </transition>
+        <div class="p-6 text-gray-300 flex flex-row gap-4">
+          <div class="mb-4 text-sm">
+            Comanda pentru useri Streamlabs: !verific
+            <button
+                class="w-full text-left p-2 bg-green-600 text-gray-900 rounded focus:outline-none hover:bg-green-500 transition"
+                @click="copyText(verifyComandStreamlabs())"
+            >
+              <code>{{ verifyComandStreamlabs() }}</code>
+            </button>
+          </div>
+
+          <div class="mb-4 text-sm">
+            Comanda pentru useri Nightbot: !verific
+            <button
+                class="w-full text-left p-2 bg-green-600 text-gray-900 rounded focus:outline-none hover:bg-green-500 transition"
+                @click="copyText(verifyComandNightBot())"
+            >
+              <code>{{ verifyComandNightBot() }}</code>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </AppLayout>

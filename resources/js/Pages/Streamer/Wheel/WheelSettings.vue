@@ -5,13 +5,11 @@ import WheelLists from "./Components/WheelLists.vue";
 
 <template>
   <AppLayout title="Dashboard">
-    <div class="py-2">
+    <div class="py-4">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <!-- Card Container -->
-        <div class="bg-gray-900 overflow-hidden shadow-lg rounded-md transition-all duration-300">
-          <div class="p-6">
+        <div class="bg-gray-800 overflow-hidden shadow-lg rounded-md transition-all duration-300 p-6">
             <WheelLists />
-          </div>
         </div>
       </div>
     </div>

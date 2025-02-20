@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col items-center p-6 bg-gray-900 min-h-screen transition-all duration-300">
+  <div class="flex flex-col items-center p-6 transition-all duration-300 w-2/6 bg-gray-800 rounded border border-gray-700 shadow">
     <!-- Loading Spinner -->
     <div v-if="loading" class="mb-4 text-center text-gray-300 transition-all duration-300">
       Loading...
@@ -8,7 +8,7 @@
     <div class="w-full max-w-md space-y-4">
       <div class="space-y-2">
         <label for="games-input" class="block text-lg font-medium text-gray-300 transition-all duration-300">
-          Game List
+          Lista Roată
         </label>
         <textarea
             rows="20"

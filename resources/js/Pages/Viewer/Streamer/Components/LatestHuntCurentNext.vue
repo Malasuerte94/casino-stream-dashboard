@@ -3,7 +3,7 @@
     <!-- Current Playing Game -->
     <div>
       <div class="font-semibold text-white">Jocul Curent</div>
-      <div v-if="currentGame" class="flex flex-row justify-between text-gray-300">
+      <div v-if="currentGame && currentGame.game" class="flex flex-row justify-between text-gray-300">
         <div>{{ currentGame.game.name }}</div>
         <div>{{ formatCurrency(currentGame.result) }}</div>
       </div>
@@ -14,7 +14,7 @@
         <div><SvgForward class="h-5 w-5 text-white stroke-current"/></div>
         <div> Următorul Joc</div>
       </div>
-      <div v-if="nextGame" class="flex flex-row justify-between text-gray-300">
+      <div v-if="nextGame && nextGame.game" class="flex flex-row justify-between text-gray-300">
         <div>{{ nextGame.game.name }}</div>
         <div>{{ formatCurrency(nextGame.result) }}</div>
       </div>
@@ -43,11 +43,11 @@ export default {
   computed: {
     currentGame() {
       if (!this.latestHunt || !this.latestHunt.bonus_hunt_games) return null;
-      return this.latestHunt.bonus_hunt_games.find(game => Number(game.result) === 0) || null;
+      return this.latestHunt.bonus_hunt_games.find(game => Number(game.result) === 0 && game.game) || null;
     },
     nextGame() {
       if (!this.latestHunt || !this.latestHunt.bonus_hunt_games) return null;
-      const index = this.latestHunt.bonus_hunt_games.findIndex(game => Number(game.result) === 0);
+      const index = this.latestHunt.bonus_hunt_games.findIndex(game => Number(game.result) === 0 && game.game);
       return index !== -1 && index + 1 < this.latestHunt.bonus_hunt_games.length
           ? this.latestHunt.bonus_hunt_games[index + 1]
           : null;

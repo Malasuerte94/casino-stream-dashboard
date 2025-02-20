@@ -3,45 +3,62 @@
     <div class="py-6 pb-20">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 px-4">
         <div class="overflow-hidden mb-4">
-          <div class="p-6 flex flex-row justify-center items-center gap-4">
-            <div>
-              <button class="btn-primary-transparent">
-                BONUS HUNT
-              </button>
+          <div class="p-6 flex flex-row justify-center items-center gap-8 relative">
+            <!-- Left Buttons Wrapper -->
+            <div class="flex flex-row gap-4 flex-1 justify-end">
+              <button @click="navigate('hunt')" class="btn-primary-transparent">HUNT</button>
+              <button @click="navigate('battle')" class="btn-primary-transparent">BATTLE</button>
             </div>
-            <div><img :src="streamer.avatar" alt="Main User" class="rounded-full h-20 w-20 object-cover"></div>
-            <div>
-              <button class="btn-primary-transparent">
-                BONUS BATTLE
-              </button>
+
+            <!-- Centered User Logo -->
+            <div class="flex-shrink-0">
+              <img :src="streamer.avatar" alt="Main User" class="rounded-full h-20 w-20 object-cover">
+            </div>
+
+            <!-- Right Buttons Wrapper -->
+            <div class="flex flex-row gap-4 flex-1 justify-start">
+              <button @click="navigate('referral')" class="btn-primary-transparent">REFERRAL</button>
+              <button @click="navigate('social')" class="btn-primary-transparent">SOCIAL</button>
             </div>
           </div>
         </div>
-        <ViewStreamerHunt :steamerId="steamerId" />
+        <!-- Dynamically load the correct component -->
+        <transition name="fade" mode="out-in">
+          <component v-if="!loading" :is="currentComponent" :steamerId="steamerId"></component>
+          <div v-else class="text-center py-6 text-gray-400">Se încarcă...</div>
+        </transition>
       </div>
     </div>
   </ViewerDash>
 </template>
 <script>
 import ViewerDash from '@/Layouts/ViewerDash.vue';
+import { router } from '@inertiajs/vue3';
 import axios from "axios";
 import ViewStreamerHunt from "./Components/ViewStreamerHunt.vue";
+import Referrals from "./Components/Referrals.vue";
 
 export default {
-  components: {ViewStreamerHunt, ViewerDash},
+  components: {ViewStreamerHunt, ViewerDash, Referrals},
   data() {
     return {
       streamer: {},
+      loading: true,
     };
   },
   props: {
     steamerId: {
       type: Number,
       required: true
+    },
+    section: {
+      type: String,
+      required: true
     }
   },
   async mounted() {
     await this.getStreamer();
+    this.loading = false;
   },
   methods: {
     async getStreamer() {
@@ -51,6 +68,31 @@ export default {
             this.streamer = response.data.streamer
           });
     },
+    navigate(section) {
+      this.loading = true;
+      router.get(`/streamer/${this.steamerId}/${section}`, {
+        onSuccess: () => {
+          this.loading = false;
+        }
+      });
+    }
+  },
+  computed: {
+    currentComponent() {
+      const sections = {
+        hunt: 'ViewStreamerHunt',
+        referral: 'Referrals'
+      };
+      return sections[this.section] || 'ViewStreamerHunt';
+    }
   }
 }
 </script>
+<style scoped>
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.3s ease-in-out;
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+}
+</style>

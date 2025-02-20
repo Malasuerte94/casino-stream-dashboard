@@ -218,6 +218,7 @@ export default {
             console.log(error);
           }).finally(async () => {
             await this.getLatestList();
+            this.$emit("update");
             this.loading = false;
           });
     },

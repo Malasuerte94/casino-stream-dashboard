@@ -33,10 +33,12 @@
             :key="game.id"
             class="backdrop-blur-xl shadow-lg shadow-black/40"
             :class="index % 2 === 0 ? 'bg-white/10' : 'bg-white/20'">
-          <td class="px-2 py-1 md:px-4 md:py-3 flex items-center gap-2">{{ game.game.name }}</td>
-          <td class="px-2 py-1 md:px-4 md:py-3 text-left">{{ game.stake }}</td>
-          <td class="px-2 py-1 md:px-4 md:py-3 text-left">{{ formatCurrency(game.result) }}</td>
-          <td class="px-2 py-1 md:px-4 md:py-3 text-left">{{ game.multiplier }}x</td>
+          <template v-if="game.game && game.game.name">
+            <td class="px-2 py-1 md:px-4 md:py-3 flex items-center gap-2">{{ game.game.name }}</td>
+            <td class="px-2 py-1 md:px-4 md:py-3 text-left">{{ game.stake }}</td>
+            <td class="px-2 py-1 md:px-4 md:py-3 text-left">{{ formatCurrency(game.result) }}</td>
+            <td class="px-2 py-1 md:px-4 md:py-3 text-left">{{ game.multiplier }}x</td>
+          </template>
         </tr>
         </tbody>
       </table>
