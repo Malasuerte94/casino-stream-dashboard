@@ -149,6 +149,7 @@ export default {
   },
   async mounted() {
     await this.getData();
+    this.startAutoScroll();
   },
   methods: {
     async getData() {
@@ -208,6 +209,11 @@ export default {
         month: "long",
         year: "numeric",
       }).format(date);
+    },
+    startAutoScroll() {
+      setInterval(() => {
+        this.activeIndex = (this.activeIndex + 1) % 3;
+      }, 5000);
     }
   },
 };

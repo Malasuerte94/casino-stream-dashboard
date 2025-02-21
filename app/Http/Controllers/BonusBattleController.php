@@ -128,7 +128,7 @@ class BonusBattleController extends Controller
                 ->first();
         }
 
-        $battleInfo = $this->getBonusBattleInforForBattle($activeBattle);
+        $battleInfo = $this->getBonusBattleInfoForBattle($activeBattle);
         return response()->json($battleInfo);
     }
 
@@ -143,7 +143,7 @@ class BonusBattleController extends Controller
         $allBattles = $user->bonusBattles()->orderBy('created_at', 'desc')->get();
 
         foreach ($allBattles as $battle) {
-            $battleInfo = $this->getBonusBattleInforForBattle($battle);
+            $battleInfo = $this->getBonusBattleInfoForBattle($battle);
             $battles[] = $battleInfo;
         }
         return response()->json(['bonusBattles' => $battles]);
@@ -156,8 +156,8 @@ class BonusBattleController extends Controller
      */
     public function getSingleBonusBattleInfo($id): JsonResponse {
         $bonusBattle = BonusBattle::findOrFail($id);
-        $battleInfo = $this->getBonusBattleInforForBattle($bonusBattle);
-        return response()->json(['bonusBattle' => $battleInfo]);
+        $battleInfo = $this->getFullBonusBattleInfoForBattle($bonusBattle);
+        return response()->json($battleInfo);
     }
 
 
@@ -165,7 +165,89 @@ class BonusBattleController extends Controller
      * @param $activeBattle
      * @return array
      */
-    private function getBonusBattleInforForBattle($activeBattle): array
+    private function getFullBonusBattleInfoForBattle($activeBattle): array
+    {
+        $result = [
+            'bonusBattle' => [
+                'id' => $activeBattle->id,
+                'name' => $activeBattle->name,
+                'stages' => []
+            ]
+        ];
+
+        $totalCost = 0;
+        $totalResult = 0;
+
+        foreach ($activeBattle->stages as $stage) {
+            $stageData = [
+                'id' => $stage->id,
+                'name' => $stage->name,
+                'brackets' => []
+            ];
+
+            foreach ($stage->brackets as $bracket) {
+                $bracketData = [
+                    'id' => $bracket->id,
+                    'participantA' => [
+                        'id' => $bracket->participant_a_id,
+                        'game' => $bracket->participantA->game->name ?? 'N/A'
+                    ],
+                    'participantB' => [
+                        'id' => $bracket->participant_b_id,
+                        'game' => $bracket->participantB->game->name ?? 'N/A'
+                    ],
+                    'winner' => [
+                        'id' => $bracket->winner_id,
+                        'game' => $bracket->winner->game->name ?? 'N/A'
+                    ],
+                    'scores' => []
+                ];
+
+                foreach ($bracket->scores as $score) {
+                    $bracketData['scores'][] = [
+                        'participant_id' => $score->bonus_concurrent_id,
+                        'cost' => $score->cost_buy,
+                        'result' => $score->result_buy,
+                        'score' => $score->score,
+                        'is_winner' => $score->bonus_concurrent_id === $bracket->winner_id
+                    ];
+
+                    $totalCost += $score->cost_buy;
+                    $totalResult += $score->result_buy;
+                }
+
+                $stageData['brackets'][] = $bracketData;
+            }
+
+            $result['bonusBattle']['stages'][] = $stageData;
+        }
+
+        $result['bonusBattle']['summary'] = [
+            'total_cost' => $totalCost,
+            'total_result' => $totalResult,
+            'profit' => $totalResult - $totalCost,
+            'winning_game' => $result['bonusBattle']['stages'][0]['brackets'][0]['winner']['game'] ?? 'N/A'
+        ];
+
+        $allBattleBrackets = $activeBattle->stages->flatMap->brackets;
+        $result['bonusBattle']['participants'] = $activeBattle->concurrents()->get()->map(function ($concurrent) use ($allBattleBrackets) {
+            $isEliminated = $allBattleBrackets->contains(function ($bracket) use ($concurrent) {
+                return $bracket->is_finished && $bracket->winner_id !== $concurrent->id &&
+                    ($bracket->participant_a_id === $concurrent->id || $bracket->participant_b_id === $concurrent->id);
+            });
+            $concurrent->load('game');
+            return array_merge($concurrent->toArray(), ['is_eliminated' => $isEliminated]);
+        })->toArray();
+
+        return $result;
+    }
+
+
+    /**
+     * @param $activeBattle
+     * @return array
+     */
+    private function getBonusBattleInfoForBattle($activeBattle): array
     {
         $activeInfo = $this->getCurentBattleDetails($activeBattle);
         $activeStage = $activeBattle->lastActiveStage ?? $activeBattle->lastEndedStage;

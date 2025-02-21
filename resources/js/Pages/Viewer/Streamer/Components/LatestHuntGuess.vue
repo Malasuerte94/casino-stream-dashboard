@@ -17,7 +17,7 @@
     </div>
   </div>
 
-  <div class="relative" v-if="!$page.props.user_streamer && latestHunt">
+  <div class="relative" v-if="latestHunt">
     <!-- Main Form -->
     <div
         class="backdrop-blur-xl bg-white/10 shadow-lg shadow-black/40 border border-white/20 p-4 rounded-lg gap-4 flex flex-col text-white relative"
@@ -113,7 +113,7 @@
     >
       <div class=" p-1 rounded-lg text-white">
 
-        <div class="flex flex-col text-xs">
+        <div class="flex flex-col text-xs" v-if="!notPredicted">
           <div class="text-sm font-semibold text-left">Predicțiile tale</div>
           <div class="w-full mt-2 border border-gray-700 rounded-lg flex flex-row">
             <div class="flex flex-col">
@@ -142,6 +142,7 @@
             </div>
           </div>
         </div>
+        <div v-else class="text-sm font-semibold text-left">Nu ai predicții pentru acest hunt</div>
       </div>
     </div>
   </div>
@@ -182,7 +183,8 @@ export default {
         lowestMultiplierWinner: "Cel mai Mic Multiplicator",
         exactBiggestMultiplierGame: "Cel mai bun joc",
         exactLowestMultiplierGame: "Cel mai prost joc",
-      }
+      },
+      notPredicted: false
     };
   },
   async mounted() {
@@ -196,12 +198,15 @@ export default {
       try {
         const response = await axios.get(`/api/viewer/get-prediction/${this.latestHunt.id}`);
         if (response.data && response.data.prediction) {
+          this.notPredicted = false;
           this.existingPrediction = response.data.prediction;
           this.highestMulti = response.data.prediction.highestMulti;
           this.lowestMulti = response.data.prediction.lowestMulti;
           this.totalPayout = response.data.prediction.totalPayout;
           this.bestGame = response.data.prediction.bestGame;
           this.worstGame = response.data.prediction.worstGame;
+        } else if(!this.latestHunt.is_open) {
+          this.notPredicted = true;
         }
       } catch (error) {
         console.error("Error fetching existing prediction:", error);
