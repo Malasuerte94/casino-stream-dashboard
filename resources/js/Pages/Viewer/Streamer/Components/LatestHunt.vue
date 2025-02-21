@@ -47,6 +47,7 @@
     <!-- Hunt Stats -->
     <div class="md:w-1/2 w-full flex flex-col gap-4 text-white rounded-lg">
       <LatestHuntGuess :latestHunt="latestHunt" listType="hunt" :currency="currency" />
+      <LatestHuntGuessers :latestHunt="latestHunt" listType="hunt" :currency="currency" />
       <div class="flex flex-col md:flex-row w-full gap-4">
         <div class="w-full md:w-1/2">
           <LatestHuntStats :latestHunt="latestHunt" :currency="currency" />
@@ -74,8 +75,10 @@ import LatestHuntHighLowX from "./LatestHuntHighLowX.vue";
 import LatestHuntHighLowWin from "./LatestHuntHighLowWin.vue";
 import LatestHuntGuess from "./LatestHuntGuess.vue";
 import axios from "axios";
+import LatestHuntGuessers from "./LatestHuntGuessers.vue";
 export default {
   components: {
+    LatestHuntGuessers,
     LatestHuntGuess,
     LatestHuntHighLowWin,
     LatestHuntHighLowX,

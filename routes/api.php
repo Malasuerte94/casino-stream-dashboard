@@ -144,6 +144,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::post('add-prediction', [GuessEntriesController::class, 'postPrediction']);
         Route::get('get-prediction/{id}', [GuessEntriesController::class, 'getPrediction']);
+        Route::get('get-predictions/{id}', [GuessEntriesController::class, 'getPredictions']);
     });
 });
 

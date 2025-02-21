@@ -103,7 +103,7 @@ class GuessEntriesController extends Controller
      * @param int $id
      * @return JsonResponse
      */
-    public function getPrediction($id): JsonResponse
+    public function getPrediction(int $id): JsonResponse
     {
         try {
             $user = auth()->user();
@@ -134,4 +134,31 @@ class GuessEntriesController extends Controller
             return response()->json(['error' => $e->getMessage()], 400);
         }
     }
+
+    /**
+     * Retrieve the user's existing prediction for a given bonus.
+     *
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function getPredictions(int $id): JsonResponse
+    {
+        try {
+            $predictions = GuessEntry::where('bonus_hunt_id', $id)
+                ->with(['user:id,name,profile_photo_path']) // Eager load user with selected fields
+                ->get();
+
+            if ($predictions->isEmpty()) {
+                return response()->json(['predictions' => null], 200);
+            }
+
+            return response()->json([
+                'predictions' => $predictions
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
+
 }

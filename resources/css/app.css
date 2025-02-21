@@ -185,3 +185,34 @@
 .fade-enter, .fade-leave-to {
     opacity: 0;
 }
+
+
+
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px; /* Thin scrollbar */
+    height: 6px; /* Thin horizontal scrollbar */
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #353681; /* Indigo track */
+    border-radius: 10px;
+    margin: 2px; /* Adds spacing to prevent full height track */
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #6366f1; /* Primary Indigo color */
+    border-radius: 10px; /* Ensures rounded corners */
+    border: 2px solid #353681; /* Creates a padding effect */
+    min-height: 20px; /* Makes sure the handle isn't too small */
+    transition: background 0.3s ease-in-out;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #4f46e5; /* Darker Indigo on hover */
+}
+
