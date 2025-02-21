@@ -191,21 +191,11 @@ class BonusListController extends Controller
 
     }
 
-    public function getBonusWinner(int $streamerId): JsonResponse
+    public function getBonusWinner(int $bonuHuntId): JsonResponse
     {
-        $streamer = User::find($streamerId);
-
-        if (!$streamer) {
-            return response()->json(['error' => 'Streamer not found'], 404);
-        }
-
-        $settings = $streamer->userSettings->where('name', 'bonus_list')->first();
 
         // Get latest ended bonus
-        $bonus = ($settings->value === 'buy')
-            ? $streamer->bonusBuys()->where('ended', true)->latest()->first()
-            : $streamer->bonusHunts()->where('ended', true)->latest()->first();
-
+        $bonus = BonusHunt::findOrFail($bonuHuntId);
         if (!$bonus) {
             return response()->json(['error' => 'No ended bonus found'], 404);
         }
@@ -221,7 +211,7 @@ class BonusListController extends Controller
 
         return response()->json([
             'bonus_id' => $bonus->id,
-            'bonus_type' => $settings->value,
+            'bonus_type' => 'hunt',
             'results' => [
                 'result' => $bonus->result,
                 'biggestMultiplier' => $bonus->bonusHuntGames()->max('multiplier'),

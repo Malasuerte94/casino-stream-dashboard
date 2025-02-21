@@ -240,9 +240,8 @@ export default {
     },
     async fetchWinners() {
       try {
-        const response = await axios.get(`/api/get-bonus-winner/${this.latestHunt.user_id}`);
+        const response = await axios.get(`/api/get-bonus-winner/${this.latestHunt.id}`);
         if(response.data && response.data.winners) {
-          console.log(response.data.winners);
           this.winners = response.data.winners;
         } else {
           this.winners = null;
