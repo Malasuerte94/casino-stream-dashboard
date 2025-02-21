@@ -69,6 +69,8 @@ export default {
         const response = await axios.get(`/api/viewer/get-predictions/${this.latestHunt.id}`);
         if (response.data && response.data.predictions) {
           this.allGuessers = response.data.predictions;
+        } else {
+          this.allGuessers = [];
         }
       } catch (error) {
         console.error("Error fetching existing predictions:", error);
@@ -86,6 +88,11 @@ export default {
         hour12: false
       }).format(date);
     },
+  },
+  watch: {
+    latestHunt() {
+      this.fetchExistingPredictions();
+    }
   }
 };
 </script>

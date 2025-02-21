@@ -218,7 +218,6 @@ export default {
 
     async submitPredictions() {
       if (!this.latestHunt.is_open) return;
-
       const payload = {
         highestMulti: this.highestMulti,
         lowestMulti: this.lowestMulti,
@@ -228,12 +227,11 @@ export default {
         bonusId: this.latestHunt.id,
         listType: this.listType
       };
-
       try {
         const response = await axios.post("/api/viewer/add-prediction", payload);
         this.notification = response.data.message;
-        await this.fetchExistingPrediction(); // Refresh prediction after submission
-        setTimeout(() => (this.notification = null), 3000); // Hide notification after 3s
+        await this.fetchExistingPrediction();
+        setTimeout(() => (this.notification = null), 3000);
       } catch (error) {
         console.error("Error submitting predictions:", error);
         this.notification = "Eroare la trimiterea predicției!";
@@ -243,7 +241,12 @@ export default {
     async fetchWinners() {
       try {
         const response = await axios.get(`/api/get-bonus-winner/${this.latestHunt.user_id}`);
-        this.winners = response.data.winners;
+        if(response.data && response.data.winners) {
+          console.log(response.data.winners);
+          this.winners = response.data.winners;
+        } else {
+          this.winners = null;
+        }
       } catch (error) {
         console.error("No winners found.");
       }
@@ -251,6 +254,12 @@ export default {
     getGameName(gameId) {
       const game = this.latestHunt.bonus_hunt_games.find(g => g.id === gameId);
       return game ? game.game.name : "Necunoscut";
+    }
+  },
+  watch: {
+    latestHunt() {
+      this.fetchExistingPrediction();
+      this.fetchWinners();
     }
   }
 };
