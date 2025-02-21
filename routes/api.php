@@ -193,7 +193,7 @@ Route::get('/ref-list/{id}', [ReferralController::class, 'getReferrals']);
 
 // Viewer Action Routes
 Route::get('/show-entries/{id}/{type}', [GuessEntriesController::class, 'showEntries']);
-Route::get('/get-bonus-winner/{id}', [BonusListController::class, 'getBonusWinner']);
+Route::get('/get-bonus-winner/{id}', [BonusListController::class, 'getBonusHuntWinner']);
 // Viewer Action Routes
 
 Route::get('/bonus-battle-info/{id}', [BonusBattleController::class, 'getBonusBattleInfo']);

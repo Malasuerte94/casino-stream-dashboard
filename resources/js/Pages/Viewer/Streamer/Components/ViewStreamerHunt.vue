@@ -13,8 +13,8 @@
             <div>ULTIMUL HUNT</div>
           </div>
           <div class="bg-gray-800 px-2 py-1 rounded-lg text-xs font-bold"
-               :class="{ 'text-gray-500': latestBonusHunt.ended, 'text-green-500': !latestBonusHunt.ended }">
-            {{ latestBonusHunt.ended ? 'TERMINAT' : 'ACTIV' }}
+               :class="{ 'text-gray-500': latestHunt.ended, 'text-green-500': !latestHunt.ended }">
+            {{ latestHunt.ended ? 'TERMINAT' : 'ACTIV' }}
           </div>
         </div>
 
@@ -23,14 +23,14 @@
             <div>
               <SvgGame class="h-5 w-5 text-indigo-500 fill-current"/>
             </div>
-            <div> {{ latestBonusHunt.bonus_hunt_games.length }}</div>
+            <div> {{ latestHunt.bonus_hunt_games.length }}</div>
           </div>
           <div class="flex flex-row items-center gap-1 bg-gray-700 px-2 py-1 rounded-lg">
             <div>
               <SvgMoney class="h-5 w-5 text-green-500"/>
             </div>
             <div>
-              {{ latestBonusHunt.start }} {{ currency }}
+              {{ latestHunt.start }} {{ currency }}
             </div>
           </div>
         </div>
@@ -39,7 +39,7 @@
           <div>
             <SvgCalendar class="w-4 h-4 text-gray-500 stroke-current"/>
           </div>
-          <div>{{ convertDate(latestBonusHunt.created_at) }}</div>
+          <div>{{ convertDate(latestHunt.created_at) }}</div>
         </div>
       </div>
 
@@ -101,10 +101,10 @@
     </div>
     <template v-if="bonusHuntHistory.length > 0">
       <transition name="fade" mode="out-in">
-        <LatestHunt :huntId="latestBonusHunt.id" :currency="currency"/>
+        <LatestHunt :huntId="latestHunt.id" :currency="currency"/>
       </transition>
       <transition name="fade" mode="out-in">
-        <HuntHistory @seeHunt="changeLatestBonusHunt" :bonusHuntHistory="bonusHuntHistory" :currency="currency"/>
+        <HuntHistory @seeHunt="changeLatestHunt" :bonusHuntHistory="bonusHuntHistory" :currency="currency"/>
       </transition>
     </template>
   </div>
@@ -134,7 +134,7 @@ export default {
       loading: true,
       streamer: {},
       bonusHuntHistory: [],
-      latestBonusHunt: null,
+      latestHunt: null,
       refreshInterval: null,
       currency: 'RON',
       activeIndex: 0,
@@ -161,7 +161,7 @@ export default {
       try {
         const response = await axios.get("/api/viewer/get-bh-history/" + this.steamerId);
         this.bonusHuntHistory = response.data.bonusHunts;
-        this.latestBonusHunt = this.bonusHuntHistory[0]
+        this.latestHunt = this.bonusHuntHistory[0]
       } catch (error) {
         console.error("Error fetching bonus hunt history:", error);
       }
@@ -199,8 +199,8 @@ export default {
         console.error("Error registering click:", error);
       }
     },
-    changeLatestBonusHunt(bonusHunt) {
-      this.latestBonusHunt = bonusHunt;
+    changeLatestHunt(bonusHunt) {
+      this.latestHunt = bonusHunt;
     },
     convertDate(isoString) {
       const date = new Date(isoString);

@@ -191,41 +191,71 @@ class BonusListController extends Controller
 
     }
 
-    public function getBonusWinner(int $bonuHuntId): JsonResponse
+    public function getBonusHuntWinner(int $bonusHuntId): JsonResponse
     {
+        $bonus = BonusHunt::findOrFail($bonusHuntId);
 
-        // Get latest ended bonus
-        $bonus = BonusHunt::findOrFail($bonuHuntId);
         if (!$bonus) {
             return response()->json(['error' => 'No ended bonus found'], 404);
         }
 
-        // Fetch the winners entry
-        $winner = Winner::where('bonus_hunt_id', $bonus->id)
-            ->orWhere('bonus_buy_id', $bonus->id)
-            ->first();
+        $winner = Winner::where('bonus_hunt_id', $bonus->id)->first();
 
         if (!$winner) {
             return response()->json(['message' => 'No winners found'], 204);
         }
+
+        $multipliers = $bonus->bonusHuntGames()->pluck('multiplier');
+        $biggestMultiplier = $multipliers->max();
+        $lowestMultiplier = $multipliers->min();
 
         return response()->json([
             'bonus_id' => $bonus->id,
             'bonus_type' => 'hunt',
             'results' => [
                 'result' => $bonus->result,
-                'biggestMultiplier' => $bonus->bonusHuntGames()->max('multiplier'),
-                'lowestMultiplier' => $bonus->bonusHuntGames()->min('multiplier'),
+                'biggestMultiplier' => $biggestMultiplier,
+                'lowestMultiplier' => $lowestMultiplier,
             ],
             'winners' => [
-                'resultWinner' => $winner->win_closest_result ? $winner->closestResult->user : null,
-                'biggestMultiplierWinner' => $winner->win_closest_biggest_multi ? $winner->closestBiggestMulti->user : null,
-                'lowestMultiplierWinner' => $winner->win_closest_lowest_multi ? $winner->closestLowestMulti->user : null,
-                'exactBiggestMultiplierGame' => $winner->win_exact_biggest_multi_game ? $winner->exactBiggestMultiGame->user : null,
-                'exactLowestMultiplierGame' => $winner->win_exact_lowest_multi_game ? $winner->exactLowestMultiGame->user : null,
+                'resultWinner' => $winner->win_closest_result
+                    ? [
+                        'user' => $winner->closestResult->user,
+                        'estimated' => $winner->closestResult->estimated
+                    ]
+                    : null,
+
+                'biggestMultiplierWinner' => $winner->win_closest_biggest_multi
+                    ? [
+                        'user' => $winner->closestBiggestMulti->user,
+                        'estimated' => $winner->closestBiggestMulti->biggest_multi
+                    ]
+                    : null,
+
+                'lowestMultiplierWinner' => $winner->win_closest_lowest_multi
+                    ? [
+                        'user' => $winner->closestLowestMulti->user,
+                        'estimated' => $winner->closestLowestMulti->lowest_multi
+                    ]
+                    : null,
+
+                'exactBiggestMultiplierGame' => $winner->win_exact_biggest_multi_game
+                    ? [
+                        'user' => $winner->exactBiggestMultiGame->user,
+                        'game_id' => $winner->exactBiggestMultiGame->game_highest_id
+                    ]
+                    : null,
+
+                'exactLowestMultiplierGame' => $winner->win_exact_lowest_multi_game
+                    ? [
+                        'user' => $winner->exactLowestMultiGame->user,
+                        'game_id' => $winner->exactLowestMultiGame->game_lowest_id
+                    ]
+                    : null,
             ]
         ], 200);
     }
+
 
 
 }

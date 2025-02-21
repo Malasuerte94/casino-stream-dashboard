@@ -4,14 +4,29 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <div v-for="(winner, key) in winners" :key="key"
            class="flex items-center gap-3 bg-gray-900/80 p-4 rounded-lg shadow-lg border border-gray-700">
-        <img v-if="winner?.profile_photo_path" :src="winner.profile_photo_path" alt="User Avatar" class="w-10 h-10 rounded-full border border-gray-600">
+        <img v-if="winner?.user?.profile_photo_path" :src="winner.user.profile_photo_path" alt="User Avatar"
+             class="w-10 h-10 rounded-full border border-gray-600">
         <div v-else class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center text-white text-xs">
           🏅
         </div>
-        <!-- Winner Details -->
         <div class="flex flex-col">
           <div class="text-gray-300 text-xs uppercase">{{ winnerTitles[key] }}</div>
-          <div class="font-semibold text-white">{{ winner ? (winner.yt_name || winner.name || "N/A") : "N/A" }}</div>
+          <div class="font-semibold text-white">{{ winner?.user?.yt_name || winner?.user?.name || "N/A" }}</div>
+          <div v-if="key === 'resultWinner'">
+            <span>{{ formatCurrency(winner.estimated) }}</span>
+            <span :class="getDifferenceClass(winner.estimated, huntResults.result)">
+              ({{ formatDifference(winner.estimated, huntResults.result) }})
+            </span>
+          </div>
+          <div v-else-if="key === 'biggestMultiplierWinner' || key === 'lowestMultiplierWinner'">
+            <span>{{ formatMultiplier(winner.estimated) }}</span>
+            <span :class="getDifferenceClass(winner.estimated, huntResults[key.replace('Winner', '')])">
+              ({{ formatMultiplierDifference(winner.estimated, huntResults[key.replace('Winner', '')]) }})
+            </span>
+          </div>
+          <div v-else-if="key === 'exactBiggestMultiplierGame' || key === 'exactLowestMultiplierGame'">
+            <span>{{ getGameName(winner?.game_id) }}</span>
+          </div>
         </div>
       </div>
     </div>
@@ -177,6 +192,7 @@ export default {
       existingPrediction: null,
       notification: null,
       winners: null,
+      huntResults: null,
       winnerTitles: {
         resultWinner: "Cel mai Apropiat Rezultat",
         biggestMultiplierWinner: "Cel mai Mare Multiplicator",
@@ -243,8 +259,10 @@ export default {
         const response = await axios.get(`/api/get-bonus-winner/${this.latestHunt.id}`);
         if(response.data && response.data.winners) {
           this.winners = response.data.winners;
+          this.huntResults = response.data.results;
         } else {
           this.winners = null;
+          this.huntResults = null;
         }
       } catch (error) {
         console.error("No winners found.");
@@ -253,6 +271,23 @@ export default {
     getGameName(gameId) {
       const game = this.latestHunt.bonus_hunt_games.find(g => g.id === gameId);
       return game ? game.game.name : "Necunoscut";
+    },
+    formatCurrency(value) {
+      return `${Number(value).toLocaleString()} ${this.currency}`;
+    },
+    formatMultiplier(value) {
+      return `${Number(value)}x`;
+    },
+    formatMultiplierDifference(estimated, actual) {
+      const diff = actual - estimated;
+      return diff > 0 ? `+${diff}x` : `${diff}x`;
+    },
+    formatDifference(estimated, actual) {
+      const diff = actual - estimated;
+      return diff > 0 ? `+${diff.toLocaleString()} ${this.currency}` : `${diff.toLocaleString()} ${this.currency}`;
+    },
+    getDifferenceClass(estimated, actual) {
+      return actual - estimated >= 0 ? 'text-green-400' : 'text-red-400';
     }
   },
   watch: {
