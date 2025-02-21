@@ -55,7 +55,7 @@ const logout = () => {
 
             <div class="hidden sm:flex sm:items-center sm:ml-6">
               <!-- Settings Dropdown -->
-              <div class="ml-3 relative">
+              <div class="ml-3 relative" v-if="$page.props.user.id">
                 <Dropdown align="right" width="48">
                   <template #trigger>
                     <button v-if="$page.props.jetstream.managesProfilePhotos" class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition">
@@ -78,25 +78,34 @@ const logout = () => {
                     <div class="block px-4 py-2 text-xs text-gray-400">
                       Manage Account
                     </div>
-
-                    <DropdownLink :href="route('profile.show')">
-                      Profile
-                    </DropdownLink>
-
-                    <DropdownLink v-if="$page.props.jetstream.hasApiFeatures" :href="route('api-tokens.index')">
-                      API Tokens
-                    </DropdownLink>
-
-                    <div class="border-t border-gray-900" />
-
-                    <!-- Authentication -->
-                    <form @submit.prevent="logout">
-                      <DropdownLink as="button">
-                        Log Out
+                      <DropdownLink :href="route('profile.show')">
+                        Profile
                       </DropdownLink>
-                    </form>
+
+                      <DropdownLink v-if="$page.props.jetstream.hasApiFeatures" :href="route('api-tokens.index')">
+                        API Tokens
+                      </DropdownLink>
+
+                      <div class="border-t border-gray-900" />
+
+                      <!-- Authentication -->
+                      <form @submit.prevent="logout">
+                        <DropdownLink as="button">
+                          Log Out
+                        </DropdownLink>
+                      </form>
                   </template>
                 </Dropdown>
+              </div>
+              <div v-else>
+                <div class="flex items-center gap-2">
+                  <NavLink :href="route('dashboard')">
+                    Logare
+                  </NavLink>
+                  <NavLink :href="route('register')">
+                    Înregistrare
+                  </NavLink>
+                </div>
               </div>
             </div>
 

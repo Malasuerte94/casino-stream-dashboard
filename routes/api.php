@@ -133,20 +133,27 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/test', [BonusBattleController::class, 'test']);
 
+});
+
+//FOR USER PUBLIC
+Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('viewer')->group(function () {
         Route::get('get-yt-code', [ViewerController::class, 'getVerifyCode']);
-        Route::get('get-streamer/{id}', [ViewerController::class, 'getSteamer']);
-        Route::get('get-bh-history/{id}', [ViewerController::class, 'getBonusHuntHistory']);
-        Route::get('get-bh/{id}', [ViewerController::class, 'getBonusHunt']);
-
-        Route::get('get-bb-history/{id}', [BonusBattleController::class, 'getBonusBattleHistory']);
-        Route::get('get-bb/{id}', [BonusBattleController::class, 'getSingleBonusBattleInfo']);
-
         Route::post('add-prediction', [GuessEntriesController::class, 'postPrediction']);
         Route::get('get-prediction/{id}', [GuessEntriesController::class, 'getPrediction']);
-        Route::get('get-predictions/{id}', [GuessEntriesController::class, 'getPredictions']);
     });
 });
+
+Route::prefix('viewer')->group(function () {
+    Route::get('get-streamer/{id}', [ViewerController::class, 'getSteamer']);
+    Route::get('get-bh-history/{id}', [ViewerController::class, 'getBonusHuntHistory']);
+    Route::get('get-bh/{id}', [ViewerController::class, 'getBonusHunt']);
+    Route::get('get-bb-history/{id}', [BonusBattleController::class, 'getBonusBattleHistory']);
+    Route::get('get-bb/{id}', [BonusBattleController::class, 'getSingleBonusBattleInfo']);
+    Route::get('get-predictions/{id}', [GuessEntriesController::class, 'getPredictions']);
+});
+//FOR USER PUBLIC
+
 
 // Public Routes (No Authentication Required)
 Route::get('/stream', [StreamController::class, 'index']);

@@ -108,7 +108,7 @@
 
     <!-- Overlay when hunt is closed -->
     <div
-        v-if="!latestHunt.is_open"
+        v-if="!$page.props.user.id || !latestHunt.is_open"
         class="absolute inset-0 bg-black/30 backdrop-blur-md flex items-center justify-center rounded-lg p-0"
     >
       <div class=" p-1 rounded-lg text-white">
@@ -209,6 +209,9 @@ export default {
           this.notPredicted = true;
         }
       } catch (error) {
+        if(!this.$page.props.user.id) {
+          this.notPredicted = true;
+        }
         console.error("Error fetching existing prediction:", error);
       }
     },

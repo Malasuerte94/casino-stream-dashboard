@@ -88,10 +88,12 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Viewer/MainUser');
     })->name('dashboard');
-    Route::get('/streamer/{id}/{section?}', [ViewerController::class, 'viewStreamer'])->name('view-streamer');
 });
 
+Route::get('/streamer/{id}/{section?}', [ViewerController::class, 'viewStreamer'])->name('view-streamer');
 
+
+//STREAMER
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
