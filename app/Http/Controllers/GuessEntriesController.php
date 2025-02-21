@@ -114,7 +114,6 @@ class GuessEntriesController extends Controller
 
             // Find existing prediction
             $prediction = GuessEntry::where('bonus_hunt_id', $id)
-                ->orWhere('bonus_buy_id', $id)
                 ->where('user_id', $user->id)
                 ->first();
 
