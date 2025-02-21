@@ -35,7 +35,7 @@ const submit = () => {
 <template>
   <div class="min-h-screen flex flex-col">
     <!-- Header -->
-    <header class="bg-gray-800 py-4 shadow-md">
+    <header class="py-4 backdrop-blur-xl bg-white/10 shadow-lg shadow-black/10">
       <div class="max-w-6xl mx-auto px-4 flex items-center justify-between">
         <h1 class="text-2xl font-bold">Dashboard Păcănele</h1>
         <a

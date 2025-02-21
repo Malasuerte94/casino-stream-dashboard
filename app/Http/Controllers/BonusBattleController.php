@@ -118,8 +118,7 @@ class BonusBattleController extends Controller
      */
     public function getBonusBattleInfo($id): JsonResponse
     {
-        $userId = $id;
-        $user = User::findOrFail($userId);
+        $user = User::findOrFail($id);
 
         $activeBattle = $user->bonusBattles()->where('active', true)->first();
 
@@ -129,6 +128,45 @@ class BonusBattleController extends Controller
                 ->first();
         }
 
+        $battleInfo = $this->getBonusBattleInforForBattle($activeBattle);
+        return response()->json($battleInfo);
+    }
+
+    /**
+     * Get PUBLIC BATTLEs INFO
+     * @param $id
+     * @return JsonResponse
+     */
+    public function getBonusBattleHistory($id): JsonResponse {
+        $user = User::findOrFail($id);
+        $battles = [];
+        $allBattles = $user->bonusBattles()->orderBy('created_at', 'desc')->get();
+
+        foreach ($allBattles as $battle) {
+            $battleInfo = $this->getBonusBattleInforForBattle($battle);
+            $battles[] = $battleInfo;
+        }
+        return response()->json(['bonusBattles' => $battles]);
+    }
+
+    /**
+     * Get PUBLIC BATTLE INFO
+     * @param $id
+     * @return JsonResponse
+     */
+    public function getSingleBonusBattleInfo($id): JsonResponse {
+        $bonusBattle = BonusBattle::findOrFail($id);
+        $battleInfo = $this->getBonusBattleInforForBattle($bonusBattle);
+        return response()->json(['bonusBattle' => $battleInfo]);
+    }
+
+
+    /**
+     * @param $activeBattle
+     * @return array
+     */
+    private function getBonusBattleInforForBattle($activeBattle): array
+    {
         $activeInfo = $this->getCurentBattleDetails($activeBattle);
         $activeStage = $activeBattle->lastActiveStage ?? $activeBattle->lastEndedStage;
 
@@ -189,8 +227,6 @@ class BonusBattleController extends Controller
             return $score->cost_buy;
         });
 
-
-
         $activeInfo['stage_brackets'] = $stageBrackets;
         $activeInfo['all_concurrents'] = $allConcurrents;
         $activeInfo['current_score'] = $activeStage->activeBracket?->scores()->get();
@@ -200,9 +236,8 @@ class BonusBattleController extends Controller
         $activeInfo['total_profit'] = $totalProfit;
         $activeInfo['total_cost'] = $totalCost;
 
-        return response()->json($activeInfo);
+        return $activeInfo;
     }
-
 
     private function getCurentBattleDetails($activeBattle): array
     {

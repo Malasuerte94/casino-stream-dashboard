@@ -24,8 +24,7 @@
         </div>
         <!-- Dynamically load the correct component -->
         <transition name="fade" mode="out-in">
-          <component v-if="!loading" :is="currentComponent" :steamerId="steamerId"></component>
-          <div v-else class="text-center py-6 text-gray-400">Se încarcă...</div>
+            <component :is="currentComponent" :steamerId="steamerId"></component>
         </transition>
       </div>
     </div>
@@ -36,10 +35,11 @@ import ViewerDash from '@/Layouts/ViewerDash.vue';
 import { router } from '@inertiajs/vue3';
 import axios from "axios";
 import ViewStreamerHunt from "./Components/ViewStreamerHunt.vue";
+import ViewStreamerBonusBattle from "./Components/ViewStreamerBonusBattle.vue";
 import Referrals from "./Components/Referrals.vue";
 
 export default {
-  components: {ViewStreamerHunt, ViewerDash, Referrals},
+  components: {ViewStreamerHunt, ViewerDash, Referrals, ViewStreamerBonusBattle},
   data() {
     return {
       streamer: {},
@@ -81,6 +81,7 @@ export default {
     currentComponent() {
       const sections = {
         hunt: 'ViewStreamerHunt',
+        battle: 'ViewStreamerBonusBattle',
         referral: 'Referrals'
       };
       return sections[this.section] || 'ViewStreamerHunt';
@@ -88,11 +89,3 @@ export default {
   }
 }
 </script>
-<style scoped>
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.3s ease-in-out;
-}
-.fade-enter, .fade-leave-to {
-  opacity: 0;
-}
-</style>

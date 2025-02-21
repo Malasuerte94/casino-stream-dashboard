@@ -1,31 +1,31 @@
 <template>
   <div class="flex gap-2 overflow-x-auto overflow-y-visible scrollbar-hide cursor-grab active:cursor-grabbing select-none py-4"
        ref="scrollContainer">
-    <div v-for="bonusHunt in bonusHuntHistory" @click="seeHunt(bonusHunt)"
+    <div v-for="bonusBattle in bonusBattleHistory" @click="seeBattle(bonusBattle)"
          class="rounded-lg backdrop-blur-xl p-4 bg-white/10 shadow-lg shadow-black/40 border border-white/20
                 w-[90%] md:w-1/4 flex flex-col gap-2 justify-between min-w-[250px] hover:scale-110 transition-all duration-300">
       <div class="flex flex-row justify-between items-center">
         <div class="text-sm">
-          BONUS HUNT #{{ bonusHunt.id }}
+          BONUS BATTLE #{{ bonusBattle.battle.id }}
         </div>
         <div class="bg-gray-800 px-2 py-1 rounded text-xs"
-             :class="{ 'text-gray-500': bonusHunt.ended, 'text-green-500': !bonusHunt.ended }">
-          {{ bonusHunt.ended ? 'TERMINAT' : 'ACTIV' }}
+             :class="{ 'text-gray-500': !bonusBattle.battle.active, 'text-green-500': bonusBattle.battle.active }">
+          {{ !bonusBattle.battle.active ? 'TERMINAT' : 'ACTIV' }}
         </div>
       </div>
       <div class="flex flex-row justify-between items-center text-xl">
         <div class="flex flex-row items-center gap-1 bg-gray-700 px-2 py-1 rounded">
           <div><SvgGame class="h-5 w-5 text-indigo-500 fill-current" /></div>
-          <div>{{ bonusHunt.bonus_hunt_games.length }}</div>
+          <div>{{ bonusBattle.all_concurrents.length }}</div>
         </div>
         <div class="flex flex-row items-center gap-1 bg-gray-700 px-2 py-1 rounded">
           <div><SvgMoney class="h-5 w-5 text-green-500" /></div>
-          <div>{{ bonusHunt.start }} {{currency}}</div>
+          <div>{{ bonusBattle.total_cost }} {{currency}}</div>
         </div>
       </div>
       <div class="flex flex-row items-center gap-1 text-sm">
         <div><SvgCalendar class="w-4 h-4 text-gray-500 stroke-current" /></div>
-        <div>{{ convertDate(bonusHunt.created_at) }}</div>
+        <div>{{ convertDate(bonusBattle.battle.created_at) }}</div>
       </div>
     </div>
   </div>
@@ -43,7 +43,7 @@ export default {
     SvgBackward
   },
   props: {
-    bonusHuntHistory: {
+    bonusBattleHistory: {
       type: Array,
       required: true
     },
@@ -96,8 +96,8 @@ export default {
         year: "numeric",
       }).format(date);
     },
-    seeHunt(bonusHunt) {
-      this.$emit('seeHunt', bonusHunt);
+    seeBattle(bonusBattle) {
+      this.$emit('seeBattle', bonusBattle);
     }
   },
 };

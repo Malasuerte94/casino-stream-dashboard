@@ -103,6 +103,25 @@ class ViewerController extends Controller
         ]);
     }
 
+    /**
+     * Get Bonus Hunt with associated games.
+     *
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function getBonusHunt($id): JsonResponse
+    {
+        $bonusHunt = BonusHunt::where('id', $id)
+            ->with([
+                'bonusHuntGames.game'
+            ])
+            ->first();
+
+        return response()->json([
+            'latestHunt' => $bonusHunt,
+        ]);
+    }
+
     public function getVerifyCode(Request $request): JsonResponse
     {
         $user = $request->user();

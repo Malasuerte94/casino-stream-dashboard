@@ -18,7 +18,7 @@
 <main class="flex-grow">
     @inertia
 </main>
-<footer class="footer-donate bg-gray-900 border-gray-700 py-3">
+<footer class="footer-donate backdrop-blur-xl bg-white/10 shadow-lg shadow-black/10 py-3">
     <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0">
         <div class="text-xs text-gray-400">
             Proiect realizat de

@@ -2,7 +2,7 @@
   <div v-if="!loading">
     <div class="flex flex-col md:flex-row justify-center items-stretch gap-4 mb-4">
       <!-- First Box (1/5 width on desktop) -->
-      <div v-if="bonusHuntHistory.length > 0"
+      <div v-if="bonusBattleHistory.length > 0"
            class="gap-2 rounded-lg backdrop-blur-xl p-4 bg-white/10 shadow-lg shadow-black/40 border border-white/20 w-full md:w-1/4 flex flex-col justify-between">
 
         <div class="flex flex-row justify-between items-center">
@@ -10,11 +10,11 @@
             <div>
               <SvgBackward class="h-5 w-5 text-white stroke-current"/>
             </div>
-            <div>ULTIMUL HUNT</div>
+            <div>ULTIMUL BATTLE</div>
           </div>
           <div class="bg-gray-800 px-2 py-1 rounded-lg text-xs font-bold"
-               :class="{ 'text-gray-500': latestBonusHunt.ended, 'text-green-500': !latestBonusHunt.ended }">
-            {{ latestBonusHunt.ended ? 'TERMINAT' : 'ACTIV' }}
+               :class="{ 'text-gray-500': !latestBonusBattle.battle.active, 'text-green-500': latestBonusBattle.battle.active }">
+            {{ !latestBonusBattle.battle.active ? 'TERMINAT' : 'ACTIV' }}
           </div>
         </div>
 
@@ -23,14 +23,14 @@
             <div>
               <SvgGame class="h-5 w-5 text-indigo-500 fill-current"/>
             </div>
-            <div> {{ latestBonusHunt.bonus_hunt_games.length }}</div>
+            <div> {{ latestBonusBattle.all_concurrents.length }}</div>
           </div>
           <div class="flex flex-row items-center gap-1 bg-gray-700 px-2 py-1 rounded-lg">
             <div>
               <SvgMoney class="h-5 w-5 text-green-500"/>
             </div>
             <div>
-              {{ latestBonusHunt.start }} {{ currency }}
+              {{ latestBonusBattle.total_cost }} {{ currency }}
             </div>
           </div>
         </div>
@@ -39,12 +39,12 @@
           <div>
             <SvgCalendar class="w-4 h-4 text-gray-500 stroke-current"/>
           </div>
-          <div>{{ convertDate(latestBonusHunt.created_at) }}</div>
+          <div>{{ convertDate(latestBonusBattle.battle.created_at) }}</div>
         </div>
       </div>
 
 
-      <template v-if="this.bannerSpot.length >= 2">
+      <template v-if="this.bannerSpot && this.bannerSpot.length >= 2">
         <a :href="this.bannerSpot[0].url" target="_blank"
            class="relative rounded-lg overflow-hidden w-full md:w-1/4 flex group"
            @click="registerClick(this.bannerSpot[0].id)">
@@ -99,13 +99,10 @@
         </div>
       </a>
     </div>
-    <template v-if="bonusHuntHistory.length > 0">
-      <transition name="fade" mode="out-in">
-        <LatestHunt :huntId="latestBonusHunt.id" :currency="currency"/>
-      </transition>
-      <transition name="fade" mode="out-in">
-        <HuntHistory @seeHunt="changeLatestBonusHunt" :bonusHuntHistory="bonusHuntHistory" :currency="currency"/>
-      </transition>
+    <template v-if="bonusBattleHistory.length > 0">
+      <LatestBonusBattle :battleId="latestBonusBattle.battle.id" :currency="currency" />
+      <BattleHistory @seeBattle="changeLatestBonusBattle" :bonusBattleHistory="bonusBattleHistory"
+                     :currency="currency"/>
     </template>
   </div>
 </template>
@@ -116,13 +113,13 @@ import SvgGame from "/public/storage/assets/images/slots.svg";
 import SvgMoney from "/public/storage/assets/images/money.svg";
 import SvgStakeSite from "/public/storage/assets/images/stake-site.svg";
 import SvgBackward from "/public/storage/assets/images/backward.svg";
-import HuntHistory from "./HuntHistory.vue";
-import LatestHunt from "./LatestHunt.vue";
+import LatestBonusBattle from "./LatestBonusBattle.vue";
+import BattleHistory from "./BattleHistory.vue";
 
 export default {
   components: {
-    LatestHunt,
-    HuntHistory,
+    BattleHistory,
+    LatestBonusBattle,
     SvgCalendar,
     SvgGame,
     SvgMoney,
@@ -133,8 +130,8 @@ export default {
     return {
       loading: true,
       streamer: {},
-      bonusHuntHistory: [],
-      latestBonusHunt: null,
+      bonusBattleHistory: [],
+      latestBonusBattle: null,
       refreshInterval: null,
       currency: 'RON',
       activeIndex: 0,
@@ -149,18 +146,19 @@ export default {
   },
   async mounted() {
     await this.getData();
+    this.startAutoScroll();
   },
   methods: {
     async getData() {
-      await this.getBonusHuntHistory();
+      await this.getBonusBattleHistory();
       await this.getSettings();
       await this.getBannerAds();
     },
-    async getBonusHuntHistory() {
+    async getBonusBattleHistory() {
       try {
-        const response = await axios.get("/api/viewer/get-bh-history/" + this.steamerId);
-        this.bonusHuntHistory = response.data.bonusHunts;
-        this.latestBonusHunt = this.bonusHuntHistory[0]
+        const response = await axios.get("/api/viewer/get-bb-history/" + this.steamerId);
+        this.bonusBattleHistory = response.data.bonusBattles;
+        this.latestBonusBattle = this.bonusBattleHistory[0]
       } catch (error) {
         console.error("Error fetching bonus hunt history:", error);
       }
@@ -198,8 +196,8 @@ export default {
         console.error("Error registering click:", error);
       }
     },
-    changeLatestBonusHunt(bonusHunt) {
-      this.latestBonusHunt = bonusHunt;
+    changeLatestBonusBattle(bonusBattle) {
+      this.latestBonusBattle = bonusBattle;
     },
     convertDate(isoString) {
       const date = new Date(isoString);
@@ -208,6 +206,11 @@ export default {
         month: "long",
         year: "numeric",
       }).format(date);
+    },
+    startAutoScroll() {
+      setInterval(() => {
+        this.activeIndex = (this.activeIndex + 1) % 3;
+      }, 5000);
     }
   },
 };

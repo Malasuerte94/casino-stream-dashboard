@@ -41,18 +41,18 @@
       </table>
     </div>
 
-    <!-- New Banner Ads System -->
-    <h2 class="text-xl font-bold mt-8 mb-4">Banner Ads</h2>
+    <!-- New Banner Profile System -->
+    <h2 class="text-xl font-bold mt-8 mb-4">Banner Profile</h2>
     <div class="flex flex-wrap gap-2 items-center">
-      <input type="file" @change="handleFileUpload('bannerAd', $event)" class="input-primary" />
-      <input type="text" v-model="bannerAd.name" class="input-primary" placeholder="Nume banner ad" />
-      <input type="text" v-model="bannerAd.url" class="input-primary" placeholder="URL" />
+      <input type="file" @change="handleFileUpload('bannerProfile', $event)" class="input-primary" />
+      <input type="text" v-model="bannerProfile.name" class="input-primary" placeholder="Nume banner profil" />
+      <input type="text" v-model="bannerProfile.url" class="input-primary" placeholder="URL" />
       <button
           @click="uploadBannerAd"
           type="button"
           class="btn-primary"
       >
-        Adauga Ad
+        Adauga Banner Profil
       </button>
     </div>
 
@@ -69,18 +69,18 @@
         </tr>
         </thead>
         <tbody>
-        <tr v-for="(bannerAd, index) in bannerAds" :key="bannerAd.id + index" class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
-          <td class="p-2">{{ bannerAd.id }}</td>
-          <td class="p-2">{{ bannerAd.name }}</td>
+        <tr v-for="(bannerProfile, index) in bannerAds" :key="bannerProfile.id + index" class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
+          <td class="p-2">{{ bannerProfile.id }}</td>
+          <td class="p-2">{{ bannerProfile.name }}</td>
           <td class="p-2">
-            <img :src="bannerAd.image" class="banner-image h-[130px] w-auto" alt="Banner Image" />
+            <img :src="bannerProfile.image" class="banner-image h-[130px] w-auto" alt="Banner Image" />
           </td>
           <td class="p-2">
-            <a :href="bannerAd.url" target="_blank" class="text-blue-500 hover:underline">{{ bannerAd.url }}</a>
+            <a :href="bannerProfile.url" target="_blank" class="text-blue-500 hover:underline">{{ bannerProfile.url }}</a>
           </td>
-          <td class="p-2 text-center">{{ bannerAd.clicks }}</td>
+          <td class="p-2 text-center">{{ bannerProfile.clicks }}</td>
           <td class="p-2">
-            <button @click="removeBannerAd(bannerAd.id)" class="text-white bg-red-700 hover:bg-red-800 font-medium rounded-lg text-sm p-2.5">
+            <button @click="removeBannerAd(bannerProfile.id)" class="text-white bg-red-700 hover:bg-red-800 font-medium rounded-lg text-sm p-2.5">
               🗑️
             </button>
           </td>
@@ -103,7 +103,7 @@ export default {
         name: ""
       },
       banners: [],
-      bannerAd: {
+      bannerProfile: {
         file: null,
         name: "",
         url: ""
@@ -161,9 +161,9 @@ export default {
     async uploadBannerAd() {
       this.loading = true;
       let formData = new FormData();
-      formData.append("name", this.bannerAd.name);
-      formData.append("image", this.bannerAd.file);
-      formData.append("url", this.bannerAd.url);
+      formData.append("name", this.bannerProfile.name);
+      formData.append("image", this.bannerProfile.file);
+      formData.append("url", this.bannerProfile.url);
 
       await axios
           .post("/api/banner-ads", formData, {

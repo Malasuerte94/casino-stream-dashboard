@@ -17,7 +17,7 @@
     </div>
   </div>
 
-  <div class="relative" v-if="!$page.props.user_streamer">
+  <div class="relative" v-if="!$page.props.user_streamer && latestHunt">
     <!-- Main Form -->
     <div
         class="backdrop-blur-xl bg-white/10 shadow-lg shadow-black/40 border border-white/20 p-4 rounded-lg gap-4 flex flex-col text-white relative"
@@ -62,7 +62,7 @@
               v-model="bestGame"
               class="bg-gray-900 text-white border border-gray-700 rounded p-2 outline-none focus:ring focus:ring-green-500"
           >
-            <option v-for="game in latestHunt?.bonus_hunt_games" :key="game.id" :value="game.id">
+            <option v-for="game in latestHunt.bonus_hunt_games" :key="game.id" :value="game.id">
               {{ game.game.name }}
             </option>
           </select>
@@ -75,7 +75,7 @@
               v-model="worstGame"
               class="bg-gray-900 text-white border border-gray-700 rounded p-2 outline-none focus:ring focus:ring-red-500"
           >
-            <option v-for="game in latestHunt?.bonus_hunt_games" :key="game.id" :value="game.id">
+            <option v-for="game in latestHunt.bonus_hunt_games" :key="game.id" :value="game.id">
               {{ game.game.name }}
             </option>
           </select>
@@ -98,7 +98,7 @@
           <button
               @click="submitPredictions"
               class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300"
-              :disabled="!latestHunt?.is_open"
+              :disabled="!latestHunt.is_open"
           >
             {{ existingPrediction ? "Update Predicții" : "Trimite Predicții" }}
           </button>
@@ -108,7 +108,7 @@
 
     <!-- Overlay when hunt is closed -->
     <div
-        v-if="!latestHunt?.is_open"
+        v-if="!latestHunt.is_open"
         class="absolute inset-0 bg-black/30 backdrop-blur-md flex items-center justify-center rounded-lg p-0"
     >
       <div class=" p-1 rounded-lg text-white">
@@ -209,7 +209,7 @@ export default {
     },
 
     async submitPredictions() {
-      if (!this.latestHunt?.is_open) return;
+      if (!this.latestHunt.is_open) return;
 
       const payload = {
         highestMulti: this.highestMulti,
@@ -241,7 +241,7 @@ export default {
       }
     },
     getGameName(gameId) {
-      const game = this.latestHunt?.bonus_hunt_games.find(g => g.id === gameId);
+      const game = this.latestHunt.bonus_hunt_games.find(g => g.id === gameId);
       return game ? game.game.name : "Necunoscut";
     }
   }
