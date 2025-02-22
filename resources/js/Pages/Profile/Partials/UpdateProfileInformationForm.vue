@@ -172,6 +172,16 @@ const clearPhotoFileInput = () => {
       </ActionMessage>
       <InputError :message="discordWebhookFormHuntBuyBattle.errors" class="mt-2"/>
     </div>
+
+
+    <div class="bg-gray-700 shadow rounded-lg p-6 mb-6 w-1/3" v-if="$page.props.user_streamer">
+      <h3 class="text-lg font-semibold text-gray-100 mb-4">Conectare StreamLabs</h3>
+      <div class="flex items-center gap-4">
+        <a :href="route('streamlabs.authorize')" class="btn-primary">
+          Conectare Streamlabs
+        </a>
+      </div>
+    </div>
   </div>
 
   <!-- Profile Information Form Section -->

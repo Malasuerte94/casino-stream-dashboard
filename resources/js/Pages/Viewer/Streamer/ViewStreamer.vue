@@ -34,12 +34,13 @@
 import ViewerDash from '@/Layouts/ViewerDash.vue';
 import { router } from '@inertiajs/vue3';
 import axios from "axios";
-import ViewStreamerHunt from "./Components/ViewStreamerHunt.vue";
-import ViewStreamerBonusBattle from "./Components/ViewStreamerBonusBattle.vue";
-import Referrals from "./Components/Referrals.vue";
+import ViewStreamerHunt from "./Components/BonusHunt/ViewStreamerHunt.vue";
+import ViewStreamerBonusBattle from "./Components/BonusBattle/ViewStreamerBonusBattle.vue";
+import Referrals from "./Components/Refferal/Referrals.vue";
+import ViewSocials from "./Components/Social/ViewSocials.vue";
 
 export default {
-  components: {ViewStreamerHunt, ViewerDash, Referrals, ViewStreamerBonusBattle},
+  components: {ViewStreamerHunt, ViewerDash, Referrals, ViewStreamerBonusBattle, ViewSocials},
   data() {
     return {
       streamer: {},
@@ -82,7 +83,8 @@ export default {
       const sections = {
         hunt: 'ViewStreamerHunt',
         battle: 'ViewStreamerBonusBattle',
-        referral: 'Referrals'
+        referral: 'Referrals',
+        social: 'ViewSocials'
       };
       return sections[this.section] || 'ViewStreamerHunt';
     }

@@ -20,6 +20,7 @@ use App\Http\Controllers\SocialController;
 use App\Http\Controllers\SpinController;
 use App\Http\Controllers\StreamAccountController;
 use App\Http\Controllers\StreamController;
+use App\Http\Controllers\StreamlabsController;
 use App\Http\Controllers\UserSettingController;
 use App\Http\Controllers\ViewerController;
 use App\Http\Controllers\WithdrawalController;
@@ -151,6 +152,7 @@ Route::prefix('viewer')->group(function () {
     Route::get('get-bb-history/{id}', [BonusBattleController::class, 'getBonusBattleHistory']);
     Route::get('get-bb/{id}', [BonusBattleController::class, 'getSingleBonusBattleInfo']);
     Route::get('get-predictions/{id}', [GuessEntriesController::class, 'getPredictions']);
+    Route::get('get-donations/{id}', [StreamlabsController::class, 'getDonations']);
 });
 //FOR USER PUBLIC
 

@@ -48,4 +48,9 @@ return [
         'webhook_url' => env('DISCORD_WEBHOOK_URL'),
     ],
 
+    'streamlabs' => [
+        'client_id' => env('STREAMLABS_CLIENT_ID'),
+        'client_secret' => env('STREAMLABS_CLIENT_SECRET'),
+    ],
+
 ];

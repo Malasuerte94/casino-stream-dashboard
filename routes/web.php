@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\GameSyncController;
 use App\Http\Controllers\SocialController;
+use App\Http\Controllers\StreamlabsController;
 use App\Http\Controllers\ViewerController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -127,6 +128,10 @@ Route::middleware([
     Route::get('/schedule', function () {
         return Inertia::render('Streamer/Schedule/SchedulePage');
     })->name('schedule');
+
+    //ONLY STREAMER STREAMLABS
+    Route::get('/streamlabs/authorize', [StreamlabsController::class, 'redirectToStreamlabs'])->name('streamlabs.authorize');
+    Route::get('/streamlabs/callback', [StreamlabsController::class, 'handleStreamlabsCallback'])->name('streamlabs.callback');
 
     //sync games
     Route::get('/sync-games', [GameSyncController::class, 'syncGames']);

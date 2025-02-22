@@ -15,22 +15,29 @@ use Illuminate\Http\Request;
 class BonusBattleController extends Controller
 {
 
-    public function test() {
-        $message =  [];
-        $userId = auth()->user()->id;
-        $user = User::find($userId);
-        $discord = new DiscordController();
-
-        $bonusBattle = BonusBattle::all()->last();
-        $bonusBuy = BonusBuy::all()->last();
-        $bonusHunt = BonusHunt::all()->last();
-
-        $message[] = $discord->buildBonusBattleDiscordMessage($bonusBattle);
-        //$message[] = $discord->buildBonusBuyDiscordMessage($bonusBuy);
-        $message[] = $discord->buildBonusHuntDiscordMessage($bonusHunt);
-
-        return response()->json($message);
+    public function test()
+    {
+//        $user = auth()->user();
+//
+//        if (!$user || !$user->streamlabs_access_token) {
+//            return response()->json(['error' => 'Streamlabs token not found.'], 403);
+//        }
+//        $client = new \GuzzleHttp\Client();
+//        try {
+//            $response = $client->request('GET', 'https://streamlabs.com/api/v2.0/points', [
+//                'headers' => [
+//                    'Authorization' => 'Bearer ' . $user->streamlabs_access_token,
+//                    'Accept'        => 'application/json',
+//                ],
+//            ]);
+//            $message = json_decode($response->getBody(), true);
+//            return response()->json($message);
+//        } catch (\Exception $e) {
+//            // In case of an error, return an error response.
+//            return response()->json(['error' => 'Unable to get points: ' . $e->getMessage()], 500);
+//        }
     }
+
 
 
     /**
