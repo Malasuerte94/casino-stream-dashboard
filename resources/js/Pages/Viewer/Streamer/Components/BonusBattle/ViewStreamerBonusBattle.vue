@@ -66,7 +66,7 @@
         </a>
       </template>
 
-      <a href="https://stake.com/?tab=register&modal=auth&c=mala" target="_blank"
+      <a href="https://stake.com/?tab=register&modal=auth&c=4cb4a7ab68" target="_blank"
          class="relative rounded-lg overflow-hidden w-full md:w-1/4 h-[130px] flex group bg-[url(/storage/assets/images/dog-bg.jpg)] bg-center bg-no-repeat bg-cover">
 
         <div
