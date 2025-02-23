@@ -144,7 +144,7 @@
 import SvgBh from "./Components/SvgBh.vue";
 
 export default {
-  components: {SvgBh},
+  components: { SvgBh },
   props: ["id"],
   data() {
     return {
@@ -155,7 +155,8 @@ export default {
       settings: {},
       isUpdating: false,
       scrollSpeed: 500,
-      itWasDuplicated: true
+      itWasDuplicated: true,
+      startedOpening: false
     };
   },
   computed: {
@@ -166,39 +167,38 @@ export default {
       return this.allSettings?.bonus_list === "buy" ? "Buy" : "Hunt";
     },
     duplicatedGames() {
+      if (this.startedOpening) return this.bonusListGames;
       if (this.shouldScroll()) {
         this.itWasDuplicated = true;
         return [...this.bonusListGames, ...this.bonusListGames];
       } else {
         this.itWasDuplicated = false;
-        return this.bonusListGames
+        return this.bonusListGames;
       }
     },
     firstEmptyResultId() {
       const game = this.bonusListGames.find((game) => game.result === '0');
       return game ? game.id : null;
     },
+    nextGameIndex() {
+      return this.bonusListGames.findIndex(game => !game.result || game.result === "0");
+    },
     gamesOpenedNr() {
-      return this.bonusListGames.filter(
-          (game) => game.result && game.result !== '0'
-      ).length;
+      return this.bonusListGames.filter(game => game.result && game.result !== '0').length;
     },
     gamesTotalNr() {
       return this.bonusListGames.length;
     },
     gameHighestMulti() {
       const multipliers = this.bonusListGames
-          .map((game) => {
-            return game?.multiplier ? parseFloat(game.multiplier.trim()) : NaN;
-          })
-          .filter((value) => !isNaN(value));
+          .map(game => game?.multiplier ? parseFloat(game.multiplier.trim()) : NaN)
+          .filter(value => !isNaN(value));
       return multipliers.length ? Math.max(...multipliers) : 0;
     },
     gameHighestResult() {
       const validResults = this.bonusListGames
           .filter(game => game.result && game.result !== "0")
           .map(game => parseFloat(game.result));
-
       if (validResults.length === 0) return 0;
       return Math.max(...validResults);
     },
@@ -206,41 +206,25 @@ export default {
       return (this.gamesOpenedNr / this.gamesTotalNr) * 100;
     },
     averageMulti() {
-      const validGames = this.bonusListGames.filter(
-          (game) => game.result !== null && game.result !== "0"
-      );
+      const validGames = this.bonusListGames.filter(game => game.result !== null && game.result !== "0");
       if (validGames.length === 0) return 0;
-      const totalMultiplier = validGames.reduce(
-          (sum, game) => sum + parseFloat(game.multiplier),
-          0
-      );
+      const totalMultiplier = validGames.reduce((sum, game) => sum + parseFloat(game.multiplier), 0);
       return Math.round(totalMultiplier / validGames.length);
     },
     requiredAverageX() {
-      const listCost = this.bonusList.start; // Total cost to break even
-      const totalPayout = this.bonusListGames.reduce(
-          (sum, game) => sum + (game.result ? parseFloat(game.result) : 0),
-          0
-      );
+      const listCost = this.bonusList.start;
+      const totalPayout = this.bonusListGames.reduce((sum, game) => sum + (game.result ? parseFloat(game.result) : 0), 0);
       const remainingCost = Math.max(listCost - totalPayout, 0);
-      const remainingGames = this.bonusListGames.filter(
-          (game) => !game.result || game.result === "0"
-      ).length;
+      const remainingGames = this.bonusListGames.filter(game => !game.result || game.result === "0").length;
       if (remainingGames === 0) return 0;
       const costPerGame = remainingCost / remainingGames;
-
       let totalRequiredX = 0;
-
-      this.bonusListGames.forEach((game) => {
+      this.bonusListGames.forEach(game => {
         const gameStake = parseFloat(game.stake);
-
-        if (game.result && game.result !== "0") {
-          return;
-        }
+        if (game.result && game.result !== "0") return;
         const requiredX = costPerGame / gameStake;
         totalRequiredX += requiredX;
       });
-
       return Math.round(totalRequiredX / remainingGames);
     }
   },
@@ -278,7 +262,7 @@ export default {
         totalHeight += item.getBoundingClientRect().height;
       });
       if (this.itWasDuplicated) {
-        totalHeight = totalHeight / 2
+        totalHeight = totalHeight / 2;
       }
       return totalHeight + 20 > availableHeight;
     },
@@ -287,7 +271,7 @@ export default {
           .get("/api/settings/" + this.id)
           .then((response) => {
             this.allSettings = response.data.settings;
-            this.loadSettings()
+            this.loadSettings();
           })
           .catch((error) => {
             console.log(error);
@@ -295,6 +279,7 @@ export default {
     },
     async loadSettings() {
       this.settings = JSON.parse(this.allSettings.obs_bonus_list);
+      this.scrollSpeed = this.settings.scrollSpeed;
     },
     async getLatestList() {
       await axios
@@ -312,6 +297,14 @@ export default {
         this.isUpdating = true;
         await this.getSettings();
         await this.getLatestList();
+        if (this.bonusListGames.some(game => !game.result || game.result === "0")) {
+          this.startedOpening = true;
+          await this.$nextTick(() => {
+            this.scrollToNextGame();
+          });
+        } else {
+          this.startedOpening = false;
+        }
         this.isUpdating = false;
         this.initAutoScroll();
       }
@@ -319,13 +312,28 @@ export default {
     initAutoScroll() {
       const gamesList = this.$refs.gamesList || this.$refs.gamesListHunt;
       if (!gamesList) return;
-      if (!this.shouldScroll()) {
-        gamesList.classList.remove('scrolling');
+      if (this.startedOpening || !this.shouldScroll()) {
+        gamesList.style.animation = '';
       } else {
-        gamesList.classList.add('scrolling');
+        gamesList.style.animation = `scrollAnimation ${this.scrollSpeed * this.bonusListGames.length}s linear infinite`;
       }
+    },
+    scrollToNextGame() {
+      const gamesList = this.$refs.gamesList || this.$refs.gamesListHunt;
+      const container = this.$refs.scrollWrapper || this.$refs.scrollWrapperHunt;
+      if (!gamesList || !container) return;
+      const gameItems = gamesList.querySelectorAll('.game-single');
+      const index = this.nextGameIndex;
+      if (index === -1 || gameItems.length <= index) return;
+      const target = gameItems[index];
+      const containerHeight = container.clientHeight;
+      const targetOffset = target.offsetTop;
+      const targetHeight = target.clientHeight;
+      const offset = targetOffset - (containerHeight / 2 - targetHeight / 2);
+      gamesList.style.transition = 'transform 0.5s ease';
+      gamesList.style.transform = `translateY(-${offset}px)`;
     }
-  },
+  }
 };
 </script>
 
@@ -355,10 +363,6 @@ body,
 .games {
   display: flex;
   flex-direction: column;
-
-  &.scrolling {
-    animation: scrollAnimation 15s linear infinite;
-  }
 }
 
 @keyframes scrollAnimation {

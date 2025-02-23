@@ -135,6 +135,11 @@
           <label class="block font-semibold">Curent Game Color</label>
           <ColorPicker v-model:pureColor="settings.tableCurrentGameColor" format="rgb" shape="square" />
         </div>
+
+        <div>
+          <label class="block font-semibold">Scroll Speed - When Hunting (Cât timp este afisat pe ecran un joc)</label>
+          <input type="number" v-model="settings.scrollSpeed" class="input-primary">
+        </div>
       </div>
 
       <!-- Save Button -->
@@ -339,7 +344,8 @@ export default {
         tableBodyFontColor: "#a55353",
         tableDividerColor: "#ff0000",
         tableBodyFontSize: 12,
-        tableCurrentGameColor: "#ff0000"
+        tableCurrentGameColor: "#ff0000",
+        scrollSpeed: 1,
       }
     };
   },
