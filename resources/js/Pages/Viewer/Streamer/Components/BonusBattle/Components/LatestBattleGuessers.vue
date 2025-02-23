@@ -1,5 +1,5 @@
 <template>
-  <div class="relative" v-if="latestHunt && allGuessers.length > 0">
+  <div class="relative" v-if="latestBattle.battle && allGuessers.length > 0">
     <div
         class="backdrop-blur-lg bg-white/10 shadow-lg shadow-black/40 border border-white/20 p-4 rounded-lg gap-4 flex flex-col text-white relative"
     >
@@ -41,12 +41,8 @@
 import axios from "axios";
 export default {
   props: {
-    latestHunt: {
+    latestBattle: {
       type: Object,
-      required: true
-    },
-    listType: {
-      type: String,
       required: true
     },
     currency: {
@@ -66,7 +62,7 @@ export default {
   methods: {
     async fetchExistingPredictions() {
       try {
-        const response = await axios.get(`/api/viewer/get-bh-predictions/${this.latestHunt.id}`);
+        const response = await axios.get(`/api/viewer/get-bb-predictions/${this.latestBattle.battle.id}`);
         if (response.data && response.data.predictions) {
           this.allGuessers = response.data.predictions;
         } else {
@@ -90,7 +86,7 @@ export default {
     },
   },
   watch: {
-    latestHunt() {
+    latestBattle() {
       this.fetchExistingPredictions();
     }
   }

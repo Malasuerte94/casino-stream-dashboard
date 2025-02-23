@@ -14,14 +14,14 @@
           <div class="font-semibold text-white">{{ winner?.user?.yt_name || winner?.user?.name || "N/A" }}</div>
           <div v-if="key === 'resultWinner'">
             <span>{{ formatCurrency(winner.estimated) }}</span>
-            <span :class="getDifferenceClass(winner.estimated, huntResults.result)">
-              ({{ formatDifference(winner.estimated, huntResults.result) }})
+            <span :class="getDifferenceClass(winner.estimated, battleResult.result)">
+              ({{ formatDifference(winner.estimated, battleResult.result) }})
             </span>
           </div>
           <div v-else-if="key === 'biggestMultiplierWinner' || key === 'lowestMultiplierWinner'">
             <span>{{ formatMultiplier(winner.estimated) }}</span>
-            <span :class="getDifferenceClass(winner.estimated, huntResults[key.replace('Winner', '')])">
-              ({{ formatMultiplierDifference(winner.estimated, huntResults[key.replace('Winner', '')]) }})
+            <span :class="getDifferenceClass(winner.estimated, battleResult[key.replace('Winner', '')])">
+              ({{ formatMultiplierDifference(winner.estimated, battleResult[key.replace('Winner', '')]) }})
             </span>
           </div>
           <div v-else-if="key === 'exactBiggestMultiplierGame' || key === 'exactLowestMultiplierGame'">
@@ -31,8 +31,7 @@
       </div>
     </div>
   </div>
-
-  <div class="relative" v-if="latestHunt">
+  <div class="relative" v-if="latestBattle?.battle">
     <!-- Main Form -->
     <div
         class="backdrop-blur-xl bg-white/10 shadow-lg shadow-black/40 border border-white/20 p-4 rounded-lg gap-4 flex flex-col text-white relative"
@@ -44,76 +43,55 @@
         </div>
       </transition>
 
-      <div class="font-semibold">Predicții Hunt</div>
+      <div class="font-semibold">Predicții Turneu</div>
 
       <!-- Multiplier Inputs (Grouped) -->
       <div class="grid grid-cols-2 gap-4">
         <div class="flex flex-col gap-1">
-          <label for="highestMulti" class="text-gray-300">Cel mai mare multi</label>
-          <input
-              id="highestMulti"
-              v-model.number="highestMulti"
-              type="number"
-              class="bg-gray-900 text-white border border-gray-700 rounded p-2 outline-none focus:ring focus:ring-indigo-500"
-          />
+          <label for="highestMulti" class="text-gray-300">Jocul cu cea mai mare plată (x)</label>
+          <select
+              id="bestGame"
+              v-model="gameHighestMulti"
+              class="bg-gray-900 text-white border border-gray-700 rounded p-2 outline-none focus:ring focus:ring-green-500"
+          >
+            <option v-for="game in latestBattle.participants" :key="game.id" :value="game.id">
+              {{ game.game.name }}
+            </option>
+          </select>
         </div>
         <div class="flex flex-col gap-1">
-          <label for="lowestMulti" class="text-gray-300">Cel mai mic multi</label>
-          <input
-              id="lowestMulti"
-              v-model.number="lowestMulti"
-              type="number"
-              class="bg-gray-900 text-white border border-gray-700 rounded p-2 outline-none focus:ring focus:ring-indigo-500"
-          />
+          <label for="lowestMulti" class="text-gray-300">Jocul cu cea mai mică plată (x)</label>
+          <select
+              id="bestGame"
+              v-model="gameLowestMulti"
+              class="bg-gray-900 text-white border border-gray-700 rounded p-2 outline-none focus:ring focus:ring-green-500"
+          >
+            <option v-for="game in latestBattle.participants" :key="game.id" :value="game.id">
+              {{ game.game.name }}
+            </option>
+          </select>
         </div>
       </div>
 
       <!-- Best & Worst Game (Grouped) -->
       <div class="grid grid-cols-2 gap-4">
         <div class="flex flex-col gap-1">
-          <label for="bestGame" class="text-gray-300">Cel mai bun joc</label>
+          <label for="bestGame" class="text-gray-300">Câștigătorul</label>
           <select
               id="bestGame"
-              v-model="bestGame"
+              v-model="gameWinner"
               class="bg-gray-900 text-white border border-gray-700 rounded p-2 outline-none focus:ring focus:ring-green-500"
           >
-            <option v-for="game in latestHunt.bonus_hunt_games" :key="game.id" :value="game.id">
+            <option v-for="game in latestBattle.participants" :key="game.id" :value="game.id">
               {{ game.game.name }}
             </option>
           </select>
         </div>
-
-        <div class="flex flex-col gap-1">
-          <label for="worstGame" class="text-gray-300">Cel mai prost joc</label>
-          <select
-              id="worstGame"
-              v-model="worstGame"
-              class="bg-gray-900 text-white border border-gray-700 rounded p-2 outline-none focus:ring focus:ring-red-500"
-          >
-            <option v-for="game in latestHunt.bonus_hunt_games" :key="game.id" :value="game.id">
-              {{ game.game.name }}
-            </option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Total Payout + Submit Button -->
-      <div class="grid grid-cols-2 gap-4">
-        <div class="flex flex-col gap-1">
-          <label for="totalPayout" class="text-gray-300">Cât plătește lista</label>
-          <input
-              id="totalPayout"
-              v-model.number="totalPayout"
-              type="number"
-              class="bg-gray-900 text-white border border-gray-700 rounded p-2 outline-none focus:ring focus:ring-indigo-500"
-          />
-        </div>
-
         <div class="flex flex-col justify-end">
           <button
               @click="submitPredictions"
               class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300"
-              :disabled="!latestHunt.is_open"
+              :disabled="!latestBattle.battle.is_open"
           >
             {{ existingPrediction ? "Update Predicții" : "Trimite Predicții" }}
           </button>
@@ -123,41 +101,30 @@
 
     <!-- Overlay when hunt is closed -->
     <div
-        v-if="!$page.props.user.id || !latestHunt.is_open"
+        v-if="!$page.props.user.id || !latestBattle.battle.is_open"
         class="absolute inset-0 bg-black/30 backdrop-blur-md flex items-center justify-center rounded-lg p-0"
     >
       <div class=" p-1 rounded-lg text-white">
-
         <div class="flex flex-col text-xs" v-if="!notPredicted">
           <div class="text-sm font-semibold text-left">Predicțiile tale</div>
           <div class="w-full mt-2 border border-gray-700 rounded-lg flex flex-row">
             <div class="flex flex-col">
               <div class="border-b border-gray-700 flex flex-row">
-                <div class="p-2">Cel mai mare multi</div>
-                <div class="p-2">{{ highestMulti }}x</div>
+                <div class="p-2">Jocul care plătește cel mai mult</div>
+                <div class="p-2">{{ getGameName(gameLowestMulti) }}</div>
               </div>
               <div class="border-b border-gray-700 flex flex-row">
-                <div class="p-2">Cel mai mic multi</div>
-                <div class="p-2">{{ lowestMulti }}x</div>
-              </div>
-            </div>
-            <div class="flex flex-col">
-              <div class="border-b border-gray-700 flex flex-row">
-                <div class="p-2">Cel mai bun joc</div>
-                <div class="p-2">{{ getGameName(bestGame) }}</div>
+                <div class="p-2">Jocul care plătește cel mai puțin</div>
+                <div class="p-2">{{ getGameName(gameHighestMulti) }}</div>
               </div>
               <div class="border-b border-gray-700 flex flex-row">
-                <div class="p-2">Cel mai prost joc</div>
-                <div class="p-2">{{ getGameName(worstGame) }}</div>
+                <div class="p-2">Câștigătorul Turneului</div>
+                <div class="p-2">{{ getGameName(gameWinner) }}</div>
               </div>
-            </div>
-            <div class="border-b border-gray-700 flex flex-col">
-              <div class="p-2">Cât plătește lista</div>
-              <div class="p-2">{{ totalPayout }} {{currency}}</div>
             </div>
           </div>
         </div>
-        <div v-else class="text-sm font-semibold text-left">Nu ai predicții pentru acest hunt</div>
+        <div v-else class="text-sm font-semibold text-left">Nu ai predicții pentru acest battle</div>
       </div>
     </div>
   </div>
@@ -168,12 +135,8 @@ import axios from "axios";
 
 export default {
   props: {
-    latestHunt: {
+    latestBattle: {
       type: Object,
-      required: true
-    },
-    listType: {
-      type: String,
       required: true
     },
     currency: {
@@ -184,44 +147,33 @@ export default {
   },
   data() {
     return {
-      highestMulti: 0,
-      lowestMulti: 0,
-      totalPayout: 0,
-      bestGame: "",
-      worstGame: "",
+      gameWinner: 0,
+      gameLowestMulti: 0,
+      gameHighestMulti: 0,
       existingPrediction: null,
       notification: null,
       winners: null,
-      huntResults: null,
-      winnerTitles: {
-        resultWinner: "Cel mai Apropiat Rezultat",
-        biggestMultiplierWinner: "Cel mai Mare Multiplicator",
-        lowestMultiplierWinner: "Cel mai Mic Multiplicator",
-        exactBiggestMultiplierGame: "Cel mai bun joc",
-        exactLowestMultiplierGame: "Cel mai prost joc",
-      },
+      battleResult: null,
       notPredicted: false
     };
   },
   async mounted() {
     await this.fetchExistingPrediction();
-    if (!this.latestHunt.is_open) {
+    if (!this.latestBattle.battle.is_open) {
       await this.fetchWinners();
     }
   },
   methods: {
     async fetchExistingPrediction() {
       try {
-        const response = await axios.get(`/api/viewer/get-bh-prediction/${this.latestHunt.id}`);
+        const response = await axios.get(`/api/viewer/get-bb-prediction/${this.latestBattle.battle.id}`);
         if (response.data && response.data.prediction) {
           this.notPredicted = false;
           this.existingPrediction = response.data.prediction;
-          this.highestMulti = response.data.prediction.highestMulti;
-          this.lowestMulti = response.data.prediction.lowestMulti;
-          this.totalPayout = response.data.prediction.totalPayout;
-          this.bestGame = response.data.prediction.bestGame;
-          this.worstGame = response.data.prediction.worstGame;
-        } else if(!this.latestHunt.is_open) {
+          this.gameWinner = response.data.prediction.gameWinner;
+          this.gameLowestMulti = response.data.prediction.gameLowestMulti;
+          this.gameHighestMulti = response.data.prediction.gameHighestMulti;
+        } else if(!this.latestBattle.battle.is_open) {
           this.notPredicted = true;
         }
       } catch (error) {
@@ -231,20 +183,16 @@ export default {
         console.error("Error fetching existing prediction:", error);
       }
     },
-
     async submitPredictions() {
-      if (!this.latestHunt.is_open) return;
+      if (!this.latestBattle.battle.is_open) return;
       const payload = {
-        highestMulti: this.highestMulti,
-        lowestMulti: this.lowestMulti,
-        totalPayout: this.totalPayout,
-        bestGame: this.bestGame,
-        worstGame: this.worstGame,
-        bonusId: this.latestHunt.id,
-        listType: this.listType
+        gameWinner: this.gameWinner,
+        gameLowestMulti: this.gameLowestMulti,
+        gameHighestMulti: this.gameHighestMulti,
+        battleId: this.latestBattle.battle.id,
       };
       try {
-        const response = await axios.post("/api/viewer/add-bh-prediction", payload);
+        const response = await axios.post("/api/viewer/add-bb-prediction", payload);
         this.notification = response.data.message;
         await this.fetchExistingPrediction();
         setTimeout(() => (this.notification = null), 3000);
@@ -256,20 +204,20 @@ export default {
     },
     async fetchWinners() {
       try {
-        const response = await axios.get(`/api/get-bonus-winner/${this.latestHunt.id}`);
+        const response = await axios.get(`/api/get-bonus-winner/${this.latestBattle.battle.id}`);
         if(response.data && response.data.winners) {
           this.winners = response.data.winners;
-          this.huntResults = response.data.results;
+          this.battleResult = response.data.results;
         } else {
           this.winners = null;
-          this.huntResults = null;
+          this.battleResult = null;
         }
       } catch (error) {
         console.error("No winners found.");
       }
     },
     getGameName(gameId) {
-      const game = this.latestHunt.bonus_hunt_games.find(g => g.id === gameId);
+      const game = this.latestBattle.participants.find(g => g.id === gameId);
       return game ? game.game.name : "Necunoscut";
     },
     formatCurrency(value) {
@@ -291,7 +239,7 @@ export default {
     }
   },
   watch: {
-    latestHunt() {
+    latestBattle() {
       this.fetchExistingPrediction();
       this.fetchWinners();
     }

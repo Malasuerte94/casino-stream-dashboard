@@ -711,6 +711,7 @@ class ComposerStaticInit69c8e8820f8dba78f915ae86794425a6
         'App\\Http\\Controllers\\SpinController' => __DIR__ . '/../..' . '/app/Http/Controllers/SpinController.php',
         'App\\Http\\Controllers\\StreamAccountController' => __DIR__ . '/../..' . '/app/Http/Controllers/StreamAccountController.php',
         'App\\Http\\Controllers\\StreamController' => __DIR__ . '/../..' . '/app/Http/Controllers/StreamController.php',
+        'App\\Http\\Controllers\\StreamlabsController' => __DIR__ . '/../..' . '/app/Http/Controllers/StreamlabsController.php',
         'App\\Http\\Controllers\\UserSettingController' => __DIR__ . '/../..' . '/app/Http/Controllers/UserSettingController.php',
         'App\\Http\\Controllers\\ViewerController' => __DIR__ . '/../..' . '/app/Http/Controllers/ViewerController.php',
         'App\\Http\\Controllers\\WithdrawalController' => __DIR__ . '/../..' . '/app/Http/Controllers/WithdrawalController.php',

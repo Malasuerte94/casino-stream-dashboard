@@ -176,8 +176,7 @@ class BonusBattleController extends Controller
     {
         $result = [
             'bonusBattle' => [
-                'id' => $activeBattle->id,
-                'name' => $activeBattle->name,
+                'battle' => $activeBattle,
                 'stages' => []
             ]
         ];
@@ -197,11 +196,13 @@ class BonusBattleController extends Controller
                     'id' => $bracket->id,
                     'participantA' => [
                         'id' => $bracket->participant_a_id,
-                        'game' => $bracket->participantA->game->name ?? 'N/A'
+                        'game' => $bracket->participantA->game->name ?? 'N/A',
+                        'full_game' => $bracket->participantA->game
                     ],
                     'participantB' => [
                         'id' => $bracket->participant_b_id,
-                        'game' => $bracket->participantB->game->name ?? 'N/A'
+                        'game' => $bracket->participantB->game->name ?? 'N/A',
+                        'full_game' => $bracket->participantB->game
                     ],
                     'winner' => [
                         'id' => $bracket->winner_id,

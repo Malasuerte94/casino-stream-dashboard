@@ -221,6 +221,14 @@ class User extends Authenticatable implements HasMedia
     }
 
     /**
+     * @return HasMany
+     */
+    public function battlePredictions(): HasMany
+    {
+        return $this->hasMany(BattlePrediction::class);
+    }
+
+    /**
      * Get the Discord webhook URL for the user's schedule announcer.
      *
      * @return string|null

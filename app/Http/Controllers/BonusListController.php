@@ -193,7 +193,7 @@ class BonusListController extends Controller
 
     public function getBonusHuntWinner(int $bonusHuntId): JsonResponse
     {
-        $bonus = BonusHunt::findOrFail($bonusHuntId);
+        $bonus = BonusHunt::find($bonusHuntId);
 
         if (!$bonus) {
             return response()->json(['error' => 'No ended bonus found'], 404);

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BannerController;
+use App\Http\Controllers\BattlePredictionController;
 use App\Http\Controllers\BattleViewerController;
 use App\Http\Controllers\BonusBattleController;
 use App\Http\Controllers\BonusBuyController;
@@ -140,8 +141,12 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('viewer')->group(function () {
         Route::get('get-yt-code', [ViewerController::class, 'getVerifyCode']);
-        Route::post('add-prediction', [GuessEntriesController::class, 'postPrediction']);
-        Route::get('get-prediction/{id}', [GuessEntriesController::class, 'getPrediction']);
+
+        Route::post('add-bh-prediction', [GuessEntriesController::class, 'postPrediction']);
+        Route::get('get-bh-prediction/{id}', [GuessEntriesController::class, 'getPrediction']);
+
+        Route::post('add-bb-prediction', [BattlePredictionController::class, 'postPrediction']);
+        Route::get('get-bb-prediction/{id}', [BattlePredictionController::class, 'getPrediction']);
     });
 });
 //VIEWER AUTH REQUIRED
@@ -180,11 +185,15 @@ Route::get('/battle-viewers-public/{id}', [BattleViewerController::class, 'getBa
 //VIEWER USER PUBLIC
 Route::prefix('viewer')->group(function () {
     Route::get('get-streamer/{id}', [ViewerController::class, 'getSteamer']);
+
     Route::get('get-bh-history/{id}', [ViewerController::class, 'getBonusHuntHistory']);
     Route::get('get-bh/{id}', [ViewerController::class, 'getBonusHunt']);
+    Route::get('get-bh-predictions/{id}', [GuessEntriesController::class, 'getPredictions']);
+
     Route::get('get-bb-history/{id}', [BonusBattleController::class, 'getBonusBattleHistory']);
     Route::get('get-bb/{id}', [BonusBattleController::class, 'getSingleBonusBattleInfo']);
-    Route::get('get-predictions/{id}', [GuessEntriesController::class, 'getPredictions']);
+    Route::get('get-bb-predictions/{id}', [BattlePredictionController::class, 'getPredictions']);
+
     Route::get('get-donations/{id}', [StreamlabsController::class, 'getDonations']);
     Route::get('get-referrals/{id}', [ReferralController::class, 'getReferrals']);
 });

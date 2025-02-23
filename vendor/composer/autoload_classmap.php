@@ -40,6 +40,7 @@ return array(
     'App\\Http\\Controllers\\SpinController' => $baseDir . '/app/Http/Controllers/SpinController.php',
     'App\\Http\\Controllers\\StreamAccountController' => $baseDir . '/app/Http/Controllers/StreamAccountController.php',
     'App\\Http\\Controllers\\StreamController' => $baseDir . '/app/Http/Controllers/StreamController.php',
+    'App\\Http\\Controllers\\StreamlabsController' => $baseDir . '/app/Http/Controllers/StreamlabsController.php',
     'App\\Http\\Controllers\\UserSettingController' => $baseDir . '/app/Http/Controllers/UserSettingController.php',
     'App\\Http\\Controllers\\ViewerController' => $baseDir . '/app/Http/Controllers/ViewerController.php',
     'App\\Http\\Controllers\\WithdrawalController' => $baseDir . '/app/Http/Controllers/WithdrawalController.php',

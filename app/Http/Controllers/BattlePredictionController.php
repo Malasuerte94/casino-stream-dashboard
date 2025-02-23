@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\GuessEntriesResource;
+use App\Models\BattlePrediction;
+use App\Models\BonusBattle;
 use App\Models\BonusBuy;
 use App\Models\BonusHunt;
 use App\Models\GuessEntry;
@@ -10,7 +12,7 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class GuessEntriesController extends Controller
+class BattlePredictionController extends Controller
 {
     /**
      * Post or update a user's prediction.
@@ -27,43 +29,35 @@ class GuessEntriesController extends Controller
                 throw new Exception('User not found');
             }
 
-            // Validate request data
             $validatedData = $request->validate([
-                'bonusId' => 'required|numeric',
-                'totalPayout' => 'required|numeric',
-                'highestMulti' => 'required|numeric',
-                'lowestMulti' => 'required|numeric',
-                'bestGame' => 'required|numeric',
-                'worstGame' => 'required|numeric',
-                'listType' => 'required|string|in:buy,hunt',
+                'battleId' => 'required|numeric',
+                'gameWinner' => 'required|numeric',
+                'gameLowestMulti' => 'required|numeric',
+                'gameHighestMulti' => 'required|numeric',
             ]);
 
-            $bonusId = $validatedData['bonusId'];
-            $type = $validatedData['listType'];
+            $battleId = $validatedData['battleId'];
 
             // Find the relevant bonus entry
-            $bonus = ($type === 'buy') ? BonusBuy::find($bonusId) : BonusHunt::find($bonusId);
+            $bonusBattle =  BonusBattle::find($battleId);
 
-            if (!$bonus) {
+            if (!$bonusBattle) {
                 throw new Exception('Bonusul nu a fost găsit');
             }
 
-            if (!$bonus->is_open) {
+            if (!$bonusBattle->is_open) {
                 throw new Exception('Înscrieri închise');
             }
 
             // Create or update the guess entry
-            $entry = $user->guessEntries()->updateOrCreate(
+            $entry = $user->battlePredictions()->updateOrCreate(
                 [
-                    'bonus_hunt_id' => $type === 'hunt' ? $bonusId : null,
-                    'bonus_buy_id' => $type === 'buy' ? $bonusId : null,
+                    'bonus_battle_id' => $battleId,
                 ],
                 [
-                    'estimated' => $validatedData['totalPayout'],
-                    'game_highest_id' => $validatedData['bestGame'],
-                    'game_lowest_id' => $validatedData['worstGame'],
-                    'biggest_multi' => $validatedData['highestMulti'],
-                    'lowest_multi' => $validatedData['lowestMulti'],
+                    'game_winner_id' => $validatedData['gameWinner'],
+                    'game_biggest_multi_id' => $validatedData['gameHighestMulti'],
+                    'game_lowest_multi_id' => $validatedData['gameLowestMulti']
                 ]
             );
 
@@ -91,8 +85,7 @@ class GuessEntriesController extends Controller
                 throw new Exception('User not found');
             }
 
-            // Find existing prediction
-            $prediction = GuessEntry::where('bonus_hunt_id', $id)
+            $prediction = BattlePrediction::where('bonus_battle_id', $id)
                 ->where('user_id', $user->id)
                 ->first();
 
@@ -102,11 +95,9 @@ class GuessEntriesController extends Controller
 
             return response()->json([
                 'prediction' => [
-                    'totalPayout' => $prediction->estimated,
-                    'highestMulti' => $prediction->biggest_multi,
-                    'lowestMulti' => $prediction->lowest_multi,
-                    'bestGame' => $prediction->game_highest_id,
-                    'worstGame' => $prediction->game_lowest_id,
+                    'gameWinner' => $prediction->game_winner_id,
+                    'gameHighestMulti' => $prediction->game_biggest_multi_id,
+                    'gameLowestMulti' => $prediction->game_lowest_multi_id
                 ]
             ], 200);
         } catch (Exception $e) {
@@ -123,8 +114,8 @@ class GuessEntriesController extends Controller
     public function getPredictions(int $id): JsonResponse
     {
         try {
-            $predictions = GuessEntry::where('bonus_hunt_id', $id)
-                ->with(['user:id,yt_name,profile_photo_path']) // Eager load user with selected fields
+            $predictions = BattlePrediction::where('bonus_battle_id', $id)
+                ->with(['user:id,yt_name,profile_photo_path'])
                 ->get();
 
             if ($predictions->isEmpty()) {

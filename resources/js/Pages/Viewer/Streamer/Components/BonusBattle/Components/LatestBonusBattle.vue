@@ -46,6 +46,8 @@
       </div>
       <!-- Battle Stats -->
       <div class="md:w-1/2 w-full flex flex-col gap-4 text-white rounded-lg">
+        <LatestBattleGuess :latestBattle="latestBattle" :currency="currency" />
+        <LatestBattleGuessers :latestBattle="latestBattle" :currency="currency" />
         <div class="flex flex-col md:flex-row w-full gap-4">
           <div class="w-full md:w-1/2">
 <!--            <LatestHuntStats :latestBattle="latestBattle" :currency="currency"/>-->
@@ -72,14 +74,16 @@ import LatestHuntStats from "../../BonusHunt/Components/LatestHuntStats.vue";
 import LatestHuntCurentNext from "../../BonusHunt/Components/LatestHuntCurentNext.vue";
 import LatestHuntHighLowX from "../../BonusHunt/Components/LatestHuntHighLowX.vue";
 import LatestHuntHighLowWin from "../../BonusHunt/Components/LatestHuntHighLowWin.vue";
-import LatestHuntGuess from "../../BonusHunt/Components/LatestHuntGuess.vue";
 import axios from "axios";
 import BattleTournament from "./BattleTournament.vue";
+import LatestBattleGuess from "./LatestBattleGuess.vue";
+import LatestBattleGuessers from "./LatestBattleGuessers.vue";
 
 export default {
   components: {
+    LatestBattleGuessers,
+    LatestBattleGuess,
     BattleTournament,
-    LatestHuntGuess,
     LatestHuntHighLowWin,
     LatestHuntHighLowX,
     LatestHuntCurentNext,

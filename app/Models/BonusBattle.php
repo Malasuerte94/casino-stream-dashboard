@@ -27,6 +27,11 @@ class BonusBattle extends Model
         return $this->hasMany(BonusStage::class);
     }
 
+    public function battlePredictions():  HasMany
+    {
+        return $this->hasMany(BattlePrediction::class);
+    }
+
     /**
      * Get the last active stage for the bonus battle.
      *
