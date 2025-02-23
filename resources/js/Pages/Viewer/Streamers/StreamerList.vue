@@ -1,5 +1,5 @@
 <template>
-  <ViewerDash title="Bonuses">
+  <AppLayout title="Bonuses">
     <div class="py-4">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="flex flex-row gap-6">
@@ -17,12 +17,12 @@
         </div>
       </div>
     </div>
-  </ViewerDash>
+  </AppLayout>
 </template>
 <script>
-import ViewerDash from '@/Layouts/ViewerDash.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
 export default {
-  components: { ViewerDash },
+  components: { AppLayout },
   data() {
     return {
       settings: [],

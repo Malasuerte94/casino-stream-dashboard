@@ -1,9 +1,61 @@
 <template>
   <div class="p-6">
+
+    <transition name="fade">
+      <div class="bg-gray-900 p-6 mb-6 rounded border border-red-700 shadow-lg text-center">
+        <div class="text-lg text-center mb-4 text-red-300">
+          OBS WIDGETS
+        </div>
+        <div class="flex flex-wrap gap-2 bg-gray-800 p-2 rounded-lg shadow-lg h-10 items-center justify-center">
+          <NavLink class="text-white text-sm font-semibold px-3 py-1 border-transparent transition-all duration-200 hover:text-amber-500"
+                   :href="route('bonus-list', { id: $page.props.user.id })"
+                   :active="route().current('bonus-list')">
+            Bonus Buy
+          </NavLink>
+          <NavLink class="text-white text-sm font-semibold px-3 py-1 border-transparent transition-all duration-200 hover:text-amber-500"
+                   :href="route('bonus-battle-view', { id: $page.props.user.id })"
+                   :active="route().current('bonus-battle-view')">
+            Bonus Battle
+          </NavLink>
+          <NavLink class="text-white text-sm font-semibold px-3 py-1 border-transparent transition-all duration-200 hover:text-amber-500"
+                   :href="route('bonus-battle-picker', { id: $page.props.user.id })"
+                   :active="route().current('bonus-battle-picker')">
+            Bonus Battle Picker
+          </NavLink>
+          <NavLink class="text-white text-sm font-semibold px-3 py-1 border-transparent transition-all duration-200 hover:text-amber-500"
+                   :href="route('bonus-winner-obs', { id: $page.props.user.id })"
+                   :active="route().current('bonus-winner-obs')">
+            Bonus Winner
+          </NavLink>
+          <NavLink class="text-white text-sm font-semibold px-3 py-1 border-transparent transition-all duration-200 hover:text-amber-500"
+                   :href="route('yt-like-view-counter', { id: $page.props.user.id })"
+                   :active="route().current('yt-like-view-counter')">
+            Like / View Counter YT
+          </NavLink>
+          <NavLink class="text-white text-sm font-semibold px-3 py-1 border-transparent transition-all duration-200 hover:text-amber-500"
+                   :href="route('picker-wheel', { id: $page.props.user.id })"
+                   :active="route().current('picker-wheel')">
+            Wheel
+          </NavLink>
+          <NavLink class="text-white text-sm font-semibold px-3 py-1 border-transparent transition-all duration-200 hover:text-amber-500"
+                   :href="route('banners-obs', { id: $page.props.user.id })"
+                   :active="route().current('banners-obs')">
+            Banners
+          </NavLink>
+          <NavLink class="text-white text-sm font-semibold px-3 py-1 border-transparent transition-all duration-200 hover:text-amber-500"
+                   :href="route('schedule-view', { id: $page.props.user.id })"
+                   :active="route().current('schedule-view')">
+            Schedule
+          </NavLink>
+        </div>
+      </div>
+    </transition>
+
     <!-- New Stream Call-to-Action Card -->
     <transition name="fade">
-      <div class="bg-gray-900 p-6 mb-6 rounded border border-red-700 shadow-lg">
+      <div class="bg-gray-900 p-6 mb-6 rounded border border-red-700 shadow-lg opacity-25">
         <button
+            disabled
             @click="activateDialog"
             type="button"
             class="w-full focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-500 font-medium rounded-lg text-sm px-5 py-2.5 transition-all duration-200"
@@ -36,8 +88,9 @@
 import axios from "axios";
 import DepositsStream from "./DepositsStream.vue";
 import WithdrawalsStream from "./WithdrawalsStream.vue";
+import NavLink from "../../../Components/NavLink.vue";
 export default {
-  components: { DepositsStream, WithdrawalsStream },
+  components: {NavLink, DepositsStream, WithdrawalsStream },
   emits: ["displayOnly"],
   data() {
     return {

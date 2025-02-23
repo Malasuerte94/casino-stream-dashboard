@@ -309,7 +309,7 @@ const handleWinnersPicked = (winnersArray) => {
               </h3>
               <transition-group name="fade">
                 <div v-for="(concurrent, index) in concurrents" :key="index"
-                   class="relative overflow-hidden flex items-center gap-4 bg-gray-900 p-4 rounded-md shadow transition-all duration-300"
+                   class="relative overflow-hidden flex items-center gap-4 bg-gray-800 p-4 rounded-md shadow transition-all duration-300"
                    :style="concurrent.game_id ? {'--bg-image': 'url(' + getGameThumbnail(concurrent.game_id) + ')'} : {}">
                 <!-- Blurred Background Layer -->
                 <div v-if="concurrent.game_id"
@@ -347,9 +347,9 @@ const handleWinnersPicked = (winnersArray) => {
           </div>
         </div>
 
-        <div v-if="winner && !activeBattle" class="bg-gray-900 overflow-hidden shadow-lg rounded-md transition-all duration-300">
+        <div v-if="winner && !activeBattle" class="bg-gray-800 overflow-hidden shadow-lg rounded-md transition-all duration-300">
           <div class="p-6 flex justify-center items-center bg-gray-800">
-            <div class="w-full max-w-md bg-gray-900 shadow-lg rounded-md p-6 text-center transition-all duration-300">
+            <div class="w-full max-w-md bg-gray-800 shadow-lg rounded-md p-6 text-center transition-all duration-300">
               <img v-if="winner.game.image"
                    :src="getGameThumbnail(winner.game.id)"
                    alt="Game Thumbnail"
@@ -390,7 +390,7 @@ const handleWinnersPicked = (winnersArray) => {
         </DialogModal>
 
         <!-- Active Battle Display -->
-        <div v-if="activeBattle" class="bg-gray-900 overflow-hidden shadow-lg rounded-md mt-6 transition-all duration-300">
+        <div v-if="activeBattle" class="bg-gray-800 overflow-hidden shadow-lg rounded-md mt-6 transition-all duration-300">
           <div class="p-6">
             <div class="flex justify-between items-center">
               <h2 class="text-xl font-bold mb-4 text-gray-100">Active Battle: {{ activeBattle.title }}</h2>

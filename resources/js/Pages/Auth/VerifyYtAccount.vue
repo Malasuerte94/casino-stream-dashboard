@@ -1,5 +1,5 @@
 <template>
-  <ViewerDash title="Bonuses">
+  <AppLayout title="Bonuses">
     <div class="min-h-screen flex flex-col justify-center items-center ">
       <div class="flex flex-col gap-2 text-center bg-gray-600 text-lg w-2/6 p-4 rounded-lg">
         <div>
@@ -19,15 +19,15 @@
         </div>
       </div>
     </div>
-  </ViewerDash>
+  </AppLayout>
 </template>
 
 <script>
-import ViewerDash from '@/Layouts/ViewerDash.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
 import axios from 'axios';
 
 export default {
-  components: { ViewerDash },
+  components: { AppLayout },
   data() {
     return {
       command: '',

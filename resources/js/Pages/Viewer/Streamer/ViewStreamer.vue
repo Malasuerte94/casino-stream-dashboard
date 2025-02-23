@@ -1,5 +1,5 @@
 <template>
-  <ViewerDash title="Main User">
+  <AppLayout title="Main User">
     <div class="py-6 pb-20">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 px-4">
         <div class="overflow-hidden mb-4">
@@ -28,10 +28,10 @@
         </transition>
       </div>
     </div>
-  </ViewerDash>
+  </AppLayout>
 </template>
 <script>
-import ViewerDash from '@/Layouts/ViewerDash.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
 import { router } from '@inertiajs/vue3';
 import axios from "axios";
 import ViewStreamerHunt from "./Components/BonusHunt/ViewStreamerHunt.vue";
@@ -40,7 +40,7 @@ import Referrals from "./Components/Refferal/Referrals.vue";
 import ViewSocials from "./Components/Social/ViewSocials.vue";
 
 export default {
-  components: {ViewStreamerHunt, ViewerDash, Referrals, ViewStreamerBonusBattle, ViewSocials},
+  components: {ViewStreamerHunt, AppLayout, Referrals, ViewStreamerBonusBattle, ViewSocials},
   data() {
     return {
       streamer: {},
