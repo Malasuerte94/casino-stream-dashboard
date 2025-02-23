@@ -35,11 +35,25 @@
           </div>
         </div>
 
-        <div class="flex flex-row items-center gap-1 text-sm">
-          <div>
-            <SvgCalendar class="w-4 h-4 text-gray-500 stroke-current"/>
+        <div class="flex flex-row items-center justify-between gap-1 text-sm">
+          <div class="flex flex-row items-center gap-1">
+            <div>
+              <SvgCalendar class="w-4 h-4 text-gray-500 stroke-current"/>
+            </div>
+            <div>{{ convertDate(latestHunt.created_at) }}</div>
           </div>
-          <div>{{ convertDate(latestHunt.created_at) }}</div>
+          <div
+              class="flex flex-row items-center gap-1 bg-gray-700 px-2 py-1 rounded"
+              :class="{
+              'text-green-500': parseFloat(latestHunt.result) >= parseFloat(latestHunt.start),
+              'text-red-500': parseFloat(latestHunt.result) <= parseFloat(latestHunt.start)
+            }"
+          >
+            <div>
+              <SvgMoney class="h-4 w-4"/>
+            </div>
+            <div>{{ latestHunt.result }} {{ currency }}</div>
+          </div>
         </div>
       </div>
 
@@ -206,7 +220,7 @@ export default {
       const date = new Date(isoString);
       return new Intl.DateTimeFormat("ro-RO", {
         day: "2-digit",
-        month: "long",
+        month: "short",
         year: "numeric",
       }).format(date);
     },
