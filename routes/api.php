@@ -136,7 +136,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 });
 
-//FOR USER PUBLIC
+//VIEWER USER AUTH REQUIRED
 Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('viewer')->group(function () {
         Route::get('get-yt-code', [ViewerController::class, 'getVerifyCode']);
@@ -144,27 +144,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('get-prediction/{id}', [GuessEntriesController::class, 'getPrediction']);
     });
 });
-
-Route::prefix('viewer')->group(function () {
-    Route::get('get-streamer/{id}', [ViewerController::class, 'getSteamer']);
-    Route::get('get-bh-history/{id}', [ViewerController::class, 'getBonusHuntHistory']);
-    Route::get('get-bh/{id}', [ViewerController::class, 'getBonusHunt']);
-    Route::get('get-bb-history/{id}', [BonusBattleController::class, 'getBonusBattleHistory']);
-    Route::get('get-bb/{id}', [BonusBattleController::class, 'getSingleBonusBattleInfo']);
-    Route::get('get-predictions/{id}', [GuessEntriesController::class, 'getPredictions']);
-    Route::get('get-donations/{id}', [StreamlabsController::class, 'getDonations']);
-});
-//FOR USER PUBLIC
-
+//VIEWER AUTH REQUIRED
 
 // Public Routes (No Authentication Required)
 Route::get('/stream', [StreamController::class, 'index']);
 Route::get('/bonus-buy', [BonusBuyController::class, 'index']);
 Route::get('/bonus-buy-all', [BonusBuyController::class, 'all']);
-
 Route::get('/bonus-hunt', [BonusHuntController::class, 'index']);
 Route::get('/bonus-hunt-all', [BonusHuntController::class, 'all']);
-
 Route::get('/socials', [SocialController::class, 'index']);
 Route::get('/settings', [UserSettingController::class, 'index']);
 Route::get('/settings/{id}', [UserSettingController::class, 'show']);
@@ -174,47 +161,45 @@ Route::get('/deposits/{id}', [DepositController::class, 'show']);
 Route::get('/withdrawals', [WithdrawalController::class, 'index']);
 Route::get('/withdrawals/{id}', [WithdrawalController::class, 'show']);
 Route::get('/banner', [BannerController::class, 'index']);
-
 Route::get('/wheel-list/{id}', [SpinController::class, 'index']);
-Route::get('/spin/{id}', [SpinController::class, 'triggerSpin']);
-Route::get('/spin/check/{id}', [SpinController::class, 'checkSpin']);
-Route::post('/spin/clear/{id}', [SpinController::class, 'clearSpin']);
-
 Route::get('/youtube-link/{id}', [StreamController::class, 'getYoutubeLink']);
 Route::post('/get-youtube-data', [StreamController::class, 'getYoutubeData']);
-
 Route::get('/bonus-list/{id}', [BonusListController::class, 'index']);
 Route::get('/stream/{id}', [StreamController::class, 'show']);
 Route::get('/banners/{id}', [BannerController::class, 'show']);
 Route::get('/banners-ads/{id}', [BannerController::class, 'showAds']);
 Route::post('/banner-ads/{id}/click', [BannerController::class, 'registerClick']);
 Route::get('/get-latest-list', [BonusListController::class, 'getUrl']);
-
-Route::get('/ref-list/{id}', [ReferralController::class, 'getReferrals']);
-
-
-// Viewer Action Routes
-Route::get('/show-entries/{id}/{type}', [GuessEntriesController::class, 'showEntries']);
-Route::get('/get-bonus-winner/{id}', [BonusListController::class, 'getBonusHuntWinner']);
-// Viewer Action Routes
-
-Route::get('/bonus-battle-info/{id}', [BonusBattleController::class, 'getBonusBattleInfo']);
-
-//schedule
 Route::get('/schedule/weekly/{id}', [ScheduleController::class, 'getWeeklySchedule']);
-
-//get-all-games
 Route::apiResource('games', GameController::class);
-
-//get-all-users-list
+Route::get('/get-bonus-winner/{id}', [BonusListController::class, 'getBonusHuntWinner']);
+Route::get('/bonus-battle-info/{id}', [BonusBattleController::class, 'getBonusBattleInfo']);
 Route::get('/battle-viewers-public/{id}', [BattleViewerController::class, 'getBattleViewersPublic']);
 
+
+//VIEWER USER PUBLIC
+Route::prefix('viewer')->group(function () {
+    Route::get('get-streamer/{id}', [ViewerController::class, 'getSteamer']);
+    Route::get('get-bh-history/{id}', [ViewerController::class, 'getBonusHuntHistory']);
+    Route::get('get-bh/{id}', [ViewerController::class, 'getBonusHunt']);
+    Route::get('get-bb-history/{id}', [BonusBattleController::class, 'getBonusBattleHistory']);
+    Route::get('get-bb/{id}', [BonusBattleController::class, 'getSingleBonusBattleInfo']);
+    Route::get('get-predictions/{id}', [GuessEntriesController::class, 'getPredictions']);
+    Route::get('get-donations/{id}', [StreamlabsController::class, 'getDonations']);
+    Route::get('get-referrals/{id}', [ReferralController::class, 'getReferrals']);
+});
+//VIEWER USER PUBLIC
+
+
+//STREAMER USER FOR PY SOFTWARE DESKTOP
 Route::get('/get-casinos', [CasinoController::class, 'getCasinos']);
 Route::post('/add-casino', [CasinoController::class, 'addCasino']);
+Route::get('/spin/{id}', [SpinController::class, 'triggerSpin']);
+Route::get('/spin/check/{id}', [SpinController::class, 'checkSpin']);
+Route::post('/spin/clear/{id}', [SpinController::class, 'clearSpin']);
 
-//viewer actions - YT-BOT
+
+//VIEWER USER - ACTIONS WITH BOT
 Route::get('/verify-yt-code/{user}/{code}', [ViewerController::class, 'verifyCode']);
-//register for bonus battle picker
 Route::get('/add-bb-viewer/{username}/{game}/{creatorId}',[BattleViewerController::class, 'addBattleViewer']);
-//add refferal
 Route::get('/referral/{id}/{parent}/{child}', [ReferralController::class, 'registerReferral']);

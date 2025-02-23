@@ -1,6 +1,6 @@
 <template>
   <div v-if="latestBattle">
-    <div class="w-full mb-4">
+    <div class="w-full mb-8 mt-8">
       <BattleTournament :latestBattle="latestBattle" :currency="currency"/>
     </div>
     <div class="flex flex-col md:flex-row gap-4 w-full mb-4">

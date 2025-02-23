@@ -13,27 +13,6 @@ use Illuminate\Http\Request;
 class GuessEntriesController extends Controller
 {
     /**
-     * @param int $bonusListId
-     * @param string $type
-     * @return bool|string
-     */
-    public function showEntries(int $bonusListId, string $type): bool|string
-    {
-
-        if ($type === 'buy') {
-            $bonus = BonusBuy::find($bonusListId);
-        } else {
-            $bonus = BonusHunt::find($bonusListId);
-        }
-
-        $entries = $bonus->guessEntries;
-        $entries = GuessEntriesResource::collection($entries);
-
-        return json_encode($entries);
-
-    }
-
-    /**
      * Post or update a user's prediction.
      *
      * @param Request $request

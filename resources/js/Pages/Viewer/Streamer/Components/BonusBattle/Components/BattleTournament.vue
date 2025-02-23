@@ -52,7 +52,7 @@
             </div>
           </div>
         </div>
-        <div class="mt-8 text-center font-bold text-xl text-yellow-500">🏆 Winner: {{ latestBattle.summary.winning_game }} 🏆</div>
+        <div v-if="latestBattle.summary.winning_game !== 'N/A'" class="mt-8 text-center font-bold text-xl text-yellow-500">🏆 Winner: {{ latestBattle.summary.winning_game }} 🏆</div>
       </div>
     </div>
   </div>
@@ -97,14 +97,6 @@ export default {
       event.preventDefault();
       const scaleAmount = event.deltaY * -0.001;
       this.scale = Math.min(Math.max(this.scale + scaleAmount, 0.5), 2);
-    },
-    getLineStyle(stageIndex, bracketIndex) {
-      return {
-        height: stageIndex < this.latestBattle.stages.length - 1 ? '30px' : '0px',
-        top: '50%',
-        left: '50%',
-        transform: 'translateX(-50%)'
-      };
     }
   }
 };

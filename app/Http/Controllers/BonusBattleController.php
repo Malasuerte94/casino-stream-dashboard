@@ -233,7 +233,7 @@ class BonusBattleController extends Controller
             'total_cost' => $totalCost,
             'total_result' => $totalResult,
             'profit' => $totalResult - $totalCost,
-            'winning_game' => $result['bonusBattle']['stages'][0]['brackets'][0]['winner']['game'] ?? 'N/A'
+            'winning_game' => $result['bonusBattle']['stages'][0]['brackets'][0]['winner']['game'] ?? null
         ];
 
         $allBattleBrackets = $activeBattle->stages->flatMap->brackets;
