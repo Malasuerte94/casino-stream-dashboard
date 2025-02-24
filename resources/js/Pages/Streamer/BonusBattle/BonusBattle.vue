@@ -157,7 +157,7 @@ const startBattle = async () => {
   }
 
   try {
-    const response = await axios.post('/api/bonus-battles', {
+    await axios.post('/api/bonus-battles', {
       title: title.value,
       stake: stake.value,
       prize: prize.value,
@@ -242,7 +242,7 @@ const fetchActiveBattle = async () => {
     activeBracket.value = response.data.bracket;
     activeScores.value = response.data.scores;
     history.value = response.data.history;
-    isBattleOpen.value = Boolean(response.data.battle.is_open);
+    isBattleOpen.value = Boolean(response.data.battle?.is_open);
     title.value = 'Bonus Battle #' + (totalBattles.value + 1);
 
     if (activeConcurrents.value) {
@@ -295,7 +295,7 @@ const handleWinnersPicked = (winnersArray) => {
     <div class="py-4">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <!-- Top Link & Controls -->
-        <div
+        <div v-if="activeBattle"
             class="px-6 py-3 flex items-center justify-between bg-gray-800 rounded-md shadow-md transition-all duration-300">
           <div class="flex items-center space-x-4">
             <span class="text-sm text-gray-300">LINK pentru View-eri (predicții)</span>
@@ -303,7 +303,7 @@ const handleWinnersPicked = (winnersArray) => {
               {{ guessUrl }}
             </div>
           </div>
-          <div class="flex items-center space-x-4" v-if="activeBattle">
+          <div class="flex items-center space-x-4">
             <!-- Toggle Switch -->
             <span class="ml-3 text-sm font-medium text-gray-300 flex items-center gap-2">
           {{ isBattleOpen ? 'Predicții Pornite' : 'Predicții Oprite' }}
