@@ -13,6 +13,7 @@ import { createPinia } from 'pinia';
 
 import Echo from "laravel-echo";
 import Pusher from "pusher-js";
+import formatCurrency from "./plugins/formatCurrency";
 
 window.Pusher = Pusher;
 window.Echo = new Echo({
@@ -37,6 +38,7 @@ createInertiaApp({
             .use(ZiggyVue, Ziggy)
             .use(Dialog)
             .use(pinia)
+            .use(formatCurrency, { currency: 'RON' })
             .mount(el);
     },
     progress: {
