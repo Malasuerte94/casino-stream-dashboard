@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\BattleViewer;
+use App\Models\BonusBattle;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -140,4 +141,79 @@ class BattleViewerController extends Controller
 
         return response()->json($viewers, 200);
     }
+
+
+    /**
+     * @param $bonusBattleId
+     * @return JsonResponse
+     */
+    public function getWinners($bonusBattleId): JsonResponse
+    {
+        $bonusBattle = BonusBattle::find($bonusBattleId);
+
+        if (!$bonusBattle) {
+            return response()->json(['error' => 'Battle not found!'], 404);
+        }
+
+        if (!$bonusBattle->battlePredictionWinners) {
+            return response()->json(['error' => 'Winners not found!'], 404);
+        }
+
+        $winnersGame   = $bonusBattle->battlePredictionWinners->gameWinner;
+        $winnersLowGame = $bonusBattle->battlePredictionWinners->gameLowest;
+        $winnersHighGame = $bonusBattle->battlePredictionWinners->gameHighest;
+
+        $winners = [];
+
+        if ($winnersGame) {
+            $gamePrediction = $winnersGame->toArray();
+            $gamePrediction['user'] = $winnersGame->user->only(['id', 'name', 'yt_name', 'profile_photo_path']);
+            $winners['gameWinner'] = [
+                'key' => 'winner',
+                'prediction' => $gamePrediction,
+                'game'       => $winnersGame->gameWinner->game
+            ];
+        } else {
+            $winners['gameWinner'] = [
+                'key' => 'winner',
+                'prediction' => null,
+                'game'       => null
+            ];
+        }
+
+        if ($winnersLowGame) {
+            $lowestPrediction = $winnersLowGame->toArray();
+            $lowestPrediction['user'] = $winnersLowGame->user->only(['id', 'name', 'yt_name', 'profile_photo_path']);
+            $winners['gameLowest'] = [
+                'key' => 'low',
+                'prediction' => $lowestPrediction,
+                'game'       => $winnersLowGame->gameLow->game
+            ];
+        } else {
+            $winners['gameLowest'] = [
+                'key' => 'low',
+                'prediction' => null,
+                'game'       => null
+            ];
+        }
+
+        if ($winnersHighGame) {
+            $highestPrediction = $winnersHighGame->toArray();
+            $highestPrediction['user'] = $winnersHighGame->user->only(['id', 'name', 'yt_name', 'profile_photo_path']);
+            $winners['gameHighest'] = [
+                'key' => 'high',
+                'prediction' => $highestPrediction,
+                'game'       => $winnersHighGame->gameHigh->game
+            ];
+        } else {
+            $winners['gameHighest'] = [
+                'key' => 'high',
+                'prediction' => null,
+                'game'       => null
+            ];
+        }
+
+        return response()->json(['winners' => $winners], 200);
+    }
+
 }

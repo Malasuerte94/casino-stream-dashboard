@@ -116,6 +116,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/add-score', [BonusBattleController::class, 'addScore']);
         Route::put('/edit-concurrent', [BonusBattleController::class, 'editConcurrent']);
         Route::delete('/delete-score/{id}', [BonusBattleController::class, 'deleteScore']);
+        Route::patch('/switch-predictions', [BonusBattleController::class, 'switchPredictions']);
         Route::get('/battle-viewers', [BattleViewerController::class, 'getBattleViewers']);
         Route::patch('/battle-viewers/{id}', [BattleViewerController::class, 'updateBattleViewer']);
         Route::post('/battle-viewers/remove-all', [BattleViewerController::class, 'clearBattleViewers']);
@@ -181,6 +182,9 @@ Route::get('/get-bonus-winner/{id}', [BonusListController::class, 'getBonusHuntW
 Route::get('/bonus-battle-info/{id}', [BonusBattleController::class, 'getBonusBattleInfo']);
 Route::get('/battle-viewers-public/{id}', [BattleViewerController::class, 'getBattleViewersPublic']);
 
+Route::prefix('bb')->group(function () {
+    Route::get('get-winners/{id}', [BattleViewerController::class, 'getWinners']);
+});
 
 //VIEWER USER PUBLIC
 Route::prefix('viewer')->group(function () {

@@ -3,7 +3,7 @@
     <!-- Top Link & Controls -->
     <div class="px-6 py-3 flex items-center justify-between bg-gray-800 rounded-md shadow-md transition-all duration-300">
       <div class="flex items-center space-x-4">
-        <span class="text-sm text-gray-300">LINK pentru View-eri (ghicește suma)</span>
+        <span class="text-sm text-gray-300">LINK pentru View-eri (predicții)</span>
         <div class="text-sm font-bold py-1 px-3 bg-gray-700 rounded-md border border-gray-600 transition">
           {{ guessUrl }}
         </div>

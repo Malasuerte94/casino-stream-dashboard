@@ -3,10 +3,12 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import {ref, onMounted, computed} from 'vue';
 import vSelect from 'vue-select';
 import "vue-select/dist/vue-select.css";
-import { useGameStore } from '@/stores/gameStore';
+import {useGameStore} from '@/stores/gameStore';
 import BonusBattleViewers from "./Components/BonusBattleViewers.vue";
 import DialogModal from "@/Components/DialogModal.vue";
-import { useBattleStore } from '@/stores/battleStore';
+import {useBattleStore} from '@/stores/battleStore';
+import {usePage} from '@inertiajs/vue3';
+import axios from "axios";
 
 const battleStore = useBattleStore();
 const loading = ref(true);
@@ -23,6 +25,7 @@ const activeScores = ref([{}]);
 const totalBattles = ref(null);
 const history = ref([]);
 const activeSelect = ref(false);
+const isBattleOpen = ref(false);
 
 const winner = ref(null);
 const currentPair = ref([]);
@@ -42,11 +45,16 @@ const cantStart = computed(() => {
 });
 
 const canGoNext = computed(() => {
-  if(activeScores.value) {
+  if (activeScores.value) {
     if (activeScores.value.length < 2) return false;
     return activeScores.value.every(score => score.cost_buy > 0);
   }
   return false
+});
+
+const guessUrl = computed(() => {
+  const host = window.location.origin;
+  return `${host}/streamer/${usePage().props.user.id}`;
 });
 
 const confirmLogout = () => {
@@ -59,6 +67,17 @@ const closeModal = () => {
 
 const addConcurrent = (number) => {
   battleStore.addConcurrent(number);
+};
+
+const setStatusGuessList = async () => {
+  await axios
+      .patch("/api/bonus-battles/switch-predictions", {
+        is_open: isBattleOpen.value,
+        bonus_battle_id: activeBattle.value.id,
+      })
+      .then(async () => {
+        await fetchActiveBattle();
+      });
 };
 
 const addScore = async () => {
@@ -223,6 +242,7 @@ const fetchActiveBattle = async () => {
     activeBracket.value = response.data.bracket;
     activeScores.value = response.data.scores;
     history.value = response.data.history;
+    isBattleOpen.value = Boolean(response.data.battle.is_open);
     title.value = 'Bonus Battle #' + (totalBattles.value + 1);
 
     if (activeConcurrents.value) {
@@ -274,69 +294,106 @@ const handleWinnersPicked = (winnersArray) => {
   <AppLayout title="Bonus Battle">
     <div class="py-4">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <!-- Top Link & Controls -->
+        <div
+            class="px-6 py-3 flex items-center justify-between bg-gray-800 rounded-md shadow-md transition-all duration-300">
+          <div class="flex items-center space-x-4">
+            <span class="text-sm text-gray-300">LINK pentru View-eri (predicții)</span>
+            <div class="text-sm font-bold py-1 px-3 bg-gray-700 rounded-md border border-gray-600 transition">
+              {{ guessUrl }}
+            </div>
+          </div>
+          <div class="flex items-center space-x-4" v-if="activeBattle">
+            <!-- Toggle Switch -->
+            <span class="ml-3 text-sm font-medium text-gray-300 flex items-center gap-2">
+          {{ isBattleOpen ? 'Predicții Pornite' : 'Predicții Oprite' }}
+          <label for="toggle" class="relative inline-flex items-center cursor-pointer">
+            <input
+                type="checkbox"
+                id="toggle"
+                v-model="isBattleOpen"
+                @change="setStatusGuessList"
+                class="sr-only peer"
+            />
+            <div
+                class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full
+            dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white
+            after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border
+            after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
+            ></div>
+          </label>
+        </span>
+            <button class="btn-danger" @click="confirmLogout">
+              INCHIDE TURNEU FORȚAT
+            </button>
+          </div>
+        </div>
         <!-- Hide form if there's an active battle -->
-        <div v-if="!activeBattle && !winner" class="bg-gray-800 overflow-hidden shadow-lg rounded-md transition-all duration-300">
+        <div v-if="!activeBattle && !winner"
+             class="bg-gray-800 overflow-hidden shadow-lg rounded-md transition-all duration-300">
           <div class="p-6 space-y-4">
             <!-- Input Form -->
             <div class="flex flex-row gap-2">
               <div>
                 <label for="title" class="block text-sm font-medium text-gray-300">Titlu Bonus Battle</label>
-                <input type="text" v-model="title" id="title" class="mt-1 block w-full input-primary" />
+                <input type="text" v-model="title" id="title" class="mt-1 block w-full input-primary"/>
               </div>
               <div>
-                <label for="stake" class="block text-sm font-medium text-gray-300">Miză (eg: 5-8, 5, 10-20, etc.)</label>
-                <input type="text" v-model="stake" id="stake" class="mt-1 block w-full input-primary" />
+                <label for="stake" class="block text-sm font-medium text-gray-300">Miză (eg: 5-8, 5, 10-20,
+                  etc.)</label>
+                <input type="text" v-model="stake" id="stake" class="mt-1 block w-full input-primary"/>
               </div>
               <div>
                 <label for="prize" class="block text-sm font-medium text-gray-300">Premiu</label>
-                <input type="text" v-model="prize" id="prize" class="mt-1 block w-full input-primary" />
+                <input type="text" v-model="prize" id="prize" class="mt-1 block w-full input-primary"/>
               </div>
               <div>
-                <label for="buys" class="block text-sm font-medium text-gray-300">Câte buys per joc (poți face ulterior câte vrei)</label>
-                <input type="text" v-model="buys" id="buys" class="mt-1 block w-full input-primary" />
+                <label for="buys" class="block text-sm font-medium text-gray-300">Câte buys per joc (poți face ulterior
+                  câte vrei)</label>
+                <input type="text" v-model="buys" id="buys" class="mt-1 block w-full input-primary"/>
               </div>
             </div>
             <div class="flex flex-col md:flex-row md:space-x-4">
               <div class="md:w-2/3 bg-gray-800 p-6 rounded-md shadow-md space-y-4 transition-all duration-300">
-              <h3 class="text-lg font-semibold text-gray-300 flex gap-2 items-center">
-                Participanți
-                <div class="flex gap-4">
-                  <button @click="addConcurrent(4)" class="btn-primary">4</button>
-                  <button @click="addConcurrent(8)" class="btn-primary">8</button>
-                  <button @click="addConcurrent(16)" class="btn-primary">16</button>
-                  <button @click="addConcurrent(4)" class="btn-danger">RESET</button>
-                </div>
-              </h3>
-              <transition-group name="fade">
-                <div v-for="(concurrent, index) in concurrents" :key="index"
-                   class="relative overflow-hidden flex items-center gap-4 bg-gray-800 p-4 rounded-md shadow transition-all duration-300"
-                   :style="concurrent.game_id ? {'--bg-image': 'url(' + getGameThumbnail(concurrent.game_id) + ')'} : {}">
-                <!-- Blurred Background Layer -->
-                <div v-if="concurrent.game_id"
-                     class="absolute inset-0 pointer-events-none bg-blur transition-all duration-300"></div>
-                <!-- Row Content -->
-                <div class="relative z-10 flex items-center gap-4 w-full">
-                  <img v-if="concurrent.game_id"
-                       :src="getGameThumbnail(concurrent.game_id)"
-                       alt="Game Thumbnail"
-                       class="w-16 h-16 object-cover rounded-md"/>
-                  <v-select
-                      :options="availableGames"
-                      label="name"
-                      :reduce="game => game.id"
-                      v-model="concurrent.game_id"
-                      placeholder="Alege Joc"
-                      class="flex-1 transition-all duration-300"
-                      append-to-body
-                  />
-                  <input type="text" v-model="concurrent.for_user"
-                         class="flex-1 input-primary"
-                         placeholder="Cine a ales? (opțional)"/>
-                </div>
+                <h3 class="text-lg font-semibold text-gray-300 flex gap-2 items-center">
+                  Participanți
+                  <div class="flex gap-4">
+                    <button @click="addConcurrent(4)" class="btn-primary">4</button>
+                    <button @click="addConcurrent(8)" class="btn-primary">8</button>
+                    <button @click="addConcurrent(16)" class="btn-primary">16</button>
+                    <button @click="addConcurrent(4)" class="btn-danger">RESET</button>
+                  </div>
+                </h3>
+                <transition-group name="fade">
+                  <div v-for="(concurrent, index) in concurrents" :key="index"
+                       class="relative overflow-hidden flex items-center gap-4 bg-gray-800 p-4 rounded-md shadow transition-all duration-300"
+                       :style="concurrent.game_id ? {'--bg-image': 'url(' + getGameThumbnail(concurrent.game_id) + ')'} : {}">
+                    <!-- Blurred Background Layer -->
+                    <div v-if="concurrent.game_id"
+                         class="absolute inset-0 pointer-events-none bg-blur transition-all duration-300"></div>
+                    <!-- Row Content -->
+                    <div class="relative z-10 flex items-center gap-4 w-full">
+                      <img v-if="concurrent.game_id"
+                           :src="getGameThumbnail(concurrent.game_id)"
+                           alt="Game Thumbnail"
+                           class="w-16 h-16 object-cover rounded-md"/>
+                      <v-select
+                          :options="availableGames"
+                          label="name"
+                          :reduce="game => game.id"
+                          v-model="concurrent.game_id"
+                          placeholder="Alege Joc"
+                          class="flex-1 transition-all duration-300"
+                          append-to-body
+                      />
+                      <input type="text" v-model="concurrent.for_user"
+                             class="flex-1 input-primary"
+                             placeholder="Cine a ales? (opțional)"/>
+                    </div>
+                  </div>
+                </transition-group>
               </div>
-              </transition-group>
-            </div>
-              <BonusBattleViewers @winnersPicked="handleWinnersPicked" :fillCount="concurrents.length" />
+              <BonusBattleViewers @winnersPicked="handleWinnersPicked" :fillCount="concurrents.length"/>
             </div>
             <button :disabled="cantStart"
                     :class="{'opacity-50 cursor-not-allowed': cantStart}"
@@ -347,7 +404,8 @@ const handleWinnersPicked = (winnersArray) => {
           </div>
         </div>
 
-        <div v-if="winner && !activeBattle" class="bg-gray-800 overflow-hidden shadow-lg rounded-md transition-all duration-300">
+        <div v-if="winner && !activeBattle"
+             class="bg-gray-800 overflow-hidden shadow-lg rounded-md transition-all duration-300">
           <div class="p-6 flex justify-center items-center bg-gray-800">
             <div class="w-full max-w-md bg-gray-800 shadow-lg rounded-md p-6 text-center transition-all duration-300">
               <img v-if="winner.game.image"
@@ -390,20 +448,18 @@ const handleWinnersPicked = (winnersArray) => {
         </DialogModal>
 
         <!-- Active Battle Display -->
-        <div v-if="activeBattle" class="bg-gray-800 overflow-hidden shadow-lg rounded-md mt-6 transition-all duration-300">
+        <div v-if="activeBattle"
+             class="bg-gray-800 overflow-hidden shadow-lg rounded-md mt-6 transition-all duration-300">
           <div class="p-6">
-            <div class="flex justify-between items-center">
+            <div class="flex flex-row justify-between">
               <h2 class="text-xl font-bold mb-4 text-gray-100">Active Battle: {{ activeBattle.title }}</h2>
-              <button class="btn-danger" @click="confirmLogout">
-                INCHIDE TURNEU FORȚAT
-              </button>
+              <p class="text-gray-300">
+                Miza: {{ activeBattle.stake }} | Etapa: {{ activeStage.name }} | Premiu: {{ activeBattle.prize }} | Buys:
+                {{ activeBattle.buys }}
+              </p>
             </div>
-            <p class="text-gray-300">
-              Miza: {{ activeBattle.stake }} | Etapa: {{ activeStage.name }} | Premiu: {{ activeBattle.prize }} | Buys: {{ activeBattle.buys }}
-            </p>
-
             <!-- Brackets Section -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4" v-if="currentPair.length > 1">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-if="currentPair.length > 1">
               <div v-for="(concurrent, index) in currentPair" :key="index"
                    class="relative border rounded-md p-4 shadow transition-all duration-300 game-active-row"
                    :class="concurrent.game.image ? 'bg-transparent' : 'bg-gray-900'"
@@ -412,8 +468,10 @@ const handleWinnersPicked = (winnersArray) => {
                 <div v-if="concurrent.game.image"
                      class="absolute inset-0 pointer-events-none bg-blur transition-all duration-300"></div>
                 <!-- Row Content with overlay -->
-                <div class="relative z-10 p-4" :class="concurrent.game.image ? 'bg-black bg-opacity-60' : 'bg-gray-900'">
-                  <div class="flex gap-2 items-center mb-2 p-2 rounded-md border border-gray-600 transition-all duration-300">
+                <div class="relative z-10 p-4"
+                     :class="concurrent.game.image ? 'bg-black bg-opacity-60' : 'bg-gray-900'">
+                  <div
+                      class="flex gap-2 items-center mb-2 p-2 rounded-md border border-gray-600 transition-all duration-300">
                     <img v-if="concurrent.game.image"
                          :src="getGameThumbnail(concurrent.game.id)"
                          alt="Game Thumbnail"
@@ -467,7 +525,9 @@ const handleWinnersPicked = (winnersArray) => {
                       <button v-if="scoreIndex >= 1" type="button" @click="removeScore(index, scoreIndex)"
                               class="btn-danger transition-all duration-300 align-middle">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                          <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                          <path fill-rule="evenodd"
+                                d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                                clip-rule="evenodd"/>
                         </svg>
                       </button>
                     </div>
@@ -484,7 +544,9 @@ const handleWinnersPicked = (winnersArray) => {
               </div>
             </div>
             <div v-if="winner" class="mt-4">
-              <p class="text-lg font-bold text-gray-100">Câștigător: {{ winner.game.name }} | User: {{ winner.for_user }}</p>
+              <p class="text-lg font-bold text-gray-100">Câștigător: {{ winner.game.name }} | User: {{
+                  winner.for_user
+                }}</p>
             </div>
             <div class="mt-6 flex flex-col gap-4">
               <button v-if="activeStage.name !== 'Final'" type="button" @click="finishRound"
@@ -500,7 +562,8 @@ const handleWinnersPicked = (winnersArray) => {
             </div>
           </div>
           <div class="p-6">
-            <table v-if="history.stage_brackets.length > 0" class="table-auto w-full text-sm text-gray-200 mb-2 transition-all duration-300">
+            <table v-if="history.stage_brackets.length > 0"
+                   class="table-auto w-full text-sm text-gray-200 mb-2 transition-all duration-300">
               <tbody>
               <tr v-for="(bracket, index) in history.stage_brackets" :key="bracket.id"
                   :class="index % 2 === 0 ? 'bg-gray-900' : 'bg-gray-800'">
@@ -514,12 +577,14 @@ const handleWinnersPicked = (winnersArray) => {
                     </span>
                 </td>
                 <td class="px-4 py-2">
-                  {{ parseFloat(bracket.participant_a_score).toFixed(3) }} - {{ parseFloat(bracket.participant_b_score).toFixed(3) }}
+                  {{ parseFloat(bracket.participant_a_score).toFixed(3) }} -
+                  {{ parseFloat(bracket.participant_b_score).toFixed(3) }}
                 </td>
               </tr>
               </tbody>
             </table>
-            <table v-if="history.concurrents.length > 0" class="table-auto w-full text-sm text-gray-200 transition-all duration-300">
+            <table v-if="history.concurrents.length > 0"
+                   class="table-auto w-full text-sm text-gray-200 transition-all duration-300">
               <tbody>
               <tr v-for="(concurrent, index) in history.concurrents" :key="concurrent?.id"
                   :class="index % 2 === 0 ? 'bg-gray-900' : 'bg-gray-800'">
@@ -549,15 +614,18 @@ const handleWinnersPicked = (winnersArray) => {
   position: relative;
   overflow: hidden;
 }
+
 .game-active-row .row-content,
 .game-row .row-content {
   position: relative;
   z-index: 10;
 }
+
 .game-active-row.bg-transparent .row-content,
 .game-row.bg-transparent .row-content {
   @apply bg-black bg-opacity-60;
 }
+
 .game-active-row:not(.bg-transparent) .row-content,
 .game-row:not(.bg-transparent) .row-content {
   @apply bg-gray-900;

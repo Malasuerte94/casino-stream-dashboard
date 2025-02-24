@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class BonusBattle extends Model
 {
@@ -30,6 +31,11 @@ class BonusBattle extends Model
     public function battlePredictions():  HasMany
     {
         return $this->hasMany(BattlePrediction::class);
+    }
+
+    public function battlePredictionWinners(): HasOne
+    {
+        return $this->hasOne(BattlePredictionWinner::class);
     }
 
     /**
