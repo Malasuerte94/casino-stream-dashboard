@@ -52,6 +52,10 @@ export default {
       type: Number,
       required: true
     },
+    steamerName: {
+      type: String,
+      required: true
+    },
     section: {
       type: String,
       required: true
@@ -71,7 +75,7 @@ export default {
     },
     navigate(section) {
       this.loading = true;
-      router.get(`/streamer/${this.steamerId}/${section}`, {
+      router.get(`/${this.steamerName}/${section}`, {
         onSuccess: () => {
           this.loading = false;
         }

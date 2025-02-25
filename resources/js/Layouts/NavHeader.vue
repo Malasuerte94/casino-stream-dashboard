@@ -7,23 +7,23 @@
         <div class="flex">
           <!-- Logo -->
           <div class="shrink-0 flex items-center">
-            <Link :href="route('dashboard')">
+            <Link :href="route('user.dashboard')">
               <ApplicationMark class="block h-9 w-auto" />
             </Link>
           </div>
           <!-- Navigation Links -->
           <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex" v-if="$page.props.user.id">
             <NavLink
-                :href="$page.props.user_streamer ? route('streamdash') : route('dashboard')"
-                :active="$page.props.user_streamer ? route().current('streamdash') : route().current('dashboard')"
+                :href="$page.props.user_streamer ? route('streamer.dashboard') : route('user.dashboard')"
+                :active="$page.props.user_streamer ? route().current('streamer.dashboard') : route().current('user.dashboard')"
                 class="text-gray-300 hover:text-white transition-colors duration-200"
             >
               Dashboard
             </NavLink>
             <NavLink
                 v-if="!$page.props.user_streamer"
-                :href="route('streamer-list')"
-                :active="route().current('streamer-list')"
+                :href="route('user.streamer-list')"
+                :active="route().current('user.streamer-list')"
                 class="text-gray-300 hover:text-white transition-colors duration-200"
             >
               Streamers
@@ -31,36 +31,36 @@
             <!-- Streamer-specific items -->
             <template v-if="$page.props.user_streamer">
               <NavLink
-                  :href="route('lists')"
-                  :active="route().current('lists')"
+                  :href="route('streamer.lists')"
+                  :active="route().current('streamer.lists')"
                   class="text-gray-300 hover:text-white transition-colors duration-200"
               >
                 Bonus Lists
               </NavLink>
               <NavLink
-                  :href="route('bonus-battle')"
-                  :active="route().current('bonus-battle')"
+                  :href="route('streamer.bonus-battle')"
+                  :active="route().current('streamer.bonus-battle')"
                   class="text-gray-300 hover:text-white transition-colors duration-200"
               >
                 Bonus Battle
               </NavLink>
               <NavLink
-                  :href="route('wheel-settings')"
-                  :active="route().current('wheel-settings')"
+                  :href="route('streamer.wheel-settings')"
+                  :active="route().current('streamer.wheel-settings')"
                   class="text-gray-300 hover:text-white transition-colors duration-200"
               >
                 Wheel Config
               </NavLink>
               <NavLink
-                  :href="route('schedule')"
-                  :active="route().current('schedule')"
+                  :href="route('streamer.schedule')"
+                  :active="route().current('streamer.schedule')"
                   class="text-gray-300 hover:text-white transition-colors duration-200"
               >
                 Schedule
               </NavLink>
               <NavLink
-                  :href="route('report')"
-                  :active="route().current('report')"
+                  :href="route('streamer.report')"
+                  :active="route().current('streamer.report')"
                   class="text-gray-300 hover:text-white transition-colors duration-200"
               >
                 Raport
@@ -107,13 +107,13 @@
                 <div class="block px-4 py-2 text-xs text-gray-400">Manage Account</div>
                 <DropdownLink :href="route('profile.show')">Profile</DropdownLink>
                 <template v-if="$page.props.user_streamer">
-                  <DropdownLink :href="route('stream-accounts')" :active="route().current('stream-accounts')">
+                  <DropdownLink :href="route('streamer.stream-accounts')" :active="route().current('streamer.stream-accounts')">
                     Conturi Stream
                   </DropdownLink>
-                  <DropdownLink :href="route('banners')" :active="route().current('banners')">
+                  <DropdownLink :href="route('streamer.banners')" :active="route().current('streamer.banners')">
                     Banners
                   </DropdownLink>
-                  <DropdownLink :href="route('settings')" :active="route().current('settings')">
+                  <DropdownLink :href="route('streamer.settings')" :active="route().current('streamer.settings')">
                     OBS Settings
                   </DropdownLink>
                 </template>
@@ -125,8 +125,8 @@
             </Dropdown>
           </div>
           <div v-else class="flex items-center gap-2">
-            <NavLink :href="route('dashboard')">Logare</NavLink>
-            <NavLink :href="route('register')">Înregistrare</NavLink>
+            <NavLink>Logare / Modal</NavLink>
+            <NavLink>Înregistrare / Modal</NavLink>
           </div>
         </div>
 
@@ -161,15 +161,15 @@
     <div :class="{ 'block': showingNavigationDropdown, 'hidden': !showingNavigationDropdown }" class="sm:hidden">
       <div class="pt-2 pb-3 space-y-1">
         <ResponsiveNavLink
-            :href="$page.props.user_streamer ? route('streamdash') : route('dashboard')"
-            :active="$page.props.user_streamer ? route().current('streamdash') : route().current('dashboard')"
+            :href="$page.props.user_streamer ? route('streamer.dashboard') : route('user.dashboard')"
+            :active="$page.props.user_streamer ? route().current('streamer.dashboard') : route().current('user.dashboard')"
             class="text-gray-300 hover:text-white transition-colors duration-200"
         >
           Dashboard
         </ResponsiveNavLink>
         <ResponsiveNavLink
-            :href="route('streamer-list')"
-            :active="route().current('streamer-list')"
+            :href="route('user.streamer-list')"
+            :active="route().current('user.streamer-list')"
             class="text-gray-300 hover:text-white transition-colors duration-200"
         >
           Streamers
@@ -177,36 +177,36 @@
         <!-- Streamer-specific items -->
         <template v-if="$page.props.user_streamer">
           <ResponsiveNavLink
-              :href="route('lists')"
-              :active="route().current('lists')"
+              :href="route('streamer.lists')"
+              :active="route().current('streamer.lists')"
               class="text-gray-300 hover:text-white transition-colors duration-200"
           >
             Bonus Lists
           </ResponsiveNavLink>
           <ResponsiveNavLink
-              :href="route('bonus-battle')"
-              :active="route().current('bonus-battle')"
+              :href="route('streamer.bonus-battle')"
+              :active="route().current('streamer.bonus-battle')"
               class="text-gray-300 hover:text-white transition-colors duration-200"
           >
             Bonus Battle
           </ResponsiveNavLink>
           <ResponsiveNavLink
-              :href="route('wheel-settings')"
-              :active="route().current('wheel-settings')"
+              :href="route('streamer.wheel-settings')"
+              :active="route().current('streamer.wheel-settings')"
               class="text-gray-300 hover:text-white transition-colors duration-200"
           >
             Wheel Config
           </ResponsiveNavLink>
           <ResponsiveNavLink
-              :href="route('schedule')"
-              :active="route().current('schedule')"
+              :href="route('streamer.schedule')"
+              :active="route().current('streamer.schedule')"
               class="text-gray-300 hover:text-white transition-colors duration-200"
           >
             Schedule
           </ResponsiveNavLink>
           <ResponsiveNavLink
-              :href="route('report')"
-              :active="route().current('report')"
+              :href="route('streamer.report')"
+              :active="route().current('streamer.report')"
               class="text-gray-300 hover:text-white transition-colors duration-200"
           >
             Raport
@@ -236,13 +236,13 @@
             Profile
           </ResponsiveNavLink>
           <template v-if="$page.props.user_streamer">
-            <ResponsiveNavLink :href="route('stream-accounts')" :active="route().current('stream-accounts')">
+            <ResponsiveNavLink :href="route('streamer.stream-accounts')" :active="route().current('streamer.stream-accounts')">
               Conturi Stream
             </ResponsiveNavLink>
-            <ResponsiveNavLink :href="route('banners')" :active="route().current('banners')">
+            <ResponsiveNavLink :href="route('streamer.banners')" :active="route().current('streamer.banners')">
               Banners
             </ResponsiveNavLink>
-            <ResponsiveNavLink :href="route('settings')" :active="route().current('settings')">
+            <ResponsiveNavLink :href="route('streamer.settings')" :active="route().current('streamer.settings')">
               OBS Settings
             </ResponsiveNavLink>
           </template>
@@ -254,7 +254,7 @@
       <!-- Guest options -->
       <div v-else class="pt-4 pb-1 border-t border-gray-700">
         <div class="mt-3 space-y-1">
-          <ResponsiveNavLink :href="route('dashboard')">Logare</ResponsiveNavLink>
+          <ResponsiveNavLink :href="route('user.dashboard')">Logare</ResponsiveNavLink>
           <ResponsiveNavLink :href="route('register')">Înregistrare</ResponsiveNavLink>
         </div>
       </div>

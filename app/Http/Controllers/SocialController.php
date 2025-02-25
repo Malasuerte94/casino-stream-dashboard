@@ -95,7 +95,7 @@ class SocialController extends Controller
         $social->update(['user_id' => $user->id]);
         Auth::login($user);
 
-        return redirect('/streamdash');
+        return redirect('/streamer.dashboard');
     }
 
     /**
@@ -119,7 +119,7 @@ class SocialController extends Controller
         $social->update(['user_id' => $user->id]);
         Auth::login($user);
 
-        return redirect('/streamdash');
+        return redirect('/streamer.dashboard');
     }
 
     /**
@@ -136,7 +136,7 @@ class SocialController extends Controller
         }
 
         Auth::login($social->user);
-        return redirect('/streamdash');
+        return redirect('/streamer.dashboard');
     }
 
 

@@ -6,6 +6,8 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import SvgLogo from "/public/storage/assets/branding/logo-long-white.svg";
+import Register from "@/Pages/Auth/Register.vue";
 
 defineProps({
   canLogin: Boolean,
@@ -37,14 +39,7 @@ const submit = () => {
     <!-- Header -->
     <header class="py-4 backdrop-blur-xl bg-white/10 shadow-lg shadow-black/10">
       <div class="max-w-6xl mx-auto px-4 flex items-center justify-between">
-        <h1 class="text-2xl font-bold">Dashboard Păcănele</h1>
-        <a
-            target="_blank"
-            href="https://www.youtube.com/@MalaTheMan"
-            class="text-sm hover:underline"
-        >
-          by @MalaTheMan
-        </a>
+        <SvgLogo class="w-[150px] h-auto text-gray-500 stroke-current" />
       </div>
     </header>
 
@@ -56,13 +51,13 @@ const submit = () => {
           <!-- Display Dashboard Streamer only if user is a streamer -->
           <Link
               v-if="$page.props.user_streamer"
-              :href="route('streamdash')"
+              :href="route('streamer.dashboard')"
               class="text-lg px-4 py-2 border border-gray-600 rounded transition transform duration-200 ease-in-out hover:bg-gray-700 hover:border-gray-500 hover:scale-105"
           >
             Dashboard Streamer
           </Link>
           <Link
-              :href="route('dashboard')"
+              :href="route('user.dashboard')"
               class="text-lg px-4 py-2 border border-gray-600 rounded transition transform duration-200 ease-in-out hover:bg-gray-700 hover:border-gray-500 hover:scale-105"
           >
             Dashboard Viewer
@@ -146,6 +141,7 @@ const submit = () => {
               </div>
             </form>
           </AuthenticationCard>
+          <Register />
         </div>
       </div>
     </main>

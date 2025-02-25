@@ -23,7 +23,21 @@ Route::get('/auth/{provider}/redirect', [SocialController::class, 'redirect'])
     ->where('provider', 'google|youtube');
 Route::get('/auth/{provider}/callback', [SocialController::class, 'callback'])
     ->where('provider', 'google|youtube');
-Route::post('/add-email-to-account', [SocialController::class, 'addRequiredEmail'])->name('add-required-email-to-account');
+Route::post('/add-email-to-account', [SocialController::class, 'addRequiredEmail'])->name(
+    'add-required-email-to-account'
+);
+
+Route::get('/', function () {
+    return Inertia::render('Welcome', [
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+        'laravelVersion' => Application::VERSION,
+        'phpVersion' => PHP_VERSION,
+    ]);
+})->name('welcome');
+
+//PUBLIC STREAMER PAGE
+Route::get('/{name}/{section?}', [ViewerController::class, 'viewStreamer'])->name('view-streamer');
 
 //display in OBS - PUBLIC
 Route::get('/bonus-list/{id}', function ($id) {
@@ -59,21 +73,10 @@ Route::get('/referrals/{id}', function ($id) {
 Route::get('/schedule-view/{id}', function ($id) {
     return Inertia::render('Streamer/OBS/ScheduleViewObs', ['id' => $id]);
 })->name('schedule-view');
-
 Route::get('/test', function () {
     return Inertia::render('Test');
 })->name('test');
 //display in OBS - PUBLIC
-
-
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-})->name('welcome');
 
 
 Route::middleware([
@@ -85,14 +88,14 @@ Route::middleware([
     Route::get('/account/verify', [SocialController::class, 'verifyYtAccount'])
         ->middleware('redirect.verified')
         ->name('account.verify');
-    Route::get('/streamers', [ViewerController::class, 'streamerList'])->name('streamer-list');
-    Route::get('/dashboard', function () {
-        return Inertia::render('Viewer/MainUser');
-    })->name('dashboard');
+
+    Route::prefix('user')->group(function () {
+        Route::get('/streamers', [ViewerController::class, 'streamerList'])->name('user.streamer-list');
+        Route::get('/dashboard', function () {
+            return Inertia::render('Viewer/MainUser');
+        })->name('user.dashboard');
+    });
 });
-
-Route::get('/streamer/{id}/{section?}', [ViewerController::class, 'viewStreamer'])->name('view-streamer');
-
 
 //STREAMER
 Route::middleware([
@@ -100,38 +103,51 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
     'streamer'
-])->group(function () {
-    Route::get('/streamdash', function () {
+])->prefix('streamer')->group(function () {
+
+    Route::get('/dashboard', function () {
         return Inertia::render('Streamer/StreamDash');
-    })->name('streamdash');
+    })->name('streamer.dashboard');
+
     Route::get('/lists', function () {
         return Inertia::render('Streamer/BonusHuntBuy/Bonuses');
-    })->name('lists');
+    })->name('streamer.lists');
+
     Route::get('/bonus-battle', function () {
         return Inertia::render('Streamer/BonusBattle/BonusBattle');
-    })->name('bonus-battle');
+    })->name('streamer.bonus-battle');
+
     Route::get('/settings', function () {
         return Inertia::render('Streamer/Profile/Settings/Settings');
-    })->name('settings');
+    })->name('streamer.settings');
+
     Route::get('/banners', function () {
         return Inertia::render('Streamer/Profile/Banners/Banners');
-    })->name('banners');
+    })->name('streamer.banners');
+
     Route::get('/report', function () {
         return Inertia::render('Streamer/Report/Report');
-    })->name('report');
+    })->name('streamer.report');
+
     Route::get('/stream-accounts', function () {
         return Inertia::render('Streamer/Profile/StreamAccounts/StreamAccounts');
-    })->name('stream-accounts');
+    })->name('streamer.stream-accounts');
+
     Route::get('/wheel-settings', function () {
         return Inertia::render('Streamer/Wheel/WheelSettings');
-    })->name('wheel-settings');
+    })->name('streamer.wheel-settings');
+
     Route::get('/schedule', function () {
         return Inertia::render('Streamer/Schedule/SchedulePage');
-    })->name('schedule');
+    })->name('streamer.schedule');
 
     //ONLY STREAMER STREAMLABS
-    Route::get('/streamlabs/authorize', [StreamlabsController::class, 'redirectToStreamlabs'])->name('streamlabs.authorize');
-    Route::get('/streamlabs/callback', [StreamlabsController::class, 'handleStreamlabsCallback'])->name('streamlabs.callback');
+    Route::get('/streamlabs/authorize', [StreamlabsController::class, 'redirectToStreamlabs'])->name(
+        'streamer.streamlabs.authorize'
+    );
+    Route::get('/streamlabs/callback', [StreamlabsController::class, 'handleStreamlabsCallback'])->name(
+        'streamer.streamlabs.callback'
+    );
 
     //sync games
     Route::get('/sync-games', [GameSyncController::class, 'syncGames']);

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <link rel="icon" href="/storage/assets/branding/SMALL-whitefavicon.svg">
     <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Fonts -->
@@ -18,21 +18,5 @@
 <main class="flex-grow">
     @inertia
 </main>
-<footer class="footer-donate backdrop-blur-xl bg-white/10 shadow-lg shadow-black/10 py-3">
-    <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0">
-        <div class="text-xs text-gray-400">
-            Proiect realizat de
-            <a class="underline text-indigo-400" href="https://catalin-ene.ro/" target="_blank">
-                Ene Catalin @ MalaTheMan
-            </a>
-        </div>
-        <div class="font-bold text-xs">
-            Vrei să sprijini acest proiect?
-            <a class="donate-button inline-block bg-indigo-600 hover:bg-indigo-700 text-white py-1 px-2 rounded transition-colors duration-200" target="_blank" href="https://revolut.me/malatheman">
-                Revolut
-            </a>
-        </div>
-    </div>
-</footer>
 </body>
 </html>
