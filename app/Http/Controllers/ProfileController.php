@@ -34,11 +34,10 @@ class ProfileController extends Controller
     public function getProfilePicture($userId) {
         $user = User::find($userId);
         if ($user) {
-            $media = $user->getFirstMedia('profile_pictures');
+            $media = $user->getMedia('profile_pictures')->sortByDesc('created_at')->first();
             if ($media) {
-                $fullUrl = $media->getUrl();
                 return response()->json([
-                    'profile_picture' => $fullUrl,
+                    'profile_picture' => $media->getUrl(),
                 ]);
             }
         }

@@ -35,7 +35,7 @@ export default {
       selectedGame: null,
       spinDuration: 4000,
       showSelectedGame: false,
-      centerImageUrl: "https://yt3.googleusercontent.com/CfIgnRwE7ROK9CugvIS1PQOjiOUfMyruXwnHwE3FmRnHu7Utw-RjZKldzKONjXFSTUl8zCfX=s160-c-k-c0x00ffffff-no-rj",
+      centerImageUrl: "",
       previousEndDegree: 0,
       animation: null,
       newEndDegree: 0,
