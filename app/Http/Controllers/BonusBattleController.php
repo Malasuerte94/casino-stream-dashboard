@@ -401,6 +401,7 @@ class BonusBattleController extends Controller
             'stake' => 'string|nullable',
             'prize' => 'string|nullable',
             'buys' => 'int|nullable',
+            'isRandom' => 'boolean',
             'concurrents' => 'required|array|min:2',
             'concurrents.*.game_id' => 'required|int',
             'concurrents.*.for_user' => 'string|max:255|nullable',
@@ -425,7 +426,7 @@ class BonusBattleController extends Controller
 
         $bonusBattle->stages()->create(['name' => 'Stage 1']);
 
-        $this->generateFirstBrackets($bonusBattle);
+        $this->generateFirstBrackets($bonusBattle, $validated['isRandom']);
 
         return response()->json(['message' => 'Bonus battle created successfully!', 'bonus_battle' => $bonusBattle],
             201);
@@ -436,9 +437,10 @@ class BonusBattleController extends Controller
      * Generate brackets for a given BonusBattle.
      *
      * @param BonusBattle $bonusBattle
+     * @param bool $isRandom
      * @return void
      */
-    function generateFirstBrackets(BonusBattle $bonusBattle): void
+    function generateFirstBrackets(BonusBattle $bonusBattle, bool $isRandom): void
     {
         $concurrents = $bonusBattle->concurrents;
 
@@ -447,9 +449,10 @@ class BonusBattleController extends Controller
         if (!$activeStage) {
             $activeStage = $bonusBattle->stages()->create(['name' => 'Stage 1']);
         }
-        $shuffledConcurrents = $concurrents->shuffle();
 
-        $pairs = $shuffledConcurrents->chunk(2)->map(function ($chunk) {
+        $orderedConcurrents = $isRandom ? $concurrents->shuffle() : $concurrents;
+
+        $pairs = $orderedConcurrents->chunk(2)->map(function ($chunk) {
             return $chunk->values()->all();
         })->toArray();
 
@@ -458,10 +461,10 @@ class BonusBattleController extends Controller
                 continue;
             }
             Bracket::create([
-                'bonus_stage_id' => $activeStage->id,
-                'participant_a_id' => $pair[0]->id,
-                'participant_b_id' => $pair[1]->id ?? null,
-                'is_finished' => false,
+                'bonus_stage_id'    => $activeStage->id,
+                'participant_a_id'  => $pair[0]->id,
+                'participant_b_id'  => $pair[1]->id ?? null,
+                'is_finished'       => false,
             ]);
         }
     }

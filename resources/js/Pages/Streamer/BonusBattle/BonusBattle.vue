@@ -17,6 +17,7 @@ const title = ref('');
 const stake = ref('5-10');
 const prize = ref('');
 const buys = ref('2');
+const isRandom = ref(true);
 const concurrents = computed(() => battleStore.concurrents);
 const activeBattle = ref(null);
 const activeConcurrents = ref(null);
@@ -163,6 +164,7 @@ const startBattle = async () => {
       stake: stake.value,
       prize: prize.value,
       buys: buys.value,
+      isRandom: isRandom.value,
       concurrents: concurrents.value,
     });
     await fetchActiveBattle();
@@ -335,24 +337,43 @@ const handleWinnersPicked = (winnersArray) => {
           <div class="p-6 space-y-4">
             <!-- Input Form -->
             <div class="flex flex-row gap-2">
-              <div>
-                <label for="title" class="block text-sm font-medium text-gray-300">Titlu Bonus Battle</label>
-                <input type="text" v-model="title" id="title" class="mt-1 block w-full input-primary"/>
-              </div>
-              <div>
-                <label for="stake" class="block text-sm font-medium text-gray-300">Miză (eg: 5-8, 5, 10-20,
-                  etc.)</label>
-                <input type="text" v-model="stake" id="stake" class="mt-1 block w-full input-primary"/>
-              </div>
-              <div>
-                <label for="prize" class="block text-sm font-medium text-gray-300">Premiu</label>
-                <input type="text" v-model="prize" id="prize" class="mt-1 block w-full input-primary"/>
-              </div>
-              <div>
-                <label for="buys" class="block text-sm font-medium text-gray-300">Câte buys per joc (poți face ulterior
-                  câte vrei)</label>
-                <input type="text" v-model="buys" id="buys" class="mt-1 block w-full input-primary"/>
-              </div>
+              <MyInput
+                  v-model="title"
+                  label="Titlu Bonus Battle"
+                  type="text"
+              />
+              <MyInput
+                  v-model="stake"
+                  label="Miză (eg: 5-8, 5, 10-20)"
+                  type="text"
+              />
+              <MyInput
+                  v-model="prize"
+                  label="Premiu"
+                  type="text"
+              />
+              <MyInput
+                  v-model="buys"
+                  label="Câte buys per joc"
+                  type="text"
+              />
+              <div class="ml-3 text-sm font-medium text-gray-300 flex items-center gap-2">
+              <label for="toggle" class="relative inline-flex items-center cursor-pointer">
+                <input
+                    type="checkbox"
+                    id="toggle"
+                    v-model="isRandom"
+                    class="sr-only peer"
+                />
+                <div
+                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full
+                dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white
+                after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border
+                after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
+                ></div>
+              </label>
+                {{ isRandom ? 'Random' : 'În funcție de lista' }}
+            </div>
             </div>
             <div class="flex flex-col md:flex-row md:space-x-4">
               <div class="md:w-2/3 bg-gray-800 p-6 rounded-md shadow-md space-y-4 transition-all duration-300">
@@ -387,9 +408,10 @@ const handleWinnersPicked = (winnersArray) => {
                           class="flex-1 transition-all duration-300"
                           append-to-body
                       />
-                      <input type="text" v-model="concurrent.for_user"
-                             class="flex-1 input-primary"
-                             placeholder="Cine a ales? (opțional)"/>
+                      <MyInput
+                          v-model="concurrent.for_user"
+                          label="Cine a ales? (opțional)"
+                          />
                     </div>
                   </div>
                 </transition-group>
