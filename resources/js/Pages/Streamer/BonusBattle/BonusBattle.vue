@@ -9,6 +9,7 @@ import DialogModal from "@/Components/DialogModal.vue";
 import {useBattleStore} from '@/stores/battleStore';
 import {usePage} from '@inertiajs/vue3';
 import axios from "axios";
+import MyInput from "../../../Components/MyInput.vue";
 
 const battleStore = useBattleStore();
 const loading = ref(true);
@@ -54,7 +55,7 @@ const canGoNext = computed(() => {
 
 const guessUrl = computed(() => {
   const host = window.location.origin;
-  return `${host}/streamer/${usePage().props.user.id}`;
+  return `${host}/${usePage().props.user.name}`;
 });
 
 const confirmLogout = () => {
@@ -468,7 +469,7 @@ const handleWinnersPicked = (winnersArray) => {
                 <div v-if="concurrent.game.image"
                      class="absolute inset-0 pointer-events-none bg-blur transition-all duration-300"></div>
                 <!-- Row Content with overlay -->
-                <div class="relative z-10 p-4"
+                <div class="relative z-10 p-4 rounded-lg"
                      :class="concurrent.game.image ? 'bg-black bg-opacity-60' : 'bg-gray-900'">
                   <div
                       class="flex gap-2 items-center mb-2 p-2 rounded-md border border-gray-600 transition-all duration-300">
@@ -500,30 +501,31 @@ const handleWinnersPicked = (winnersArray) => {
                   <div>
                     <div v-for="(score, scoreIndex) in concurrent.scores" :key="scoreIndex"
                          class="flex items-center space-x-2 mt-1 transition-all duration-300">
-                      <label class="text-sm font-medium text-gray-300">
-                        Cost Buy
-                        <input type="number" v-model="concurrent.scores[scoreIndex].cost_buy"
-                               class="block w-40 border border-gray-600 rounded-md shadow-sm p-2 transition-all duration-300 input-primary"
-                               :disabled="loading"
-                               :class="{'input-disabled': loading}"
-                               placeholder="Amount" @input="recalculateScore(index, scoreIndex)"/>
-                      </label>
-                      <label class="text-sm font-medium text-gray-300">
-                        Rezultat Buy
-                        <input :disabled="score.cost_buy <= 0 || loading"
-                               :class="{'input-disabled': score.cost_buy <= 0 || loading, 'input-primary': score.cost_buy > 0}"
-                               type="number" v-model="concurrent.scores[scoreIndex].result_buy"
-                               class="block w-40 border border-gray-600 rounded-md shadow-sm p-2 transition-all duration-300"
-                               placeholder="Result" @input="recalculateScore(index, scoreIndex)"/>
-                      </label>
-                      <label class="text-sm font-medium text-gray-300">
-                        Scor
-                        <input readonly disabled type="number" v-model="concurrent.scores[scoreIndex].score"
-                               class="block w-20 border border-gray-600 rounded-md shadow-sm p-2 input-disabled transition-all duration-300"
-                               placeholder="Result"/>
-                      </label>
-                      <button v-if="scoreIndex >= 1" type="button" @click="removeScore(index, scoreIndex)"
-                              class="btn-danger transition-all duration-300 align-middle">
+                      <MyInput
+                          v-model="concurrent.scores[scoreIndex].cost_buy"
+                          label="Cost Buy"
+                          type="number"
+                          :disabled="loading"
+                          @input="recalculateScore(index, scoreIndex)"
+                      />
+                      <MyInput
+                          v-model="concurrent.scores[scoreIndex].result_buy"
+                          label="Rezultat"
+                          type="number"
+                          :disabled="score.cost_buy <= 0 || loading"
+                          @input="recalculateScore(index, scoreIndex)"
+                      />
+                      <MyInput
+                          v-model="concurrent.scores[scoreIndex].score"
+                          label="Scor"
+                          type="number"
+                          :disabled="true"
+                      />
+                      <button type="button" @click="removeScore(index, scoreIndex)"
+                              class="btn-danger transition-all duration-300 align-middle"
+                              :disabled="scoreIndex === 0"
+                              :class="{'opacity-0': scoreIndex === 0}"
+                      >
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                           <path fill-rule="evenodd"
                                 d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"

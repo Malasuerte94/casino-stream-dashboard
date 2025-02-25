@@ -192,7 +192,7 @@
         </div>
 
         <div class="second-battle">
-          <template v-if="bonusBattleAllBracketsCurentStage.length > 0">
+          <template v-if="bonusBattleAllBracketsCurentStage.length > 0 && settings.tableStageHistoryEnable">
             <transition-group name="fade-down" tag="div" class="bracket-container py-2 px-2">
               <div
                   v-for="bracket in bonusBattleAllBracketsCurentStage"

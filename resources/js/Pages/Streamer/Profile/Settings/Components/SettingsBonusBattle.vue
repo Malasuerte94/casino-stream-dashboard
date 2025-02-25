@@ -126,6 +126,11 @@
         </div>
 
         <div class="flex items-center">
+          <input type="checkbox" v-model="settings.tableStageHistoryEnable" class="mr-2">
+          <label class="font-semibold">Show Stage History</label>
+        </div>
+
+        <div class="flex items-center">
           <input type="checkbox" v-model="settings.tableHistoryEnable" class="mr-2">
           <label class="font-semibold">Show History</label>
         </div>
@@ -368,6 +373,7 @@ export default {
         tableHistoryBgEvenColor: "#ff0000",
         tableScoresFontSize: 12,
         tableHistoryEnable: true,
+        tableStageHistoryEnable: true
       }
     };
   },
