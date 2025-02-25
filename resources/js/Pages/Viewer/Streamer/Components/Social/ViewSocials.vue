@@ -37,7 +37,7 @@
 <script>
 export default {
   props: {
-    steamerId: {
+    streamerId: {
       type: Number,
       required: true
     }
@@ -53,7 +53,7 @@ export default {
   methods: {
     async getDonations() {
       try {
-        const response = await axios.get(`/api/viewer/get-donations/${this.steamerId}`);
+        const response = await axios.get(`/api/viewer/get-donations/${this.streamerId}`);
         this.donations = response.data.donations;
       } catch (error) {
         console.log(error);

@@ -24,7 +24,10 @@ const submit = () => {
 
 <template>
   <AuthenticationCard>
-    <form @submit.prevent="submit">
+    <slot name="logo">
+      <h2 class="text-xl font-bold uppercase mb-2 text-left">Register</h2>
+    </slot>
+    <form @submit.prevent="submit" class="space-y-4 text-left">
       <div>
         <InputLabel for="name" value="Name" />
         <TextInput
@@ -90,23 +93,14 @@ const submit = () => {
         </InputLabel>
       </div>
 
-      <div class="flex items-center justify-between mt-4">
-        <Link :href="route('login')" class="underline text-sm text-gray-600 hover:text-gray-900">
-          Ai cont deja?
-        </Link>
-        <PrimaryButton class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-          ÎNREGISTRARE
+      <div class="flex items-center justify-between mt-4 gap-4">
+        <PrimaryButton class="w-full" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+          Înregistrare
         </PrimaryButton>
-      </div>
-      <div class="mt-12 text-center">
-        Așteptăm aprobarea de la Google pentru a activa înregistrarea cu YT!
-        <div class="flex items-center w-full gap-5">
-          <a href="/auth/google/redirect" class="w-full text-center mt-4 google-register">
-            Înregistrare cu Google
-          </a>
-        </div>
+        <a href="/auth/google/redirect" class="btn-secondary w-full text-center google-register flex-nowrap whitespace-nowrap">
+          Înregistrare cu Google
+        </a>
       </div>
     </form>
   </AuthenticationCard>
-
 </template>

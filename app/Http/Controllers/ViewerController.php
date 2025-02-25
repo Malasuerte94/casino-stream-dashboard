@@ -53,19 +53,18 @@ class ViewerController extends Controller
 
 
     /**
-     * @param string $streamerName
+     * @param User $user
      * @param string $section
      * @return Response
      */
-    public function viewStreamer(string $streamerName, string $section = 'hunt'): Response
+    public function viewStreamer(User $user, string $section = 'hunt'): Response
     {
-        $streamer = User::where('name', $streamerName)->first();
-        if (!$streamer) {
-            abort(404);
-        }
-        return Inertia::render('Viewer/Streamer/ViewStreamer', ['steamerId' => $streamer->id, 'steamerName' => $streamerName, 'section' => $section]);
+        return Inertia::render('Viewer/Streamer/ViewStreamer', [
+            'streamerId'   => $user->id,
+            'streamerName' => $user->name,
+            'section'      => $section,
+        ]);
     }
-
 
     /**
      * @param $id

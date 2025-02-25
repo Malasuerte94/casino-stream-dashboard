@@ -24,7 +24,7 @@
         </div>
         <!-- Dynamically load the correct component -->
         <transition name="fade" mode="out-in">
-            <component :is="currentComponent" :steamerId="steamerId"></component>
+            <component :is="currentComponent" :streamerId="streamerId"></component>
         </transition>
       </div>
     </div>
@@ -48,11 +48,11 @@ export default {
     };
   },
   props: {
-    steamerId: {
+    streamerId: {
       type: Number,
       required: true
     },
-    steamerName: {
+    streamerName: {
       type: String,
       required: true
     },
@@ -68,14 +68,14 @@ export default {
   methods: {
     async getStreamer() {
       await axios
-          .get("/api/viewer/get-streamer/"+this.steamerId)
+          .get("/api/viewer/get-streamer/"+this.streamerId)
           .then((response) => {
             this.streamer = response.data.streamer
           });
     },
     navigate(section) {
       this.loading = true;
-      router.get(`/${this.steamerName}/${section}`, {
+      router.get(`/${this.streamerName}/${section}`, {
         onSuccess: () => {
           this.loading = false;
         }

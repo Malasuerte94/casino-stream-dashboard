@@ -23,23 +23,19 @@ Route::get('/auth/{provider}/redirect', [SocialController::class, 'redirect'])
     ->where('provider', 'google|youtube');
 Route::get('/auth/{provider}/callback', [SocialController::class, 'callback'])
     ->where('provider', 'google|youtube');
-Route::post('/add-email-to-account', [SocialController::class, 'addRequiredEmail'])->name(
-    'add-required-email-to-account'
-);
+Route::post('/add-email-to-account', [SocialController::class, 'addRequiredEmail'])
+    ->name('add-required-email-to-account');
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
+        'canLogin'       => Route::has('login'),
+        'canRegister'    => Route::has('register'),
         'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
+        'phpVersion'     => PHP_VERSION,
     ]);
 })->name('welcome');
 
-//PUBLIC STREAMER PAGE
-Route::get('/{name}/{section?}', [ViewerController::class, 'viewStreamer'])->name('view-streamer');
-
-//display in OBS - PUBLIC
+// OBS PUBLIC ROUTES
 Route::get('/bonus-list/{id}', function ($id) {
     return Inertia::render('Streamer/OBS/BonusListObs', ['id' => $id]);
 })->name('bonus-list');
@@ -76,8 +72,6 @@ Route::get('/schedule-view/{id}', function ($id) {
 Route::get('/test', function () {
     return Inertia::render('Test');
 })->name('test');
-//display in OBS - PUBLIC
-
 
 Route::middleware([
     'auth:sanctum',
@@ -90,14 +84,14 @@ Route::middleware([
         ->name('account.verify');
 
     Route::prefix('user')->group(function () {
-        Route::get('/streamers', [ViewerController::class, 'streamerList'])->name('user.streamer-list');
+        Route::get('/streamers', [ViewerController::class, 'streamerList'])
+            ->name('user.streamer-list');
         Route::get('/dashboard', function () {
             return Inertia::render('Viewer/MainUser');
         })->name('user.dashboard');
     });
 });
 
-//STREAMER
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
@@ -141,14 +135,18 @@ Route::middleware([
         return Inertia::render('Streamer/Schedule/SchedulePage');
     })->name('streamer.schedule');
 
-    //ONLY STREAMER STREAMLABS
-    Route::get('/streamlabs/authorize', [StreamlabsController::class, 'redirectToStreamlabs'])->name(
-        'streamer.streamlabs.authorize'
-    );
-    Route::get('/streamlabs/callback', [StreamlabsController::class, 'handleStreamlabsCallback'])->name(
-        'streamer.streamlabs.callback'
-    );
+    // ONLY STREAMER STREAMLABS
+    Route::get('/streamlabs/authorize', [StreamlabsController::class, 'redirectToStreamlabs'])
+        ->name('streamer.streamlabs.authorize');
+    Route::get('/streamlabs/callback', [StreamlabsController::class, 'handleStreamlabsCallback'])
+        ->name('streamer.streamlabs.callback');
 
-    //sync games
+    // sync games
     Route::get('/sync-games', [GameSyncController::class, 'syncGames']);
 });
+
+// PUBLIC STREAMER PAGE (Catch-All)
+Route::get('/{user}/{section?}', [ViewerController::class, 'viewStreamer'])
+    ->where('user', '[A-Za-z0-9_\-]+') // Adjust regex as needed for valid names
+    ->where('section', '.*')
+    ->name('view-streamer');

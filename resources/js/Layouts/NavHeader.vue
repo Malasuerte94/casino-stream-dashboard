@@ -1,4 +1,3 @@
-<!-- resources/js/Components/NavHeader.vue -->
 <template>
   <nav class="backdrop-blur-xl bg-white/10 shadow-lg shadow-black/10 relative z-50">
     <!-- Primary Navigation Menu -->
@@ -66,7 +65,7 @@
                 Raport
               </NavLink>
               <NavLink
-                  :href="route('view-streamer', { id: $page.props.user.id })"
+                  :href="route('view-streamer', { user: $page.props.user.name })"
                   :active="route().current('view-streamer')"
                   class="text-orange-600 font-bold hover:text-white transition-colors duration-200"
               >
@@ -124,10 +123,22 @@
               </template>
             </Dropdown>
           </div>
-          <div v-else class="flex items-center gap-2">
-            <NavLink>Logare / Modal</NavLink>
-            <NavLink>Înregistrare / Modal</NavLink>
+          <!-- Guest options with modal triggers -->
+          <div v-else class="flex items-center gap-4">
+            <button
+                class="text-gray-300 font-medium border-b-2 border-transparent hover:border-indigo-500 transition-colors duration-200"
+                @click="showLoginModal = true"
+            >
+              Logare
+            </button>
+            <button
+                class="text-gray-300 font-medium border-b-2 border-transparent hover:border-indigo-500 transition-colors duration-200"
+                @click="showRegisterModal = true"
+            >
+              Înregistrare
+            </button>
           </div>
+
         </div>
 
         <!-- Hamburger (Mobile) -->
@@ -212,7 +223,7 @@
             Raport
           </ResponsiveNavLink>
           <ResponsiveNavLink
-              :href="route('view-streamer', { id: $page.props.user.id })"
+              :href="route('view-streamer', { user: $page.props.user.name })"
               :active="route().current('view-streamer')"
               class="text-orange-600 font-bold hover:text-white transition-colors duration-200"
           >
@@ -251,27 +262,55 @@
           </form>
         </div>
       </div>
-      <!-- Guest options -->
+      <!-- Guest options for mobile -->
       <div v-else class="pt-4 pb-1 border-t border-gray-700">
         <div class="mt-3 space-y-1">
-          <ResponsiveNavLink :href="route('user.dashboard')">Logare</ResponsiveNavLink>
-          <ResponsiveNavLink :href="route('register')">Înregistrare</ResponsiveNavLink>
+          <a :href="route('user.dashboard')" @click.prevent="showLoginModal = true">Logare</a>
+          <a :href="route('register')" @click.prevent="showRegisterModal = true">Înregistrare</a>
         </div>
       </div>
     </div>
   </nav>
+
+  <transition name="fade">
+    <div v-if="showLoginModal" class="fixed inset-0 flex items-center justify-center z-50">
+      <!-- Backdrop -->
+      <div class="absolute inset-0 bg-black opacity-50" @click="showLoginModal = false"></div>
+      <!-- Modal content -->
+      <div class="relative rounded shadow-lg w-full max-w-md">
+        <button class="absolute top-0 right-2 mt-2 mr-2 text-xl z-10" @click="showLoginModal = false">&times;</button>
+        <LoginForm />
+      </div>
+    </div>
+  </transition>
+
+  <transition name="fade">
+    <div v-if="showRegisterModal" class="fixed inset-0 flex items-center justify-center z-50">
+      <!-- Backdrop -->
+      <div class="absolute inset-0 bg-black opacity-50" @click="showRegisterModal = false"></div>
+      <!-- Modal content -->
+      <div class="relative rounded shadow-lg w-full max-w-md">
+        <button class="absolute top-0 right-2 mt-2 mr-2 text-xl z-10" @click="showRegisterModal = false">&times;</button>
+        <RegisterForm />
+      </div>
+    </div>
+  </transition>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { Link, router } from '@inertiajs/vue3';
+import {ref} from 'vue';
+import {Link, router} from '@inertiajs/vue3';
 import ApplicationMark from '@/Components/ApplicationMark.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
+import LoginForm from '@/Components/Auth/LoginForm.vue';
+import RegisterForm from '@/Components/Auth/RegisterForm.vue';
 
 const showingNavigationDropdown = ref(false);
+const showLoginModal = ref(false);
+const showRegisterModal = ref(false);
 
 const logout = () => {
   router.post(route('logout'));

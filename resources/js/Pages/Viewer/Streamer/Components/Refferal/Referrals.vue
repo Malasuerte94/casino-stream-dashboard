@@ -85,7 +85,7 @@
 <script>
 export default {
   props: {
-    steamerId: {
+    streamerId: {
       type: Number,
       required: true
     }
@@ -108,7 +108,7 @@ export default {
   methods: {
     async getReferrals() {
       try {
-        const response = await axios.get(`/api/viewer/get-referrals/${this.steamerId}`);
+        const response = await axios.get(`/api/viewer/get-referrals/${this.streamerId}`);
         this.list = response.data.list;
         this.user = response.data.user;
         this.filteredList = this.list;

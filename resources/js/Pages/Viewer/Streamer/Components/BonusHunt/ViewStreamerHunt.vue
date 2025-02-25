@@ -156,7 +156,7 @@ export default {
     };
   },
   props: {
-    steamerId: {
+    streamerId: {
       type: Number,
       required: true
     }
@@ -173,7 +173,7 @@ export default {
     },
     async getBonusHuntHistory() {
       try {
-        const response = await axios.get("/api/viewer/get-bh-history/" + this.steamerId);
+        const response = await axios.get("/api/viewer/get-bh-history/" + this.streamerId);
         this.bonusHuntHistory = response.data.bonusHunts;
         this.latestHunt = this.bonusHuntHistory[0]
       } catch (error) {
@@ -184,7 +184,7 @@ export default {
       let settingName = "obs_bonus_list";
       try {
         const response = await axios.get(`/api/get-setting-public`, {
-          params: {setting_name: settingName, user_id: this.steamerId},
+          params: {setting_name: settingName, user_id: this.streamerId},
         });
         if (response.data.setting_value) {
           this.currency = JSON.parse(response.data.setting_value).currency;
@@ -196,7 +196,7 @@ export default {
     async getBannerAds() {
       try {
         this.loading = true;
-        const response = await axios.get(`/api/banners-ads/` + this.steamerId);
+        const response = await axios.get(`/api/banners-ads/` + this.streamerId);
         if (response.data.bannersAds) {
           this.bannerSpot = response.data.bannersAds;
         }

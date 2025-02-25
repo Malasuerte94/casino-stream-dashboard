@@ -59,6 +59,11 @@ class User extends Authenticatable implements HasMedia
         'two_factor_secret',
     ];
 
+    public function getRouteKeyName(): string
+    {
+        return 'name';
+    }
+
     /**
      * The attributes that should be cast.
      *

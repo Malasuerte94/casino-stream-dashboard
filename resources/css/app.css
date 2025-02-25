@@ -34,8 +34,6 @@
 
 .footer-donate {
     width: 100%;
-    position: fixed;
-    bottom: 0;
     color: white;
 }
 
@@ -179,14 +177,14 @@
 /* --------------------------------------------
    Transition Utilities
 -------------------------------------------- */
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
     transition: opacity 0.5s ease-in-out;
 }
-.fade-enter, .fade-leave-to {
+.fade-enter,
+.fade-leave-to {
     opacity: 0;
 }
-
-
 
 
 /* Custom Scrollbar */

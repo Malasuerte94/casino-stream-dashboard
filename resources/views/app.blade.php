@@ -19,4 +19,17 @@
     @inertia
 </main>
 </body>
+<footer class="footer-donate backdrop-blur-xl bg-white/10 shadow-lg shadow-black/10 py-3">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0">
+        <div class="text-xs text-gray-400">
+            Proiect realizat de
+            <a class="underline text-indigo-400" href="https://catalin-ene.ro/" target="_blank">
+                Ene Catalin @ MalaTheMan
+            </a>
+        </div>
+        <div class="font-bold text-xs">
+            CasinoLabs © 2025
+        </div>
+    </div>
+</footer>
 </html>
