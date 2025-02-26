@@ -48,7 +48,7 @@ export default {
   methods: {
     async getWheelList() {
       try {
-        const response = await axios.get("api/wheel-list/" + this.$page.props.user.id);
+        const response = await axios.get("/api/wheel-list/" + this.$page.props.user.id);
         this.wheelList = response.data;
       } catch (error) {
         console.error(error);
@@ -57,7 +57,7 @@ export default {
     async updateWheelList() {
       this.loading = true;
       try {
-        await axios.patch("api/wheel-list", { wheelList: this.wheelList });
+        await axios.patch("/api/wheel-list", { wheelList: this.wheelList });
         await this.getWheelList();
       } catch (error) {
         console.error(error);
