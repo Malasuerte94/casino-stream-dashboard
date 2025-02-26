@@ -299,7 +299,7 @@ const handleWinnersPicked = (winnersArray) => {
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <!-- Top Link & Controls -->
         <div v-if="activeBattle"
-            class="px-6 py-3 flex items-center justify-between bg-gray-800 rounded-md shadow-md transition-all duration-300">
+             class="px-6 py-3 flex items-center justify-between bg-gray-800 rounded-md shadow-md transition-all duration-300">
           <div class="flex items-center space-x-4">
             <span class="text-sm text-gray-300">LINK pentru View-eri (predicții)</span>
             <div class="text-sm font-bold py-1 px-3 bg-gray-700 rounded-md border border-gray-600 transition">
@@ -358,22 +358,22 @@ const handleWinnersPicked = (winnersArray) => {
                   type="text"
               />
               <div class="ml-3 text-sm font-medium text-gray-300 flex items-center gap-2">
-              <label for="toggle" class="relative inline-flex items-center cursor-pointer">
-                <input
-                    type="checkbox"
-                    id="toggle"
-                    v-model="isRandom"
-                    class="sr-only peer"
-                />
-                <div
-                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full
+                <label for="toggle" class="relative inline-flex items-center cursor-pointer">
+                  <input
+                      type="checkbox"
+                      id="toggle"
+                      v-model="isRandom"
+                      class="sr-only peer"
+                  />
+                  <div
+                      class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full
                 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white
                 after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border
                 after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
-                ></div>
-              </label>
+                  ></div>
+                </label>
                 {{ isRandom ? 'Random' : 'În funcție de lista' }}
-            </div>
+              </div>
             </div>
             <div class="flex flex-col md:flex-row md:space-x-4">
               <div class="md:w-2/3 bg-gray-800 p-6 rounded-md shadow-md space-y-4 transition-all duration-300">
@@ -411,7 +411,7 @@ const handleWinnersPicked = (winnersArray) => {
                       <MyInput
                           v-model="concurrent.for_user"
                           label="Cine a ales? (opțional)"
-                          />
+                      />
                     </div>
                   </div>
                 </transition-group>
@@ -472,12 +472,17 @@ const handleWinnersPicked = (winnersArray) => {
 
         <!-- Active Battle Display -->
         <div v-if="activeBattle"
-             class="bg-gray-800 overflow-hidden shadow-lg rounded-md mt-6 transition-all duration-300">
+             class="bg-gray-800 overflow-hidden shadow-lg rounded-md mt-6 transition-all duration-300 relative">
+          <div v-if="isBattleOpen"
+               class="absolute inset-0 bg-black/30 backdrop-blur-md flex items-center justify-center rounded-lg p-0 z-50">
+            Predicțiile sunt pornite
+          </div>
           <div class="p-6">
             <div class="flex flex-row justify-between">
               <h2 class="text-xl font-bold mb-4 text-gray-100">Active Battle: {{ activeBattle.title }}</h2>
               <p class="text-gray-300">
-                Miza: {{ activeBattle.stake }} | Etapa: {{ activeStage.name }} | Premiu: {{ activeBattle.prize }} | Buys:
+                Miza: {{ activeBattle.stake }} | Etapa: {{ activeStage.name }} | Premiu: {{ activeBattle.prize }} |
+                Buys:
                 {{ activeBattle.buys }}
               </p>
             </div>

@@ -204,7 +204,7 @@ export default {
   computed: {
     guessUrl() {
       const host = window.location.origin;
-      return `${host}/streamer/${this.$page.props.user.id}`;
+      return `${host}/${this.$page.props.user.name}`;
     },
     isEnded() {
       return Boolean(this.listEnded);

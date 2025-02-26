@@ -65,9 +65,9 @@
               <div class="header-content_buy header-content">
                 <div class="text-center">#</div>
                 <div>Joc</div>
-                <div>Miză {{ settings.currency }}</div>
-                <div>Preț {{ settings.currency }}</div>
-                <div>Plată {{ settings.currency }}</div>
+                <div>Miză</div>
+                <div>Preț </div>
+                <div>Plată</div>
                 <div>Multi</div>
               </div>
             </div>
@@ -219,6 +219,9 @@ export default {
     gamesTotalNr() {
       return this.bonusListGames.length;
     },
+    gamesRemaining() {
+      return this.bonusListGames.filter(game => !game.result || game.result === "0").length;
+    },
     gameHighestMulti() {
       const multipliers = this.bonusListGames
           .map(game => game?.multiplier ? parseFloat(game.multiplier.trim()) : NaN)
@@ -309,7 +312,7 @@ export default {
         this.isUpdating = true;
         await this.getSettings();
         await this.getLatestList();
-        if (this.bonusListGames.some(game => !game.result || game.result === "0")) {
+        if (this.bonusListGames.some(game => parseInt(game.result) !== 0) && this.gamesRemaining !== 0) {
           this.startedOpening = true;
           await this.$nextTick(() => {
             this.scrollToNextGame();

@@ -3,30 +3,24 @@
     <!-- Bonus Buy Info -->
     <div class="space-y-6 mb-6">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <input
-            :disabled="isEnded"
-            :class="{'input-disabled': isEnded}"
-            type="text"
+        <MyInput
             v-model="bonusBuy.name"
+            type="text"
+            :disabled="isEnded"
             @input="debounceUpdateBonusBuy"
-            class="input-primary"
-            placeholder="Nume Lista"
+            label="Nume Lista"
         />
-        <input
-            type="number"
+        <MyInput
             v-model="bonusBuy.start"
-            disabled
-            readonly
-            class="input-disabled"
-            placeholder="Cost (LEI)"
-        />
-        <input
             type="number"
+            :disabled="true"
+            label="Cost (LEI)"
+        />
+        <MyInput
             v-model="bonusBuy.result"
-            disabled
-            readonly
-            class="input-disabled"
-            placeholder="Rezultat (LEI)"
+            type="number"
+            :disabled="true"
+            label="Rezultat (LEI)"
         />
         <button @click="wantToReset" class="btn-primary w-full md:w-auto">
           LISTA NOUA
@@ -36,18 +30,6 @@
 
     <!-- Bonus Buy Games -->
     <template v-if="bonusBuyGames.length > 0">
-      <!-- Header Row -->
-      <div class="hidden md:grid grid-cols-[10px_50px_1fr_120px_120px_120px_120px_50px] gap-4 text-sm font-semibold text-gray-300 mb-2">
-        <span>#</span>
-        <span></span>
-        <span>Joc</span>
-        <span>Miză</span>
-        <span>Preț (LEI)</span>
-        <span>Rezultat (LEI)</span>
-        <span>Multiplicator</span>
-        <span></span>
-      </div>
-
       <!-- Game Rows with extra background div -->
       <transition-group name="fade">
       <div
@@ -90,42 +72,38 @@
               @update:modelValue="value => debounceFieldUpdate(game, 'game_id')"
               v-model="game.game_id"
           />
-          <input
-              :disabled="isEnded || loading"
-              :class="{'input-disabled': isEnded || loading}"
-              type="number"
+          <MyInput
               v-model="game.stake"
-              @input="debounceFieldUpdate(game, 'stake')"
-              min="1"
-              class="input-primary text-center"
-              placeholder="Miză"
-          />
-          <input
+              type="number"
               :disabled="isEnded || loading"
-              :class="{'input-disabled': isEnded || loading}"
-              type="number"
-              v-model="game.price"
-              @input="debounceFieldUpdate(game, 'price')"
-              min="0"
-              class="input-primary text-center"
-              placeholder="Preț (LEI)"
-          />
-          <input
-              :disabled="isEnded"
-              :class="{'input-disabled': isEnded}"
-              type="number"
-              v-model="game.result"
-              @input="debounceFieldUpdate(game, 'result')"
+              @input="debounceFieldUpdate(game, 'stake')"
+              label="Miză"
+              min="1"
               step="0.1"
-              class="input-primary text-center"
-              placeholder="Rezultat (LEI)"
           />
-          <input
+          <MyInput
+              v-model="game.price"
               type="number"
+              :disabled="isEnded || loading"
+              @input="debounceFieldUpdate(game, 'price')"
+              label="Preț (LEI)"
+              min="0"
+              step="0.1"
+          />
+          <MyInput
+              v-model="game.result"
+              type="number"
+              :disabled="isEnded || loading"
+              @input="debounceFieldUpdate(game, 'result')"
+              label="Rezultat (LEI)"
+              min="0"
+              step="0.1"
+          />
+          <MyInput
               v-model="game.multiplier"
-              disabled
-              class="input-disabled text-center"
-              placeholder="Multiplicator"
+              type="number"
+              :disabled="true"
+              label="Multiplicator"
           />
           <button
               v-if="!isEnded"
@@ -155,9 +133,10 @@ import { useGameStore } from "@/stores/gameStore";
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 import axios from "axios";
+import MyInput from "../../../../Components/MyInput.vue";
 
 export default {
-  components: { vSelect },
+  components: {MyInput, vSelect },
   data() {
     return {
       bonusBuy: {},

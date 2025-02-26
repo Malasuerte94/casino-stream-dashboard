@@ -48,7 +48,7 @@
                   :active="route().current('streamer.wheel-settings')"
                   class="text-gray-300 hover:text-white transition-colors duration-200"
               >
-                Wheel Config
+                Wheel
               </NavLink>
               <NavLink
                   :href="route('streamer.schedule')"
@@ -206,7 +206,7 @@
               :active="route().current('streamer.wheel-settings')"
               class="text-gray-300 hover:text-white transition-colors duration-200"
           >
-            Wheel Config
+            Wheel
           </ResponsiveNavLink>
           <ResponsiveNavLink
               :href="route('streamer.schedule')"
@@ -263,8 +263,8 @@
         </div>
       </div>
       <!-- Guest options for mobile -->
-      <div v-else class="pt-4 pb-1 border-t border-gray-700">
-        <div class="mt-3 space-y-1">
+      <div v-else class="p-4 border-t border-gray-700">
+        <div class="space-y-1 flex flex-col gap-4">
           <a :href="route('user.dashboard')" @click.prevent="showLoginModal = true">Logare</a>
           <a :href="route('register')" @click.prevent="showRegisterModal = true">Înregistrare</a>
         </div>
@@ -277,7 +277,7 @@
       <!-- Backdrop -->
       <div class="absolute inset-0 bg-black opacity-50" @click="showLoginModal = false"></div>
       <!-- Modal content -->
-      <div class="relative rounded shadow-lg w-full max-w-md">
+      <div class="relative rounded shadow-lg w-full max-w-md p-6 md:p-0">
         <button class="absolute top-0 right-2 mt-2 mr-2 text-xl z-10" @click="showLoginModal = false">&times;</button>
         <LoginForm />
       </div>
@@ -289,7 +289,7 @@
       <!-- Backdrop -->
       <div class="absolute inset-0 bg-black opacity-50" @click="showRegisterModal = false"></div>
       <!-- Modal content -->
-      <div class="relative rounded shadow-lg w-full max-w-md">
+      <div class="relative rounded shadow-lg w-full max-w-md p-6 md:p-0">
         <button class="absolute top-0 right-2 mt-2 mr-2 text-xl z-10" @click="showRegisterModal = false">&times;</button>
         <RegisterForm />
       </div>

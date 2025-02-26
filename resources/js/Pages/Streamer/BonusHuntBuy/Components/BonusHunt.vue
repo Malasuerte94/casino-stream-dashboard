@@ -3,29 +3,25 @@
     <!-- Bonus Hunt Info -->
     <div class="space-y-6 mb-6">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <input
-            :disabled="isEnded"
-            :class="{'input-disabled': isEnded}"
-            type="text"
+        <MyInput
             v-model="bonusHunt.name"
-            class="input-primary"
-            placeholder="Nume Lista"
-        />
-        <input
+            type="text"
             :disabled="isEnded"
-            :class="{'input-disabled': isEnded}"
             @input="debounceUpdateBonusHunt"
-            type="number"
-            v-model="bonusHunt.start"
-            class="input-primary"
-            placeholder="Cost (LEI)"
+            label="Nume Lista"
         />
-        <input
-            disabled
+        <MyInput
+            v-model="bonusHunt.start"
             type="number"
+            :disabled="isEnded"
+            @input="debounceUpdateBonusHunt"
+            label="Cost (LEI)"
+        />
+        <MyInput
             v-model="bonusHunt.result"
-            class="input-disabled"
-            placeholder="Rezultat (LEI)"
+            type="number"
+            :disabled="true"
+            label="Rezultat (LEI)"
         />
         <button @click="wantToReset" class="btn-primary w-full md:w-auto">
           LISTA NOUA
@@ -35,17 +31,6 @@
 
     <!-- Bonus Hunt Games -->
     <template v-if="bonusHuntGames.length > 0 && bonusHunt.start > 0">
-      <!-- Header Row (visible on medium screens and up) -->
-      <div class="hidden md:grid grid-cols-[10px_50px_1fr_120px_120px_120px_50px] gap-4 text-sm font-semibold text-gray-600 dark:text-gray-300 mb-2">
-        <span>#</span>
-        <span></span>
-        <span>Joc</span>
-        <span>Miză</span>
-        <span>Rezultat (LEI)</span>
-        <span>Multiplicator</span>
-        <span></span>
-      </div>
-
       <!-- Game Rows with Dedicated Blurred Background Div -->
       <transition-group name="fade">
         <div
@@ -85,32 +70,29 @@
               @update:modelValue="value => debounceFieldUpdate(game, 'game_id')"
               v-model="game.game_id"
           />
-          <input
-              :disabled="isEnded || loading"
-              :class="{'input-disabled': isEnded || loading}"
-              @input="debounceFieldUpdate(game, 'stake')"
+          <MyInput
               v-model="game.stake"
-              min="1"
               type="number"
-              class="input-primary text-center"
-              placeholder="Miză"
-          />
-          <input
               :disabled="isEnded || loading"
-              :class="{'input-disabled': isEnded || loading}"
-              @input="debounceFieldUpdate(game, 'result')"
+              @input="debounceFieldUpdate(game, 'stake')"
+              label="Miză"
+              min="1"
+              step="0.1"
+          />
+          <MyInput
               v-model="game.result"
               type="number"
+              :disabled="isEnded || loading"
+              @input="debounceFieldUpdate(game, 'result')"
               step="0.1"
-              class="input-primary text-center"
-              placeholder="Rezultat (LEI)"
+              min="0.1"
+              label="Rezultat (LEI)"
           />
-          <input
-              disabled
+          <MyInput
               v-model="game.multiplier"
               type="number"
-              class="input-disabled text-center"
-              placeholder="Multiplicator"
+              :disabled="true"
+              label="Multiplicator"
           />
           <button
               v-if="!isEnded"
@@ -143,9 +125,10 @@ import { useGameStore } from "@/stores/gameStore";
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 import axios from "axios";
+import MyInput from "../../../../Components/MyInput.vue";
 
 export default {
-  components: { vSelect },
+  components: {MyInput, vSelect },
   data() {
     return {
       bonusHunt: {},

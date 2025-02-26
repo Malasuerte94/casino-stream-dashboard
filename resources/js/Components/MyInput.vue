@@ -8,6 +8,9 @@
         placeholder=" "
         :class="{'input-disabled': disabled}"
         @input="handleInput"
+        :step="step"
+        :min="min"
+        :max="max"
         class="input-primary block rounded-t-lg px-2.5 pb-2.5 pt-5 w-full text-sm border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 focus:outline-none focus:ring-0 peer"
     />
     <label
@@ -38,6 +41,18 @@ const props = defineProps({
   label: {
     type: String,
     required: true
+  },
+  step: {
+    type: String,
+    default: ''
+  },
+  min: {
+    type: String,
+    default: ''
+  },
+  max: {
+    type: String,
+    default: ''
   }
 });
 

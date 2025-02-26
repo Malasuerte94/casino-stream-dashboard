@@ -1,24 +1,42 @@
 <template>
   <AppLayout title="Main User">
-    <div class="py-6 pb-20">
+    <div class="py-4 md:py-6 pb-20">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 px-4">
         <div class="overflow-hidden mb-4">
-          <div class="p-6 flex flex-row justify-center items-center gap-8 relative">
-            <!-- Left Buttons Wrapper -->
+          <!-- Desktop Layout (visible on md and larger) -->
+          <div class="hidden md:flex p-6 flex-row justify-center items-center gap-8 relative">
+            <!-- Left Buttons -->
             <div class="flex flex-row gap-4 flex-1 justify-end">
+              <button @click="navigate('hunt')" class="btn-primary-transparent">BUY</button>
               <button @click="navigate('hunt')" class="btn-primary-transparent">HUNT</button>
               <button @click="navigate('battle')" class="btn-primary-transparent">BATTLE</button>
             </div>
-
-            <!-- Centered User Logo -->
+            <!-- Center User Avatar -->
             <div class="flex-shrink-0">
               <img :src="streamer.avatar" alt="Main User" class="rounded-full h-20 w-20 object-cover">
             </div>
-
-            <!-- Right Buttons Wrapper -->
+            <!-- Right Buttons -->
             <div class="flex flex-row gap-4 flex-1 justify-start">
               <button @click="navigate('referral')" class="btn-primary-transparent">REFERRAL</button>
               <button @click="navigate('social')" class="btn-primary-transparent">SOCIAL</button>
+              <button @click="navigate('social')" class="btn-primary-transparent">OFERTE</button>
+            </div>
+          </div>
+
+          <!-- Mobile Layout (visible below md breakpoint) -->
+          <div class="flex md:hidden flex-col items-center gap-4">
+            <!-- User Avatar -->
+            <div>
+              <img :src="streamer.avatar" alt="Main User" class="rounded-full h-20 w-20 object-cover">
+            </div>
+            <!-- Buttons Grid -->
+            <div class="grid grid-cols-3 gap-4 w-full">
+              <button @click="navigate('hunt')" class="btn-primary-transparent">BUY</button>
+              <button @click="navigate('hunt')" class="btn-primary-transparent">HUNT</button>
+              <button @click="navigate('battle')" class="btn-primary-transparent">BATTLE</button>
+              <button @click="navigate('referral')" class="btn-primary-transparent">REFERRAL</button>
+              <button @click="navigate('social')" class="btn-primary-transparent">SOCIAL</button>
+              <button @click="navigate('social')" class="btn-primary-transparent">OFERTE</button>
             </div>
           </div>
         </div>
