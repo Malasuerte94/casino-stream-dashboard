@@ -54,7 +54,7 @@
 
         <!-- Buy Section -->
         <template v-if="huntOrBuy === 'Buy'">
-          <div class="game-table" :style="{
+          <div class="game-table" ref="gameTableBuy" :style="{
           'border': settings.borderEnabled ? settings.borderWidth + 'px ' + settings.borderColor + ' solid' : 'unset',
         }">
             <div class="header" :style="{
@@ -103,7 +103,7 @@
 
         <!-- Hunt Section -->
         <template v-else>
-          <div class="game-table" :style="{
+          <div class="game-table" ref="gameTableHunt" :style="{
           'border': settings.borderEnabled ? settings.borderWidth + 'px ' + settings.borderColor + ' solid' : 'unset',
         }">
             <div class="header" :style="{
@@ -334,19 +334,26 @@ export default {
       }
     },
     scrollToNextGame() {
+      const gameTable = this.$refs.gameTableBuy || this.$refs.gameTableHunt;
       const gamesList = this.$refs.gamesList || this.$refs.gamesListHunt;
       const container = this.$refs.scrollWrapper || this.$refs.scrollWrapperHunt;
       if (!gamesList || !container) return;
+
       const gameItems = gamesList.querySelectorAll('.game-single');
       const index = this.nextGameIndex;
       if (index === -1 || gameItems.length <= index) return;
+
       const target = gameItems[index];
-      const containerHeight = container.clientHeight;
-      const targetOffset = target.offsetTop;
+
+      const targetTop = target.offsetTop;
       const targetHeight = target.clientHeight;
-      const offset = targetOffset - targetHeight - containerHeight;
+      const gameTableHeight = gameTable.clientHeight;
+
+      const scrollTo = targetTop + targetHeight - (gameTableHeight / 2);
+
       gamesList.style.transition = 'transform 0.5s ease';
-      gamesList.style.transform = `translateY(${offset}px)`;
+      gamesList.style.transform = `translateY(-${scrollTo}px)`;
+
     }
   }
 };
