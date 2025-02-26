@@ -1,0 +1,12 @@
+{
+  "obs_widgets": "WIDGETURI OBS",
+  "schedule": "Program",
+  "nav": {
+    "bonus_list": "Hunt / Buy",
+    "bonus_battle": "Turneu",
+    "wheel": "Roata",
+    "schedule": "Program",
+    "raport": "Raport",
+    "streamer_public_page": "Pagina Publică"
+  }
+}

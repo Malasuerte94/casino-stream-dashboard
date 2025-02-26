@@ -34,42 +34,42 @@
                   :active="route().current('streamer.lists')"
                   class="text-gray-300 hover:text-white transition-colors duration-200"
               >
-                Bonus Lists
+                {{ $t('nav.bonus_list')}}
               </NavLink>
               <NavLink
                   :href="route('streamer.bonus-battle')"
                   :active="route().current('streamer.bonus-battle')"
                   class="text-gray-300 hover:text-white transition-colors duration-200"
               >
-                Bonus Battle
+                {{ $t('nav.bonus_battle')}}
               </NavLink>
               <NavLink
                   :href="route('streamer.wheel-settings')"
                   :active="route().current('streamer.wheel-settings')"
                   class="text-gray-300 hover:text-white transition-colors duration-200"
               >
-                Wheel
+                {{ $t('nav.wheel')}}
               </NavLink>
               <NavLink
                   :href="route('streamer.schedule')"
                   :active="route().current('streamer.schedule')"
                   class="text-gray-300 hover:text-white transition-colors duration-200"
               >
-                Schedule
+                {{ $t('nav.schedule')}}
               </NavLink>
               <NavLink
                   :href="route('streamer.report')"
                   :active="route().current('streamer.report')"
                   class="text-gray-300 hover:text-white transition-colors duration-200"
               >
-                Raport
+                {{ $t('nav.raport')}}
               </NavLink>
               <NavLink
                   :href="route('view-streamer', { user: $page.props.user.name })"
                   :active="route().current('view-streamer')"
                   class="text-orange-600 font-bold hover:text-white transition-colors duration-200"
               >
-                Streamer Public Page
+                {{ $t('nav.streamer_public_page')}}
               </NavLink>
             </template>
           </div>
@@ -116,6 +116,30 @@
                     OBS Settings
                   </DropdownLink>
                 </template>
+                <div class="border-t border-gray-700"></div>
+                <div class="px-4 py-2">
+                  <div class="text-xs text-gray-400 mb-1">Language</div>
+                  <div class="flex gap-2">
+                    <button
+                        @click="changeLocale('ro')"
+                        :class="[
+          $i18n.locale === 'ro' ? 'font-bold text-white' : 'text-gray-300',
+          'text-sm'
+        ]"
+                    >
+                      RO
+                    </button>
+                    <button
+                        @click="changeLocale('en')"
+                        :class="[
+          $i18n.locale === 'en' ? 'font-bold text-white' : 'text-gray-300',
+          'text-sm'
+        ]"
+                    >
+                      EN
+                    </button>
+                  </div>
+                </div>
                 <div class="border-t border-gray-700"></div>
                 <form @submit.prevent="logout">
                   <DropdownLink as="button">Log Out</DropdownLink>
@@ -314,5 +338,14 @@ const showRegisterModal = ref(false);
 
 const logout = () => {
   router.post(route('logout'));
+};
+</script>
+<script>
+export default {
+  methods: {
+    changeLocale(locale) {
+      this.$i18n.locale = locale;
+    },
+  },
 };
 </script>

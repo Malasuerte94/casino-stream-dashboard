@@ -6,7 +6,6 @@ import ChangeLog from './Components/ChangeLog.vue';
 
 <template>
   <AppLayout title="Dashboard">
-    <!-- Main Content -->
     <div class="py-4">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <transition name="fade" mode="out-in">

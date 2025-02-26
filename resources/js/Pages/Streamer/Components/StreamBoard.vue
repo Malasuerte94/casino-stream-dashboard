@@ -4,7 +4,7 @@
     <transition name="fade">
       <div class="bg-gray-900 p-6 mb-6 rounded border border-red-700 shadow-lg text-center">
         <div class="text-lg text-center mb-4 text-red-300">
-          OBS WIDGETS
+          {{ $t('obs_widgets') }}
         </div>
         <div class="flex flex-wrap gap-2 bg-gray-800 p-2 rounded-lg shadow-lg h-10 items-center justify-center">
           <NavLink class="text-white text-sm font-semibold px-3 py-1 border-transparent transition-all duration-200 hover:text-amber-500"
