@@ -102,6 +102,26 @@ class ViewerController extends Controller
     }
 
     /**
+     * Get Bonus Buy history with associated games.
+     *
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function getBonusBuyHistory(int $id): JsonResponse
+    {
+        $bonusBuy = BonusBuy::where('user_id', $id)
+            ->with([
+                'bonusBuyGames.game' // Load full game details
+            ])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json([
+            'bonusBuys' => $bonusBuy,
+        ]);
+    }
+
+    /**
      * Get Bonus Hunt with associated games.
      *
      * @param int $id
@@ -117,6 +137,25 @@ class ViewerController extends Controller
 
         return response()->json([
             'latestHunt' => $bonusHunt,
+        ]);
+    }
+
+    /**
+     * Get Bonus Buy with associated games.
+     *
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function getBonusBuy(int $id): JsonResponse
+    {
+        $bonusBuy = BonusBuy::where('id', $id)
+            ->with([
+                'bonusBuyGames.game'
+            ])
+            ->first();
+
+        return response()->json([
+            'latestBuy' => $bonusBuy,
         ]);
     }
 

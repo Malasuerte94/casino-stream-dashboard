@@ -194,6 +194,10 @@ Route::prefix('viewer')->group(function () {
     Route::get('get-bh/{id}', [ViewerController::class, 'getBonusHunt']);
     Route::get('get-bh-predictions/{id}', [GuessEntriesController::class, 'getPredictions']);
 
+    Route::get('get-bbl-history/{id}', [ViewerController::class, 'getBonusBuyHistory']);
+    Route::get('get-bbl/{id}', [ViewerController::class, 'getBonusBuy']);
+    Route::get('get-bbl-predictions/{id}', [GuessEntriesController::class, 'getBblPredictions']);
+
     Route::get('get-bb-history/{id}', [BonusBattleController::class, 'getBonusBattleHistory']);
     Route::get('get-bb/{id}', [BonusBattleController::class, 'getSingleBonusBattleInfo']);
     Route::get('get-bb-predictions/{id}', [BattlePredictionController::class, 'getPredictions']);

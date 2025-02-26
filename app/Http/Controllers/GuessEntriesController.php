@@ -140,4 +140,30 @@ class GuessEntriesController extends Controller
     }
 
 
+    /**
+     * Retrieve the user's existing prediction for a bonus buy
+     *
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function getBblPredictions(int $id): JsonResponse
+    {
+        try {
+            $predictions = GuessEntry::where('bonus_buy_id', $id)
+                ->with(['user:id,yt_name,profile_photo_path']) // Eager load user with selected fields
+                ->get();
+
+            if ($predictions->isEmpty()) {
+                return response()->json(['predictions' => null], 200);
+            }
+
+            return response()->json([
+                'predictions' => $predictions
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
+
 }

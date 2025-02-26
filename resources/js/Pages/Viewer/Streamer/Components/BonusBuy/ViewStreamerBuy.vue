@@ -2,7 +2,7 @@
   <div v-if="!loading">
     <div class="flex flex-col md:flex-row justify-center items-stretch gap-4 mb-4">
       <!-- First Box (1/5 width on desktop) -->
-      <div v-if="bonusHuntHistory.length > 0"
+      <div v-if="bonusBuyHistory.length > 0"
            class="gap-2 rounded-lg backdrop-blur-xl p-4 bg-white/10 shadow-lg shadow-black/40 border border-white/20 w-full md:w-1/4 flex flex-col justify-between">
 
         <div class="flex flex-row justify-between items-center">
@@ -10,11 +10,11 @@
             <div>
               <SvgBackward class="h-5 w-5 text-white stroke-current"/>
             </div>
-            <div class="uppercase">{{$t('latest_hunt')}}</div>
+            <div class="uppercase">{{ $t('latest_buy') }}</div>
           </div>
           <div class="bg-gray-800 px-2 py-1 rounded-lg text-xs font-bold"
-               :class="{ 'text-gray-500': latestHunt.ended, 'text-green-500': !latestHunt.ended }">
-            {{ latestHunt.ended ? 'TERMINAT' : 'ACTIV' }}
+               :class="{ 'text-gray-500': latestBuy.ended, 'text-green-500': !latestBuy.ended }">
+            {{ latestBuy.ended ? 'TERMINAT' : 'ACTIV' }}
           </div>
         </div>
 
@@ -23,14 +23,14 @@
             <div>
               <SvgGame class="h-5 w-5 text-indigo-500 fill-current"/>
             </div>
-            <div> {{ latestHunt.bonus_hunt_games.length }}</div>
+            <div> {{ latestBuy.bonus_buy_games.length }}</div>
           </div>
           <div class="flex flex-row items-center gap-1 bg-gray-700 px-2 py-1 rounded-lg">
             <div>
               <SvgMoney class="h-5 w-5 text-green-500"/>
             </div>
             <div>
-              {{ latestHunt.start }} {{ currency }}
+              {{ latestBuy.start }} {{ currency }}
             </div>
           </div>
         </div>
@@ -40,19 +40,19 @@
             <div>
               <SvgCalendar class="w-4 h-4 text-gray-500 stroke-current"/>
             </div>
-            <div>{{ convertDate(latestHunt.created_at) }}</div>
+            <div>{{ convertDate(latestBuy.created_at) }}</div>
           </div>
           <div
               class="flex flex-row items-center gap-1 bg-gray-700 px-2 py-1 rounded"
               :class="{
-              'text-green-500': parseFloat(latestHunt.result) >= parseFloat(latestHunt.start),
-              'text-red-500': parseFloat(latestHunt.result) <= parseFloat(latestHunt.start)
+              'text-green-500': parseFloat(latestBuy.result) >= parseFloat(latestBuy.start),
+              'text-red-500': parseFloat(latestBuy.result) <= parseFloat(latestBuy.start)
             }"
           >
             <div>
               <SvgMoney class="h-4 w-4"/>
             </div>
-            <div>{{ latestHunt.result }} {{ currency }}</div>
+            <div>{{ latestBuy.result }} {{ currency }}</div>
           </div>
         </div>
       </div>
@@ -113,12 +113,12 @@
         </div>
       </a>
     </div>
-    <template v-if="bonusHuntHistory.length > 0">
+    <template v-if="bonusBuyHistory.length > 0">
       <transition name="fade" mode="out-in">
-        <LatestHunt :huntId="latestHunt.id" :currency="currency"/>
+        <LatestBuy :buyId="latestBuy.id" :currency="currency"/>
       </transition>
       <transition name="fade" mode="out-in">
-        <HuntHistory @seeHunt="changeLatestHunt" :bonusHuntHistory="bonusHuntHistory" :currency="currency"/>
+        <BuyHistory @seeBuy="changeLatestBuy" :bonusBuyHistory="bonusBuyHistory" :currency="currency"/>
       </transition>
     </template>
   </div>
@@ -130,13 +130,13 @@ import SvgGame from "/public/storage/assets/images/slots.svg";
 import SvgMoney from "/public/storage/assets/images/money.svg";
 import SvgStakeSite from "/public/storage/assets/images/stake-site.svg";
 import SvgBackward from "/public/storage/assets/images/backward.svg";
-import HuntHistory from "./Components/HuntHistory.vue";
-import LatestHunt from "./Components/LatestHunt.vue";
+import BuyHistory from "./Components/BuyHistory.vue";
+import LatestBuy from "./Components/LatestBuy.vue";
 
 export default {
   components: {
-    LatestHunt,
-    HuntHistory,
+    LatestBuy,
+    BuyHistory,
     SvgCalendar,
     SvgGame,
     SvgMoney,
@@ -147,8 +147,8 @@ export default {
     return {
       loading: true,
       streamer: {},
-      bonusHuntHistory: [],
-      latestHunt: null,
+      bonusBuyHistory: [],
+      latestBuy: null,
       refreshInterval: null,
       currency: 'RON',
       activeIndex: 0,
@@ -167,17 +167,17 @@ export default {
   },
   methods: {
     async getData() {
-      await this.getBonusHuntHistory();
+      await this.getBonusBuyHistory();
       await this.getSettings();
       await this.getBannerAds();
     },
-    async getBonusHuntHistory() {
+    async getBonusBuyHistory() {
       try {
-        const response = await axios.get("/api/viewer/get-bh-history/" + this.streamerId);
-        this.bonusHuntHistory = response.data.bonusHunts;
-        this.latestHunt = this.bonusHuntHistory[0]
+        const response = await axios.get("/api/viewer/get-bbl-history/" + this.streamerId);
+        this.bonusBuyHistory = response.data.bonusBuys;
+        this.latestBuy = this.bonusBuyHistory[0]
       } catch (error) {
-        console.error("Error fetching bonus hunt history:", error);
+        console.error("Error fetching bonus buy history:", error);
       }
     },
     async getSettings() {
@@ -213,8 +213,8 @@ export default {
         console.error("Error registering click:", error);
       }
     },
-    changeLatestHunt(bonusHunt) {
-      this.latestHunt = bonusHunt;
+    changeLatestBuy(bonusBuy) {
+      this.latestBuy = bonusBuy;
     },
     convertDate(isoString) {
       const date = new Date(isoString);

@@ -1,6 +1,14 @@
 {
   "obs_widgets": "WIDGETURI OBS",
   "schedule": "Program",
+  "hunt": "Hunt",
+  "buy": "Buy",
+  "bonus_buy": "Bonus Buy",
+  "bonus_hunt": "Bonus Hunt",
+  "latest_hunt": "Ultimul Hunt",
+  "latest_buy": "Ultimul Buy",
+  "buy_predictions": "Predicții Buy",
+  "no_prediction_found": "Nu ai predicții pentru acest hunt",
   "nav": {
     "bonus_list": "Hunt / Buy",
     "bonus_battle": "Turneu",

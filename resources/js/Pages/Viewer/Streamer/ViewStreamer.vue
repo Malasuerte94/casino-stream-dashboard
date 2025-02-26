@@ -7,7 +7,7 @@
           <div class="hidden md:flex p-6 flex-row justify-center items-center gap-8 relative">
             <!-- Left Buttons -->
             <div class="flex flex-row gap-4 flex-1 justify-end">
-              <button @click="navigate('hunt')" class="btn-primary-transparent">BUY</button>
+              <button @click="navigate('buy')" class="btn-primary-transparent">BUY</button>
               <button @click="navigate('hunt')" class="btn-primary-transparent">HUNT</button>
               <button @click="navigate('battle')" class="btn-primary-transparent">BATTLE</button>
             </div>
@@ -31,7 +31,7 @@
             </div>
             <!-- Buttons Grid -->
             <div class="grid grid-cols-3 gap-4 w-full">
-              <button @click="navigate('hunt')" class="btn-primary-transparent">BUY</button>
+              <button @click="navigate('buy')" class="btn-primary-transparent">BUY</button>
               <button @click="navigate('hunt')" class="btn-primary-transparent">HUNT</button>
               <button @click="navigate('battle')" class="btn-primary-transparent">BATTLE</button>
               <button @click="navigate('referral')" class="btn-primary-transparent">REFERRAL</button>
@@ -53,12 +53,13 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import { router } from '@inertiajs/vue3';
 import axios from "axios";
 import ViewStreamerHunt from "./Components/BonusHunt/ViewStreamerHunt.vue";
+import ViewStreamerBuy from "./Components/BonusBuy/ViewStreamerBuy.vue";
 import ViewStreamerBonusBattle from "./Components/BonusBattle/ViewStreamerBonusBattle.vue";
 import Referrals from "./Components/Refferal/Referrals.vue";
 import ViewSocials from "./Components/Social/ViewSocials.vue";
 
 export default {
-  components: {ViewStreamerHunt, AppLayout, Referrals, ViewStreamerBonusBattle, ViewSocials},
+  components: {ViewStreamerHunt, AppLayout, Referrals, ViewStreamerBonusBattle, ViewSocials, ViewStreamerBuy},
   data() {
     return {
       streamer: {},
@@ -104,6 +105,7 @@ export default {
     currentComponent() {
       const sections = {
         hunt: 'ViewStreamerHunt',
+        buy: 'ViewStreamerBuy',
         battle: 'ViewStreamerBonusBattle',
         referral: 'Referrals',
         social: 'ViewSocials'
