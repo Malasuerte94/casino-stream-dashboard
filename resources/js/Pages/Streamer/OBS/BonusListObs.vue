@@ -343,9 +343,10 @@ export default {
       const target = gameItems[index];
       const containerHeight = container.clientHeight;
       const targetOffset = target.offsetTop;
-      const offset = (targetOffset * 2) - containerHeight;
+      const targetHeight = target.clientHeight;
+      const offset = targetOffset - targetHeight - containerHeight;
       gamesList.style.transition = 'transform 0.5s ease';
-      gamesList.style.transform = `translateY(-${offset}px)`;
+      gamesList.style.transform = `translateY(${offset}px)`;
     }
   }
 };
